@@ -18,7 +18,8 @@ Zu Beginnn unseres Projekts wollen wir folgende Dinge klarstellen:
 - **Finalisierung der Spielidee:**  
 
 - **Modellierung des Spiels:**  
-Für unser Spiel werden wir eine Server Client Struktur verwenden.
+Wir werden unser Spiel Top-Down designen. Dafür fangen wir mit einer Server Client Struktur an.   
+Die Logik des Spiels wird am Server ablaufen, der Client bekommt die Informationen und stellt diese bei sich dar. 
 - **Featureumfang:**  
 Wir wollen ein Spiel haben, mit dem zumindest 2 Spieler über einen Server miteinander spielen können.  
 - **Herausforderungen und erwartete Probleme:**  
