@@ -49,6 +49,7 @@ UML-Tool: Draw.io
 - [ ] HUD
 - [ ] Leveldesign
 - [ ] Characterdesgin
+- [ ] MVP
 
 ### Milestone 3:
 - [ ] Gute Interaktion der Spieler
