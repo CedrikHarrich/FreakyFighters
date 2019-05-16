@@ -16,12 +16,20 @@ Dazu halten wir uns strikt an unseren Milestoneplan:
 ### Milestone 0:
 Zu Beginnn unseres Projekts wollen wir folgende Dinge klarstellen:  
 - **Finalisierung der Spielidee:**  
+Das Spiel wird ein 2D Fighting Game und nehmen uns "Super Smash Bros." oder "Ravals of Aether".  
+Wir legen Wert auf ein schnelles Spielerlebnis. Der Kern besteht einem 1vs1 Kampfprinzip, was wir jedoch noch erweitern möchten auf andere Spielprinzipien.
+
 
 - **Modellierung des Spiels:**  
 Wir werden unser Spiel Top-Down designen. Dafür fangen wir mit einer Server Client Struktur an.   
 Die Logik des Spiels wird am Server ablaufen, der Client bekommt die Informationen und stellt diese bei sich dar. 
 - **Featureumfang:**  
 Wir wollen ein Spiel haben, mit dem zumindest 2 Spieler über einen Server miteinander spielen können.  
+Die Features, die unser Projekt haben soll teilen wir in MVP-Features und Erweiterungen ein.  
+**MVP-Features:**  
+Ein Level, ein steuerbarer Character, Server mit 2 Clients, (minimale) Kampflogik, statische Stage, semidynamische Charaktere, Erweiterbar, Minimal Artwork  
+**Erweiterungen:**  
+Mehr Levels, mehrere Charactere, Animationen, dynamische Stages, dynamische Figuren, Bots, PowerUps, Story, Sound(effekte), Parallaxeneffekt, Schere Stein Papier Prinzipien umsetzen, mehr Spielmodi
 - **Herausforderungen und erwartete Probleme:**  
 Wir haben alle einen sehr strengen Terminplan, deswegen müssen wir uns von Anfang an auf die Entwicklung des Spiels konzentrieren. Sonst kommen wir unter Zeitdruck, sobald unsere Klausuren anfangen.
 - **Milestone Plan:**  
