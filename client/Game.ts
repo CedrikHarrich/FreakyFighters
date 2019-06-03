@@ -1,4 +1,4 @@
-export default class Game {
+export class Game {
   constructor() {
     console.log('Constructing Game');
   }
