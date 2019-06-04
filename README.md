@@ -77,6 +77,7 @@ UML-Tool: Draw.io
 
 0. Node global installieren
 1. npm install
-2. npm run watch
-3. open http://localhost: + terminal
+2. npm run client
+3. npm run server
+4. open http://localhost: + terminal
 
