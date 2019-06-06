@@ -22,7 +22,7 @@ Wir legen Wert auf ein schnelles Spielerlebnis. Der Kern besteht einem 1vs1 Kamp
 
 - **Modellierung des Spiels:**  
 Wir werden unser Spiel Top-Down designen. Dafür fangen wir mit einer Server Client Struktur an.   
-Die Logik des Spiels wird am Server ablaufen, der Client bekommt die Informationen und stellt diese bei sich dar. 
+Die Logik des Spiels wird am Server ablaufen, der Client bekommt die Informationen und stellt diese bei sich dar.
 - **Featureumfang:**  
 Wir wollen ein Spiel haben, mit dem zumindest 2 Spieler über einen Server miteinander spielen können.  
 Die Features, die unser Projekt haben soll teilen wir in MVP-Features und Erweiterungen ein.  
@@ -46,9 +46,9 @@ UML-Tool: Draw.io
 
 ### Milestone 1:
 - [ ] Leveldesign Prototyp
-- [ ] Characterdesign Prototyp 
-- [x] Server-Client funktioniert
-- [x] 2 Spieler können sich einloggen und interagieren
+- [ ] Characterdesign Prototyp
+- [ ] Server-Client funktioniert
+- [ ] 2 Spieler können sich einloggen und interagieren
 
 ### Milestone 2:
 - [ ] Interaktion von Spielern ist möglich
@@ -67,17 +67,8 @@ UML-Tool: Draw.io
 - [ ] Website kaufen und hochladen
 - [ ] Bugfixing
 - [ ] Abgabe
- 
+
 
 ### Abschlussprüfung:
 - [ ] Abschlussprüfung rocken
 - [ ] Betrinken
-
-### How to start the server.
-
-0. Node global installieren
-1. npm install
-2. npm run client
-3. npm run server
-4. open http://localhost: + terminal
-

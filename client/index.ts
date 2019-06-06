@@ -33,6 +33,4 @@ socket.on("message", function (data:any) {
 form.addEventListener('submit', sendMsg);
 document.addEventListener('keyup', keyupHandler);
 
-console.log('client/index.ts');
-
 export{};
