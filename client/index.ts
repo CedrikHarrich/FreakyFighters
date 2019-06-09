@@ -1,11 +1,10 @@
 import * as io from "socket.io-client";
-import { Game } from "./Game";
 
 const socket = io("http://localhost:3000");
 const form = document.getElementById("messenger");
 const input = <HTMLInputElement>document.getElementById("input");
 const textContainer = document.getElementById("textContainer");
-const game = new Game();
+
 
 function sendMsg(e:any) {
     e.preventDefault();
