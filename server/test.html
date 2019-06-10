@@ -7,7 +7,13 @@
     <title>Document</title>
 </head>
 <body>
-    <canvas id="myCanvas" width="800" height="800" style="border:1px solid #000000;"></canvas>
+    <div id="canvasesdiv" style="position:relative; width:800px; height:800px">
+        <canvas id="layer1" style="z-index: 1; position:absolute; left:0px; top:0px; border:1px solid #000000;" height="800px" width="800"></canvas>
+        <canvas id="layer2" style="z-index: 1; position:absolute; left:0px; top:0px; border:1px solid #000000;" height="800px" width="800"></canvas>
+        <canvas id="layer3" style="z-index: 1; position:absolute; left:0px; top:0px; border:1px solid #000000;" height="800px" width="800"></canvas>
+            
+       
+    </div>
     <script src = test.js></script>
 </body>
 
