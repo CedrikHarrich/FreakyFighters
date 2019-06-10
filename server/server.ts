@@ -1,6 +1,5 @@
 //Import the required constants.
 import { GlobalConstants } from "./GlobalConstants";
-import { Socket } from "net";
 const port = GlobalConstants.port;
 
 //Setting up the objects needed for socket.io and express.
@@ -12,15 +11,22 @@ var io = require('socket.io')(http);
 var connectedClients : number = 0;
 
 //ClientHandling:
+
 io.on("connection", function(socket: any) {
-
 // ClientConnectionHandling:
-    // TODO:
-    // 1: Block new Clients from connecting if there are already two connected.
-
     connectedClients ++;
-    console.log("A user connected: " + connectedClients + ".");
-    
+
+    // Blocks new Clients from connecting if there are already two connected.
+    if(connectedClients <=2){
+        console.log("A user connected: " + connectedClients + ".");
+    } else {
+        console.log("more than 2 players!");
+        socket.emit('serverFull', {}); 
+        socket.disconnect();
+        connectedClients --;
+    }
+
+    //Handles disconnection from a client.
     socket.on('disconnect', function() {
         connectedClients --;
         console.log('Got disconnect: ' + connectedClients + ".");

@@ -29,6 +29,14 @@ socket.on("message", function (data:any) {
   logMsg(data);
 });
 
+
+
+socket.on('serverFull', function(){
+  console.log("works")
+  logMsg('SERVER IS FULL: Please try to refresh later.');
+  
+});
+
 form.addEventListener('submit', sendMsg);
 document.addEventListener('keyup', keyupHandler);
 
