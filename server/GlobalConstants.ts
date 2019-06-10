@@ -11,8 +11,11 @@ static gridWidth : number = 25;
 static canvasHeight : number = GlobalConstants.blockHeight * GlobalConstants.gridHeight;
 static canvasWidth : number= GlobalConstants.blockWidth * GlobalConstants.blockWidth;
 
-//Which socket should be used.
+//Which port should be used.
 static port : number = 3000;
+
+// TODO:
+    // 1: Events should be here too.
 }
 
 

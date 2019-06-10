@@ -1,4 +1,4 @@
-class Game {
+export class Game {
     grid : Block[][];
     playerOne : Player;
     playerTwo : Player;

@@ -19,8 +19,13 @@ io.on("connection", function(socket: any) {
     // Blocks new Clients from connecting if there are already two connected.
     if(connectedClients <=2){
         console.log("A user connected: " + connectedClients + ".");
+        if (connectedClients == 2) {
+            // TODO:
+            // send datapackage to the clients.
+            //io.emit("sendData", datapackage);
+        }
     } else {
-        console.log("more than 2 players!");
+        console.log("More than 2 players!");
         socket.emit('serverFull', {}); 
         socket.disconnect();
         connectedClients --;
@@ -50,6 +55,7 @@ io.on("connection", function(socket: any) {
     });
 
     
+    
 });
 
 //ClientListener:
@@ -58,9 +64,14 @@ const server = http.listen(port, function() {
 })
 
 
+function sendData (){
+
+}
+
+
 // Connection Handling:
     // TODO : 
-    // 1. Whenever two players have connected block everyone else.
+    // CHECK 1. Whenever two players have connected block everyone else.
     // 2. Send Information/Data to the clients.
     // 3. Wait for Ready Response
     // 4. Start Game when ready.
