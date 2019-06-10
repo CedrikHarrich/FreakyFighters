@@ -10,3 +10,6 @@ const gridWidth : number = 25;
 const canvasHeight : number = blockHeight * gridHeight;
 const canvasWidth : number= blockWidth * blockWidth;
 
+//Which socket should be used.
+const socket : number = 3000;
+

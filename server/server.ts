@@ -1,16 +1,11 @@
-import * as express from "express";
+//Setting up the objects needed for socket.io and express.
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-const app = express();
-app.set("port", process.env.PORT || 3000);
+var connectedClients : number = 0;
 
-let http = require("http").Server(app);
-// set up socket.io and bind it to our
-// http server.
-let io = require("socket.io")(http);
-
-let connectedClients : number = 0;
-
-app.use(express.static('dist'))
+//app.use(express.static('dist'))
 
 // whenever a user connects on port 3000 via
 // a websocket, log that a user has connected
@@ -34,9 +29,7 @@ io.on("connection", function(socket: any) {
 
     });
 
-    socket.on("keyup", function(event: any) {
-        console.log(event);
-    });
+    
 });
 
 const server = http.listen(3000, function() {

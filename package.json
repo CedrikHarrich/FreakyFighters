@@ -7,15 +7,16 @@
     "@types/express": "^4.16.1",
     "@types/socket.io": "^2.1.2",
     "@types/socket.io-client": "^1.4.32",
-    "concurrently": "^4.1.0",
     "express": "^4.16.4",
     "nodemon": "^1.19.0",
     "socket.io": "^2.2.0",
     "socket.io-client": "^2.2.0"
   },
   "devDependencies": {
+    "concurrently": "^4.1.0",
     "gulp": "^4.0.2",
     "gulp-typescript": "^5.0.1",
+    "http-server": "^0.11.1",
     "install": "^0.12.2",
     "ts-loader": "^6.0.1",
     "ts-node": "^8.2.0",
@@ -28,6 +29,8 @@
     "client": "webpack --watch",
     "server": "ts-node --project ./server/tsconfig.json ./server/server.ts",
     "build": "tsc",
+    "fast-start": "npm run open-browser && npm run open-browser && npm run server",
+    "open-browser": "start http://localhost:5500/client/index.html",
     "watch-ts": "tsc -w",
     "watch-node": "nodemon dist/server.js"
   },
