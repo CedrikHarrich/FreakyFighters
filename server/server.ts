@@ -1,26 +1,40 @@
+//Import the required constants.
+import { GlobalConstants } from "./GlobalConstants";
+import { Socket } from "net";
+const port = GlobalConstants.port;
+
 //Setting up the objects needed for socket.io and express.
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
+//Counting the connected clients. If there are 2 Clients the game should start.
 var connectedClients : number = 0;
 
-//app.use(express.static('dist'))
-
-// whenever a user connects on port 3000 via
-// a websocket, log that a user has connected
+//ClientHandling:
 io.on("connection", function(socket: any) {
-    // count up connectedClients
+
+// ClientConnectionHandling:
+    // TODO:
+    // 1: Block new Clients from connecting if there are already two connected.
+
     connectedClients ++;
-    console.log("A user connected" + connectedClients);
+    console.log("A user connected: " + connectedClients + ".");
     
-    // whenever a client disconnects count down connected Clients
     socket.on('disconnect', function() {
         connectedClients --;
-        console.log('Got disconnect!' + connectedClients);
+        console.log('Got disconnect: ' + connectedClients + ".");
     });
 
-    // whenever we receive a 'message' we log it out
+// ClientInputHandling:
+    // TODO:
+    // 1. Handle pressed keys. If a key was pushed update the state accordingly.
+
+
+// MessengerInputHandling:
+    // TODO:
+    // 1. Handle the interaction between messaging and playing.
+    // e.g. Writing 'w' into the chat won't move my character.
     socket.on("message", function(message: any) {
         console.log(message);
         let newMessage = "Other Person: " + message;
@@ -32,11 +46,25 @@ io.on("connection", function(socket: any) {
     
 });
 
-const server = http.listen(3000, function() {
-    console.log("listening on *:3000");
+//ClientListener:
+const server = http.listen(port, function() {
+    console.log(`Server is listening on Port *: ${port}.`);
 })
 
 
-//var connectedPlayers
-//func starteSpiel wenn 2 Clients connected und sperre weitere Spieler
+// Connection Handling:
+    // TODO : 
+    // 1. Whenever two players have connected block everyone else.
+    // 2. Send Information/Data to the clients.
+    // 3. Wait for Ready Response
+    // 4. Start Game when ready.
+    // 5. Handle a sudden disconnect from one player and other errors.
+
+// GameHandling:
+    // TODO: 
+    // 1. Implement a GameLoop for rendering the playground.
+    // 2. Recalculate the state of the game 30-60 times per second.
+    // 3. Get the inputs from the players.
+    // 4. Setup the game Logic.
+    
 

@@ -1,15 +1,18 @@
+export class GlobalConstants {
 //Pixels of a Block.
-const blockHeight : number = 32;
-const blockWidth : number  = 32;
+static blockHeight : number = 32;
+static blockWidth : number  = 32;
 
 //Number of Blocks on the grid.
-const gridHeight : number = 25;
-const gridWidth : number = 25;
+static gridHeight : number = 25;
+static gridWidth : number = 25;
 
 //Pixels of the Canvas.
-const canvasHeight : number = blockHeight * gridHeight;
-const canvasWidth : number= blockWidth * blockWidth;
+static canvasHeight : number = GlobalConstants.blockHeight * GlobalConstants.gridHeight;
+static canvasWidth : number= GlobalConstants.blockWidth * GlobalConstants.blockWidth;
 
 //Which socket should be used.
-const socket : number = 3000;
+static port : number = 3000;
+}
+
 
