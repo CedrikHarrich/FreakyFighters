@@ -26,7 +26,7 @@
   },
   "scripts": {
     "client": "webpack --watch",
-    "server": "ts-node --project ./server/tsconfig.json ./server/server.ts",
+    "server": "ts-node --project ./server/tsconfig.json ./server/index.ts",
     "build": "tsc",
     "watch-ts": "tsc -w",
     "watch-node": "nodemon dist/server.js"
