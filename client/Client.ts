@@ -13,6 +13,8 @@ export class Client {
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
   private players: [Player, Player];
+  private playerImage: any = new Image;
+  private backgroundImage: any = new Image;
 
   constructor(){
     this.socket = io("http://localhost:3000");
@@ -23,6 +25,7 @@ export class Client {
     this.context = this.canvas.getContext('2d');
 
     this.registerEvents();
+    this.loadImages();
   }
 
    registerEvents(){
@@ -41,7 +44,21 @@ export class Client {
     this.form.addEventListener('submit', this.sendMsg.bind(this));
 
     // name of pressed keys are sent to the server
-    document.addEventListener('keyup', this.keyupHandler.bind(this));
+    document.addEventListener('keyup', this.keyHandler.bind(this));
+    document.addEventListener('keydown', this.keyHandler.bind(this));
+
+  }
+
+  loadImages(){
+    this.playerImage.onload = function() {
+       console.log ("Bild geladen");
+       this.backgroundImage.onload = function(){
+         this.socket.emit("loop");
+         window.requestAnimationFrame(this.draw());
+      }
+    }
+    this.playerImage.src = "Character.png";  // erst nach dem Event Listener!
+    this.backgroundImage.src = "background.png";
   }
 
   sendMsg(e:any) {
@@ -57,8 +74,8 @@ export class Client {
     this.textContainer.appendChild(textNode);
   }
 
-  keyupHandler(event:any){
-    this.socket.emit("keyup", event.key);
+  keyHandler(event:any){
+    this.socket.emit("keyPressed", [event.key, event.type]);
   }
 
   draw(){

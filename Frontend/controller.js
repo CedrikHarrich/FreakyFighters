@@ -45,7 +45,6 @@ controller = {
 };
 
 loop = function() {
-
   if (controller.up && player.jumping == false) {
 
     player.y_velocity -= 40; //bestimmt Höhe des Sprungs
@@ -94,7 +93,7 @@ loop = function() {
  //  context.fillStyle = "#202020";
 //   context.fillRect(0, 0, 960, 640);// x, y, width, height
   context.drawImage(background, 0, 0, 960, 640);
-  context.drawImage(img, player.x, player.y, player.width, player.height);  
+  context.drawImage(img, player.x, player.y, player.width, player.height);
 
   // call update when the browser is ready to draw again
   window.requestAnimationFrame(loop);
@@ -124,7 +123,7 @@ background.src = "background.png";
 //       });
 //     });
 //   }
-// 
+//
 //   loadAssets(assetsToLoad) {
 //     return Promise.all(
 //       assetsToLoad.map(asset => this.loadAsset(asset.name, asset.url))

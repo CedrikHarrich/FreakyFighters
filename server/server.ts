@@ -57,8 +57,13 @@ export class Server {
             socket.broadcast.emit("message", newMessage);
         });
 
-        socket.on("keyup", function(event: any) {
-            console.log(event);
+        socket.on("keyPressed", function(Array: any) {
+            Array.push(socket.id);
+            this.keyHandler(Array);
+        });
+
+        socket.on("loop", function() {
+            this.updateHandler(socket.id);
         });
     })
   }
@@ -71,6 +76,14 @@ export class Server {
     for(let i = 0; i < this.clients.length; i++){
       if(this.clients[i]['id'] == id){
         this.clients.splice(i, 1);
+      }
+    }
+  }
+
+  getClientIndex(id:number){
+    for(let i = 0; i < this.clients.length; i++){
+      if(this.clients[i]['id'] == id){
+        return i;
       }
     }
   }
@@ -114,6 +127,74 @@ export class Server {
 
   updateGame(){
 
+  }
+
+  keyHandler([keyName, eventType, socketId]:[string, string, number]){
+    let keyState = (eventType == "keydown") ? true : false,
+        clientIndex = this.getClientIndex(socketId),
+        player = this.clients[clientIndex].player;
+
+      switch(keyName) {
+
+        case "ArrowLeft":// left key
+              player.setLeft(keyState);
+        break;
+        case "ArrowUp":// up key
+              player.setUp(keyState);
+        break;
+        case "ArrowRight":// right key
+            player.setRight(keyState);
+        break;
+      }
+  }
+
+  updateHandler(socketId:number){
+    let clientIndex = this.getClientIndex(socketId),
+        player = this.clients[clientIndex].player;
+
+    if (player.getUp() && !player.getJumping()) {
+
+      player.addVelocityY(-40); //bestimmt Höhe des Sprungs
+      player.setJumping(true);
+
+    }
+
+    if (player.getLeft()) {
+      player.addVelocityX(-1.5);
+    }
+
+    if (player.getRight()) {
+
+      player.addVelocityX(1.5);
+
+    }
+
+    player.addVelocityY(1.2);// gravity
+    player.addCoordsX(player.getVelocityX);
+    player.addCoordsY(player.getVelocityY);
+    
+    player.x_velocity *= 0.9;// friction
+    player.y_velocity *= 0.9;// friction
+
+    // if player is falling below floor line
+    if (player.y > 640 - 80 - 120) {
+
+      player.jumping = false;
+      player.y = 640 - 80 - 120;
+      player.y_velocity = 0;
+
+    }
+
+    // if player is going off the left of the screen
+    if (player.x < -120) {
+
+      player.x = 960;
+
+    } else if (player.x > 960) {// if player goes past right boundary
+
+      player.x = -120;
+
+    }
   }
 
 }
