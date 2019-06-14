@@ -23,6 +23,8 @@ export class Server {
     this.registerEvents();
   }
 
+  //Initialized the needed settings for setting up a server.
+  //This server is now listening to the port 3000
   init(){
     this.app.set("port", this.port);
     this.app.use(express.static('dist'));
