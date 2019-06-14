@@ -15,11 +15,11 @@ export class Server {
   private port:number = 3000;
   private Game:Game;
   private maxClients:number = 2;
-  private isReady: boolean = false;
+  private isReady: boolean = false;  
   private clients: Array<any> = [];
 
   constructor(){
-    this.init()
+    this.init();
     this.registerEvents();
   }
 
