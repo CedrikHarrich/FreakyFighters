@@ -53,7 +53,6 @@ export class Server {
   registerEvents(){
     //Event: Client connects to the server.
     this.io.on("connection", (socket: any) => {
-
         
         this.socket = socket;
         this.addClient(socket.id);
@@ -63,16 +62,20 @@ export class Server {
         
         //Event: Client disconnects from the server.
         socket.on('disconnect', () => {
+          this.readycounter = 0;
           console.log(`The player with the ID ${socket.id} has disconnected.`);
+          
           this.removeClient(socket.id);
           this.userCountHandler();
         });
 
+        //Event: When two clients are ready. Start the game.
         socket.on('ready', () => {
           this.readycounter ++;
           console.log(`There are ${this.readycounter} players ready to play.`)
           if (this.readycounter === Consts.maxClients){
             this.io.emit("gameStarts", this.game.getPlayers());
+            
           }
         }); 
 
