@@ -1,6 +1,7 @@
 import * as express from "express";
 import * as path from "path";
 
+import { GlobalConstants as Consts} from "./GlobalConstants";
 import { Game } from "./Game";
 import { Player } from "./Player";
 
@@ -17,6 +18,13 @@ export class Server {
   private maxClients:number = 2;
   private isReady: boolean = false;  
   private clients: Array<any> = [];
+  private readycounter : number = 0;
+
+  //TODO: Needs to be changed to the data we need to send to the client.
+  private gameData = {
+    h1 : 100,
+    h2 : "hello"
+  }
 
   //When the game starts it should setup a server and
   //should start listening to all events that can occur.
@@ -46,18 +54,27 @@ export class Server {
     //Event: Client connects to the server.
     this.io.on("connection", (socket: any) => {
 
+        
         this.socket = socket;
         this.addClient(socket.id);
-
-        console.log(`The user with ID ${socket.id} has connected.`);
+        console.log(`The user with ID ${socket.id} is trying to connect...`);
 
         this.userCountHandler();
+        
         //Event: Client disconnects from the server.
         socket.on('disconnect', () => {
           console.log(`The player with the ID ${socket.id} has disconnected.`);
           this.removeClient(socket.id);
           this.userCountHandler();
         });
+
+        socket.on('ready', () => {
+          this.readycounter ++;
+          console.log(`There are ${this.readycounter} players ready to play.`)
+          if (this.readycounter === Consts.maxClients){
+            this.io.emit("gameStarts", this.game.getPlayers());
+          }
+        }); 
 
         //Event: Client sends a message.
         socket.on("message", function(message: any) {
@@ -118,14 +135,17 @@ export class Server {
     //console.log(this.clients);
   }
 
+  //All the Assets are sent to the clients.
   sendGame(){
 
   }
 
   startGame(){
+    //TODO: Initialize the game
     this.game = new Game();
-    this.io.emit("message", "Game has started.");
-    console.log(`A new game has started.`);
+    
+
+    //needed?
     let players:[Player, Player] = this.game.getPlayers();
 
     if (players.length === this.clients.length){
@@ -133,9 +153,29 @@ export class Server {
           this.clients[i]['player'] = players[i];
       }
     }
+    //TODO: send out the needed data to the players.
+    this.io.emit("asset", this.gameData.h1);
+    
 
-    // should eventually emit gamestate instead of players
-    this.io.emit("gameStarts", this.game.getPlayers());
+    //Messages to Player and Console.
+    this.io.emit("message", "Game has started.");
+    console.log(`A new game has started.`);
+
+
+    //TODO: Waiting for Ready Players. io.on("ready")...
+    //TODO: 2x ready leads to event "go".
+    //TODO: Start the update loop. Send out gamestate 60 times a second.
+    //TODO: And listen for inputs and calculate them.
+    //TODO: Handle how the inputs should be calculated. Logic of the game.
+    //TODO: Check if there is a winnner. io.on("winner"); and handle it.
+    //TODO: What do you do if someone disconnects?
+
+
+    //Needed?
+    
+
+    //Needed? should eventually emit gamestate instead of players
+    //this.io.emit("gameStarts", this.game.getPlayers());
   }
 
   updateGame(){

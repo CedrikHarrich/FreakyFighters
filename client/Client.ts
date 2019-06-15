@@ -1,9 +1,11 @@
 import * as io from "socket.io-client";
 import { Player } from "../server/Player";
+import { GlobalConstants as Consts } from "../server/GlobalConstants"
 
 export class Client {
 
   private socket: SocketIOClient.Socket;
+  private serverURL = Consts.serverURL;
   private form: HTMLElement;
   private input: HTMLInputElement;
   private textContainer: HTMLElement;
@@ -15,26 +17,40 @@ export class Client {
   private players: [Player, Player];
 
   constructor(){
-    this.socket = io("http://localhost:3000");
-    this.form = document.getElementById("messenger");
-    this.input = <HTMLInputElement>document.getElementById("input");
-    this.textContainer = document.getElementById("textContainer");
-    this.canvas = <HTMLCanvasElement>document.getElementById(this.canvasID);
-    this.context = this.canvas.getContext('2d');
-
+    this.init();
     this.registerEvents();
   }
 
+  init(){
+    this.socket = io(this.serverURL);
+    this.form = document.getElementById("messenger");
+    this.input = <HTMLInputElement> document.getElementById("input");
+    this.textContainer = document.getElementById("textContainer");
+    this.canvas = <HTMLCanvasElement>document.getElementById(this.canvasID);
+    this.context = this.canvas.getContext('2d');
+   }
+
    registerEvents(){
+    
+
+    this.socket.on("gameStarts", (players:[Player, Player]) => {
+      console.log("The game starts now!");
+      this.players = players;
+      this.draw();
+    });
+
     // any data that is recieved from the socket will be printed
     this.socket.on("message", (data:any) => {
       this.logMsg(data);
     });
 
-    this.socket.on("gameStarts", (players:[Player, Player]) => {
-      console.log("game starts");
-      this.players = players;
-      this.draw();
+    //If the client gets the initial data from the server he has to use them approprietly.
+    this.socket.on("asset", (data:any) => {
+      console.log("Received initial assets.");
+      //TODO: If you get the data. Draw the initial playing field.
+      //TODO: If you are ready send out the event that you are ready.
+      this.socket.emit("ready");
+      
     });
 
     // text that is submited through the input will be sent to the server
