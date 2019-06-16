@@ -64,7 +64,6 @@ export class Server {
         socket.on('disconnect', () => {
           this.readycounter = 0;
           console.log(`The player with the ID ${socket.id} has disconnected.`);
-          
           this.removeClient(socket.id);
           this.userCountHandler();
         });
