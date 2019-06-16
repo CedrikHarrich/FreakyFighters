@@ -1,15 +1,16 @@
 import * as io from "socket.io-client";
 import { Player } from "../server/Player";
-import { GlobalConstants as Const } from "../server/GlobalConstants";
+import { GlobalConstants as CONST } from "../server/GlobalConstants";
 
 export class Client {
 
   private socket: SocketIOClient.Socket;
+  private SERVER_URL = CONST.SERVER_URL;
   private form: HTMLElement;
   private input: HTMLInputElement;
   private textContainer: HTMLElement;
-  private gridSize:number = 30; // height and width in px
-  private grid: Array<any>;
+  
+  //private grid: Array<any>;
   private canvasID: string = "myCanvas";
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
@@ -22,7 +23,7 @@ export class Client {
   private backgroundImage: any = new Image();
 
   constructor(){
-    this.socket = io("http://localhost:3000");
+    this.socket = io(this.SERVER_URL);
     this.form = document.getElementById("messenger");
     this.input = <HTMLInputElement>document.getElementById("input");
     this.textContainer = document.getElementById("textContainer");
@@ -46,10 +47,20 @@ export class Client {
       this.draw();
     });
 
+    //If the client gets the initial data from the server he has to use them approprietly.
+    this.socket.on("asset", (data:any) => {
+      console.log("Received initial assets.");
+      //TODO: If you get the data. Draw the initial playing field.
+      //TODO: If you are ready send out the event that you are ready.
+      this.socket.emit("ready");
+      
+    });
+
     this.socket.on("draw", (player:object) => {
       this.player = player;
       this.draw();
     });
+
 
     // text that is submited through the input will be sent to the server
     this.form.addEventListener('submit', this.sendMsg.bind(this));
@@ -65,6 +76,7 @@ export class Client {
      { name: 'character', url: './assets/Character.png' }
    ])
    .then((assets:any) => {
+      //do we need notifyServer?
      window.requestAnimationFrame(this.notifyServer.bind(this));
    });
   }
@@ -90,6 +102,7 @@ export class Client {
     );
   }
 
+  // I want to do a loop in the server.
   notifyServer(){
     this.socket.emit("loop");
   }
@@ -117,11 +130,11 @@ export class Client {
   }
 
   drawPlayers(){
-    this.context.drawImage(this.playerImage, this.playerX, this.playerY, Const.PLAYER_WIDTH, Const.PLAYER_HEIGHT);
+    this.context.drawImage(this.playerImage, this.playerX, this.playerY, CONST.PLAYER_WIDTH, CONST.PLAYER_HEIGHT);
   }
 
   drawBackground(){
-    this.context.drawImage(this.backgroundImage, 0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
+    this.context.drawImage(this.backgroundImage, 0, 0, CONST.CANVAS_WIDTH, CONST.CANVAS_HEIGHT);
   }
 
   drawLine(x1:number, y1:number, x2:number, y2:number) {

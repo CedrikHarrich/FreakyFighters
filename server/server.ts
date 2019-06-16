@@ -3,71 +3,108 @@ import * as path from "path";
 
 import { Game } from "./Game";
 import { Player } from "./Player";
-import { GlobalConstants as Const } from "./GlobalConstants";
+import { GlobalConstants as CONST } from "./GlobalConstants";
 
 export class Server {
-
+  
+  //Server Variables
   private app:any = express();
   private http:any;
   private io:any;
   private server:any;
   private socket: any;
-  private users:number = 0;
-  private port:number = 3000;
-  private Game:Game;
-  private maxClients:number = 2;
-  private isReady: boolean = false;
+  private PORT:number = CONST.PORT;
+  private MAX_CLIENTS:number = CONST.MAX_CLIENTS;
+
+  //Data the server holds
+  private game:Game;
   private clients: Array<any> = [];
+  private readyCounter:number = 0;
+  private gameState = {
+    h1 : 30,
+    h2 : "Hello"
+  }
 
   constructor(){
     this.init()
     this.registerEvents();
   }
 
+  //Sets up the actual server and starts listening to a port.
   init(){
-    this.app.set("port", this.port);
+    this.app.set("port", this.PORT);
     this.app.use(express.static('dist'));
 
     this.http = require("http").Server(this.app);
     this.io = require("socket.io")(this.http);
 
-    this.server = this.http.listen(this.port, () => {
-        console.log("listening on *:" + this.port);
+    console.log("A server has been created.");
+
+    this.server = this.http.listen(this.PORT, () => {
+        console.log(`The server is now listening on port *:" + ${this.PORT}.`);
     })
   }
 
+  //Starting to register all the Events that can occur.
   registerEvents(){
     this.io.on("connection", (socket: any) => {
 
+        //Do we need this?
         this.socket = socket;
+
         this.addClient(socket.id);
 
-        console.log("a user connected");
+        console.log(`The user with ID ${socket.id} is trying to connect...`);
 
         this.userCountHandler();
 
         socket.on('disconnect', () => {
-          console.log('disconnected');
+          this.readyCounter = 0;
+          console.log(`The player with the ID ${socket.id} has disconnected.`);
           this.removeClient(socket.id);
           this.userCountHandler();
         });
+
+         //Event: When two clients are ready. Start the game.
+         socket.on('ready', () => {
+          this.readyCounter ++;
+          console.log(`There are ${this.readyCounter} players ready to play.`)
+          if (this.readyCounter === this.MAX_CLIENTS){
+            this.io.emit("gameStarts", this.game.getPlayers());
+            
+            //gameLoop Berechnung
+            this.updateHandler(socket.id);
+          }
+        });
+
+        socket.on("keyPressed", (Array: any) => {
+          Array.push(socket.id);
+          this.keyHandler(Array);
+        });
+
 
         socket.on("message", (message: any) => {
             let newMessage = "Other Person: " + message;
 
             socket.broadcast.emit("message", newMessage);
+            console.log(`The player ${socket.id} has sent the message '${message}'.`);
         });
 
-        socket.on("keyPressed", (Array: any) => {
-            Array.push(socket.id);
-            this.keyHandler(Array);
-        });
-
-        socket.on("loop", () => {
-            this.updateHandler(socket.id);
-        });
+        
     })
   }
+
+  setBackGame(){
+    //Disconnect all the clients.
+    for (let entry of this.clients){
+      this.removeClient(entry.id);
+      console.log(`${entry.id} has been kicked.`);
+    }
+    //Delete the old game.
+    this.game = null;
+    console.log(`The game has been set back. New players can join again.`);
+  }
+
 
   addClient(id:number){
     this.clients.push({id: id, player: null});
@@ -90,14 +127,15 @@ export class Server {
   }
 
   userCountHandler(){
-    if(this.clients.length == this.maxClients){
+    if(this.clients.length == this.MAX_CLIENTS){
       this.startGame();
       console.log('new games')
     }
     else {
-      this.Game = null;
+      //Do we need this?
+      //this.game = null;
 
-      if(this.clients.length < this.maxClients){
+      if(this.clients.length < this.MAX_CLIENTS){
         // notifies specific client
         this.socket.emit("message", "Waiting for somebody to join");
       } else {
@@ -105,7 +143,6 @@ export class Server {
         this.io.emit("message", "Too many Clients. Please sign off.");
       }
     }
-    console.log(this.clients);
   }
 
   sendGame(){
@@ -113,8 +150,9 @@ export class Server {
   }
 
   startGame(){
-    this.Game = new Game();
-    let players:[Player, Player] = this.Game.getPlayers();
+    //TODO: Initialize the game
+    this.game = new Game();
+    let players:[Player, Player] = this.game.getPlayers();
 
     if (players.length === this.clients.length){
       for(let i = 0; i < this.clients.length; i++){
@@ -123,7 +161,28 @@ export class Server {
     }
 
     // should eventually emit gamestate instead of players
-    this.io.emit("gameStarts", this.Game.getPlayers());
+    this.io.emit("asset", this.gameState.h1);
+
+     //Messages to Player and Console.
+     this.io.emit("message", "Game has started.");
+     console.log(`A new game has started.`);
+ 
+ 
+     //TODO: Waiting for Ready Players. io.on("ready")...
+     //TODO: 2x ready leads to event "go".
+     //TODO: Start the update loop. Send out gamestate 60 times a second.
+     //TODO: And listen for inputs and calculate them.
+     //TODO: Handle how the inputs should be calculated. Logic of the game.
+     //TODO: Check if there is a winnner. io.on("winner"); and handle it.
+     //TODO: What do you do if someone disconnects?
+ 
+ 
+     //Needed?
+     
+ 
+     //Needed? should eventually emit gamestate instead of players
+     //this.io.emit("gameStarts", this.game.getPlayers());
+ 
   }
 
   updateGame(){
@@ -152,8 +211,8 @@ export class Server {
   updateHandler(socketId:number){
     let clientIndex = this.getClientIndex(socketId),
         player = this.clients[clientIndex].player,
-        playerGroundHeight = Const.CANVAS_HEIGHT - Const.GROUND_HEIGHT - Const.PLAYER_HEIGHT,
-        playerMaxCoordX =  Const.CANVAS_WIDTH - Const.PLAYER_WIDTH;
+        playerGroundHeight = CONST.CANVAS_HEIGHT - CONST.GROUND_HEIGHT - CONST.PLAYER_HEIGHT,
+        playerMaxCoordX =  CONST.CANVAS_WIDTH - CONST.PLAYER_WIDTH;
 
     if (player.getUp() && !player.getJumping()) {
 
