@@ -3,6 +3,7 @@ import * as path from "path";
 
 import { Game } from "./Game";
 import { Player } from "./Player";
+import { GlobalConstants as Const } from "./GlobalConstants";
 
 export class Server {
 
@@ -51,18 +52,18 @@ export class Server {
           this.userCountHandler();
         });
 
-        socket.on("message", function(message: any) {
+        socket.on("message", (message: any) => {
             let newMessage = "Other Person: " + message;
 
             socket.broadcast.emit("message", newMessage);
         });
 
-        socket.on("keyPressed", function(Array: any) {
+        socket.on("keyPressed", (Array: any) => {
             Array.push(socket.id);
             this.keyHandler(Array);
         });
 
-        socket.on("loop", function() {
+        socket.on("loop", () => {
             this.updateHandler(socket.id);
         });
     })
@@ -150,7 +151,9 @@ export class Server {
 
   updateHandler(socketId:number){
     let clientIndex = this.getClientIndex(socketId),
-        player = this.clients[clientIndex].player;
+        player = this.clients[clientIndex].player,
+        playerGroundHeight = Const.CANVAS_HEIGHT - Const.GROUND_HEIGHT - Const.PLAYER_HEIGHT,
+        playerMaxCoordX =  Const.CANVAS_WIDTH - Const.PLAYER_WIDTH;
 
     if (player.getUp() && !player.getJumping()) {
 
@@ -172,29 +175,32 @@ export class Server {
     player.addVelocityY(1.2);// gravity
     player.addCoordsX(player.getVelocityX);
     player.addCoordsY(player.getVelocityY);
-    
-    player.x_velocity *= 0.9;// friction
-    player.y_velocity *= 0.9;// friction
+
+    player.multiplyVelocityX(0.9);
+    player.multiplyVelocityY(0.9);
 
     // if player is falling below floor line
-    if (player.y > 640 - 80 - 120) {
+    if (player.getCoordsY() > playerGroundHeight) {
 
-      player.jumping = false;
-      player.y = 640 - 80 - 120;
-      player.y_velocity = 0;
+      player.setJumping(false);
+      player.setCoordsY(playerGroundHeight);
+      player.setVelocityY(0);
 
     }
 
     // if player is going off the left of the screen
-    if (player.x < -120) {
+    if (player.getCoordX() < 0) {
 
-      player.x = 960;
+      player.setCoordX(0);
 
-    } else if (player.x > 960) {// if player goes past right boundary
+    } else if (player.getCoordX() > playerMaxCoordX) {// if player goes past right boundary
 
-      player.x = -120;
+      player.setCoordX(playerMaxCoordX);
 
     }
+
+    this.socket.emit('draw', {'x':player.getCoordsX(), 'y':player.getCoordsY()});
+
   }
 
 }

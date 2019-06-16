@@ -6,8 +6,8 @@ export class Game {
 
   constructor() {
     this.players = [
-      new Player("red", [CONSTS.PLAYER_1_START_X_COORDS, 0]),
-      new Player("blue", [CONSTS.PLAYER_2_START_X_COORDS, 1])
+      new Player("red", {'x':CONSTS.PLAYER_1_START_X_COORDS, 'y':0}),
+      new Player("blue", {'x':CONSTS.PLAYER_2_START_X_COORDS, 'y':1})
     ];
   }
 

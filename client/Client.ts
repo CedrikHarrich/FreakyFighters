@@ -1,5 +1,6 @@
 import * as io from "socket.io-client";
 import { Player } from "../server/Player";
+import { GlobalConstants as Const } from "../server/GlobalConstants";
 
 export class Client {
 
@@ -12,9 +13,13 @@ export class Client {
   private canvasID: string = "myCanvas";
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
-  private players: [Player, Player];
-  private playerImage: any = new Image;
-  private backgroundImage: any = new Image;
+  // private players: [Player, Player];
+  private playerX: number;
+  private playerY: number;
+  private players: object;
+  private player: object;
+  private playerImage: any = new Image();
+  private backgroundImage: any = new Image();
 
   constructor(){
     this.socket = io("http://localhost:3000");
@@ -34,9 +39,15 @@ export class Client {
       this.logMsg(data);
     });
 
-    this.socket.on("gameStarts", (players:[Player, Player]) => {
+    this.socket.on("gameStarts", (data:{'x':number, 'y':number}) => {
       console.log("game starts");
-      this.players = players;
+      this.playerX = data.x;
+      this.playerY = data.y;
+      this.draw();
+    });
+
+    this.socket.on("draw", (player:object) => {
+      this.player = player;
       this.draw();
     });
 
@@ -45,20 +56,42 @@ export class Client {
 
     // name of pressed keys are sent to the server
     document.addEventListener('keyup', this.keyHandler.bind(this));
-    document.addEventListener('keydown', this.keyHandler.bind(this));
 
+    document.addEventListener('keydown', this.keyHandler.bind(this));
   }
 
   loadImages(){
-    this.playerImage.onload = function() {
-       console.log ("Bild geladen");
-       this.backgroundImage.onload = function(){
-         this.socket.emit("loop");
-         window.requestAnimationFrame(this.draw());
-      }
-    }
-    this.playerImage.src = "Character.png";  // erst nach dem Event Listener!
-    this.backgroundImage.src = "background.png";
+   this.loadAssets([
+     { name: 'character', url: './assets/Character.png' }
+   ])
+   .then((assets:any) => {
+     window.requestAnimationFrame(this.notifyServer.bind(this));
+   });
+  }
+
+  loadAsset(name:string, url:string) {
+    return new Promise((resolve:any, reject:any) => {
+      const image = new Image();
+      image.src = url;
+      image.addEventListener('load', function () {
+        return resolve({ name, image: this });
+      });
+    });
+  }
+
+  loadAssets(assetsToLoad:any) {
+    return Promise.all(
+      assetsToLoad.map((asset:any) => this.loadAsset(asset.name, asset.url))
+    ).then((assets:any) =>
+      assets.reduceRight(
+        (acc:any, elem:any) => ({ ...acc, [elem.name]: elem.image }),
+        {}
+      )
+    );
+  }
+
+  notifyServer(){
+    this.socket.emit("loop");
   }
 
   sendMsg(e:any) {
@@ -79,26 +112,16 @@ export class Client {
   }
 
   draw(){
-    this.drawGrid();
+    this.drawBackground();
     this.drawPlayers();
   }
 
   drawPlayers(){
-    for(let i = 0; i < this.players.length; i++){
-      let player = <Player>this.players[i];
-    }
+    this.context.drawImage(this.playerImage, this.playerX, this.playerY, Const.PLAYER_WIDTH, Const.PLAYER_HEIGHT);
   }
 
-  drawGrid(){
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    for(let i=1; i<this.canvas.height; i++){
-        this.drawLine(0, i*this.gridSize, this.canvas.width, i*this.gridSize);
-    }
-
-    for(let i=1; i<this.canvas.width; i++){
-        this.drawLine(i*this.gridSize, 0, i*this.gridSize, this.canvas.height);
-    }
+  drawBackground(){
+    this.context.drawImage(this.backgroundImage, 0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
   }
 
   drawLine(x1:number, y1:number, x2:number, y2:number) {

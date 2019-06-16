@@ -7,4 +7,7 @@ export class GlobalConstants {
 
   static readonly PLAYER_1_START_X_COORDS = 140;
   static readonly PLAYER_2_START_X_COORDS = 820;
+
+  static readonly GROUND_HEIGHT = 80;
+
 }

@@ -114,7 +114,7 @@ img.onload = function() {
 img.src = "Character.png";  // erst nach dem Event Listener!
 background.src = "background.png";
 
- //  loadAsset(name, url) {
+//   loadAsset(name, url) {
 //     return new Promise((resolve, reject) => {
 //       const image = new Image();
 //       image.src = url;

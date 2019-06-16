@@ -3,7 +3,6 @@ export class Player {
   private velocity: {'x':number, 'y':number};
   private character: ImageBitmapSource;
   private life: number;
-  private velocity: number;
   private height: number = 120;
   private width: number = 120;
   private hitboxes: Array<any>;
@@ -13,7 +12,7 @@ export class Player {
   private left: string;
   private right: string;
 
-  constructor(color:string, coords: [number, number]){
+  constructor(color:string, coords: {'x':number, 'y':number}){
     this.color = color;
     this.coords = coords;
   }
@@ -26,8 +25,24 @@ export class Player {
     return this.coords;
   }
 
+  getCoordX(x:number){
+    return this.coords.x;
+  }
+
+  getCoordY(y:number){
+    return this.coords.y;
+  }
+
   setCoords(coords:{'x':number, 'y':number}){
     this.coords = coords;
+  }
+
+  setCoordX(coordX: number){
+    this.coords.x = coordX;
+  }
+
+  setCoordY(coordY: number){
+    this.coords.y = coordY;
   }
 
   addCoordsX(x:number){
@@ -46,12 +61,28 @@ export class Player {
     this.velocity = velocity;
   }
 
+  changeVelocity(coord:string, value:number){
+    if (coord == 'x'){
+      this.coords.x  = value;
+    } else if(coord == 'y'){
+      this.coords.y = value;
+    }
+  }
+
   addVelocityX(x:number){
     this.velocity.x += x;
   }
 
   addVelocityY(y:number){
     this.velocity.y += y;
+  }
+
+  multiplyVelocityX(x:number){
+    this.velocity.x *= x;
+  }
+
+  multiplyVelocityY(y:number){
+    this.velocity.y *= y;
   }
 
   getVelocityX(x:number){
