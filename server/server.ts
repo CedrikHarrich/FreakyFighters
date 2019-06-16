@@ -47,21 +47,19 @@ export class Server {
   //
   registerEvents(){
     this.io.on("connection", (socket: any) => {
-
-        //Do we need this?
-        this.socket = socket;
-
-        this.addClient(socket.id);
-
         console.log(`The user with ID ${socket.id} is trying to connect...`);
 
+        this.socket = socket;
+        this.addClient(socket);
+
+        //Determines if there are enough players to start a game and keeps players
+        //in the waiting lobby.
         this.userCountHandler();
 
         socket.on('disconnect', () => {
           this.readyCounter = 0;
           console.log(`The player with the ID ${socket.id} has disconnected.`);
-          this.removeClient(socket.id);
-          this.userCountHandler();
+          this.removeClient(socket);
         });
 
          //Event: When two clients are ready. Start the game.
@@ -109,14 +107,14 @@ export class Server {
   }
 
   //
-  addClient(id:number){
-    this.clients.push({id: id, player: null});
+  addClient(socket:any){
+    this.clients.push({socket, player: null});
   }
 
   //
-  removeClient(id:number){
+  removeClient(socket:any){
     for(let i = 0; i < this.clients.length; i++){
-      if(this.clients[i]['id'] == id){
+      if(this.clients[i].socket.id == socket.id){
         this.clients.splice(i, 1);
       }
     }
@@ -135,18 +133,16 @@ export class Server {
   userCountHandler(){
     if(this.clients.length == CONST.MAX_CLIENTS){
       this.startGame();
-      console.log('new games')
     }
     else {
-      //Do we need this?
-      //this.game = null;
-
       if(this.clients.length < CONST.MAX_CLIENTS){
-        // notifies specific client
-        this.socket.emit("message", "Waiting for somebody to join");
+        // notifies that another player has to connect.
+        this.io.emit("message", "Waiting for somebody to join");
+        console.log(`${this.socket.id} is waiting for another player to connect.`);
       } else {
-        // notifies all clients
-        this.io.emit("message", "Too many Clients. Please sign off.");
+        // notifies the connecting client that the lobby is full
+        this.socket.emit("message", "Please wait... The game lobby is full at the moment. You can chat with the other players though.");
+        console.log(`${this.socket.id} is on the waiting for other players to leave.`);
       }
     }
   }

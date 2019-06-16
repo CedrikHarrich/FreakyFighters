@@ -1,5 +1,8 @@
 import { Client } from "./Client";
 
-new Client();
+var main = function (){
+    console.log("The server program is now running.");
+    new Client();
+};
 
-export{};
+main();

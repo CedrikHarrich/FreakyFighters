@@ -5,7 +5,6 @@ import { GlobalConstants as CONST } from "../server/GlobalConstants";
 export class Client {
 
   private socket: SocketIOClient.Socket;
-  private SERVER_URL = CONST.SERVER_URL;
   private form: HTMLElement;
   private input: HTMLInputElement;
   private textContainer: HTMLElement;
@@ -23,7 +22,7 @@ export class Client {
   private backgroundImage: any = new Image();
 
   constructor(){
-    this.socket = io(this.SERVER_URL);
+    this.socket = io(CONST.SERVER_URL);
     this.form = document.getElementById("messenger");
     this.input = <HTMLInputElement>document.getElementById("input");
     this.textContainer = document.getElementById("textContainer");

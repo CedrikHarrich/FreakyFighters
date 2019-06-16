@@ -28,6 +28,7 @@
     "client": "webpack --watch",
     "server": "ts-node --project ./server/tsconfig.json ./server/index.ts",
     "game": "start http://localhost:3000 && start http://localhost:3000 && npm run server",
+    "localhost": "start http://localhost:3000",
 
     "watch-node": "nodemon dist/server.js",
     "build": "tsc",
