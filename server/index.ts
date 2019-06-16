@@ -1,6 +1,12 @@
-import * as express from "express";
-import * as path from "path";
+import { Server } from "./Server";
 
-import { Server } from "./Server"
+var main = function (){
+    console.log("The server program is now running.");
+    new Server();
+}
 
-new Server();
+//Starting point. The server starts right here.
+main();
+
+
+

@@ -1,6 +1,3 @@
-import * as express from "express";
-import * as path from "path";
-
 import { Game } from "./Game";
 import { Player } from "./Player";
 import { GlobalConstants as CONST } from "./GlobalConstants";
@@ -8,44 +5,46 @@ import { GlobalConstants as CONST } from "./GlobalConstants";
 export class Server {
   
   //Server Variables
-  private app:any = express();
+  private express:any;
+  private app:any; 
   private http:any;
   private io:any;
-  private server:any;
   private socket: any;
-  private PORT:number = CONST.PORT;
-  private MAX_CLIENTS:number = CONST.MAX_CLIENTS;
 
   //Data the server holds
   private game:Game;
-  private clients: Array<any> = [];
   private readyCounter:number = 0;
+
+  //
+  private clients: Array<any> = [];
   private gameState = {
     h1 : 30,
     h2 : "Hello"
   }
-
+  
   constructor(){
-    this.init()
+    this.init();
     this.registerEvents();
   }
 
   //Sets up the actual server and starts listening to a port.
   init(){
-    this.app.set("port", this.PORT);
-    this.app.use(express.static('dist'));
-
+    //Initial settings for the server.
+    this.express = require("express");
+    this.app = this.express();
+    this.app.set("port", CONST.PORT);
+    this.app.use(this.express.static('dist'));
     this.http = require("http").Server(this.app);
     this.io = require("socket.io")(this.http);
 
-    console.log("A server has been created.");
-
-    this.server = this.http.listen(this.PORT, () => {
-        console.log(`The server is now listening on port *:" + ${this.PORT}.`);
+    //The server starts listening to the given port.
+    this.http.listen(CONST.PORT, () => {
+        console.log(`The server has been created and is now listening on port: ${CONST.PORT}.`);
     })
   }
 
   //Starting to register all the Events that can occur.
+  //
   registerEvents(){
     this.io.on("connection", (socket: any) => {
 
@@ -69,12 +68,12 @@ export class Server {
          socket.on('ready', () => {
           this.readyCounter ++;
           console.log(`There are ${this.readyCounter} players ready to play.`)
-          if (this.readyCounter === this.MAX_CLIENTS){
+          if (this.readyCounter === CONST.MAX_CLIENTS){
             //console.log(this.game.getPlayers()[1]);
-            this.io.emit("gameStarts", this.game.getPlayers());
+            //this.io.emit("gameStarts", this.game.getPlayers());
             
             //gameLoop Berechnung
-            this.updateHandler(socket.id);
+            //this.updateHandler(socket.id);
           }
         });
 
@@ -93,8 +92,11 @@ export class Server {
 
         
     })
+
+    
   }
 
+  //
   setBackGame(){
     //Disconnect all the clients.
     for (let entry of this.clients){
@@ -106,11 +108,12 @@ export class Server {
     console.log(`The game has been set back. New players can join again.`);
   }
 
-
+  //
   addClient(id:number){
     this.clients.push({id: id, player: null});
   }
 
+  //
   removeClient(id:number){
     for(let i = 0; i < this.clients.length; i++){
       if(this.clients[i]['id'] == id){
@@ -119,6 +122,7 @@ export class Server {
     }
   }
 
+  //
   getClientIndex(id:number){
     for(let i = 0; i < this.clients.length; i++){
       if(this.clients[i]['id'] == id){
@@ -127,8 +131,9 @@ export class Server {
     }
   }
 
+  //
   userCountHandler(){
-    if(this.clients.length == this.MAX_CLIENTS){
+    if(this.clients.length == CONST.MAX_CLIENTS){
       this.startGame();
       console.log('new games')
     }
@@ -136,7 +141,7 @@ export class Server {
       //Do we need this?
       //this.game = null;
 
-      if(this.clients.length < this.MAX_CLIENTS){
+      if(this.clients.length < CONST.MAX_CLIENTS){
         // notifies specific client
         this.socket.emit("message", "Waiting for somebody to join");
       } else {
@@ -146,10 +151,12 @@ export class Server {
     }
   }
 
+  //
   sendGame(){
 
   }
 
+  //
   startGame(){
     //TODO: Initialize the game
     this.game = new Game();
@@ -186,10 +193,12 @@ export class Server {
  
   }
 
+  //
   updateGame(){
 
   }
 
+  //
   keyHandler([keyName, eventType, socketId]:[string, string, number]){
     let keyState = (eventType == "keydown") ? true : false,
         clientIndex = this.getClientIndex(socketId),
@@ -209,6 +218,7 @@ export class Server {
       }
   }
 
+  //
   updateHandler(socketId:number){
     let clientIndex = this.getClientIndex(socketId),
         player = this.clients[clientIndex].player,
