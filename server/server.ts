@@ -70,6 +70,7 @@ export class Server {
           this.readyCounter ++;
           console.log(`There are ${this.readyCounter} players ready to play.`)
           if (this.readyCounter === this.MAX_CLIENTS){
+            //console.log(this.game.getPlayers()[1]);
             this.io.emit("gameStarts", this.game.getPlayers());
             
             //gameLoop Berechnung
