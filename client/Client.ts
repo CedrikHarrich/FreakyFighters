@@ -1,18 +1,21 @@
 import * as io from "socket.io-client";
-import { Player } from "../server/Player";
 import { GlobalConstants as CONST } from "../server/GlobalConstants";
 
 export class Client {
 
+  //Variables for the server-client connection
   private socket: SocketIOClient.Socket;
+
+  //Variables for the html file
   private form: HTMLElement;
   private input: HTMLInputElement;
   private textContainer: HTMLElement;
-  
-  //private grid: Array<any>;
   private canvasID: string = "myCanvas";
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
+  
+  //private grid: Array<any>;
+  
   // private players: [Player, Player];
   private playerX: number;
   private playerY: number;
@@ -22,16 +25,38 @@ export class Client {
   private backgroundImage: any = new Image();
 
   constructor(){
+    this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
+    this.context = this.canvas.getContext('2d');
+    console.log("hello");
+    this.init();
+    this.registerEvents();
+    this.backgroundImage.src = "background.png";
+    
+   
+    //this.loadImages();
+  }
+
+   init(){
+     //Connect to the server.
+     console.log("ehllo");
     this.socket = io(CONST.SERVER_URL);
+
+    //Initialize variables
     this.form = document.getElementById("messenger");
-    this.input = <HTMLInputElement>document.getElementById("input");
+    this.input = <HTMLInputElement> document.getElementById("input");
     this.textContainer = document.getElementById("textContainer");
-    this.canvas = <HTMLCanvasElement>document.getElementById(this.canvasID);
+    this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
     this.context = this.canvas.getContext('2d');
 
-    this.registerEvents();
-    this.loadImages();
-  }
+    var drawing = new Image();
+    var canvas=<HTMLCanvasElement>document.getElementById("canvas");
+    var context = canvas.getContext('2d'); 
+    drawing.src = "background.png";
+    drawing.onload = function() {
+      context.drawImage(drawing,0,0);
+   };
+    
+   }
 
    registerEvents(){
     // any data that is recieved from the socket will be printed
@@ -47,8 +72,17 @@ export class Client {
     });
 
     //If the client gets the initial data from the server he has to use them approprietly.
-    this.socket.on("asset", (data:any) => {
+    this.socket.on("asset", () => {
       console.log("Received initial assets.");
+      this.form = document.getElementById("messenger");
+    this.input = <HTMLInputElement> document.getElementById("input");
+    this.textContainer = document.getElementById("textContainer");
+    this.canvas = <HTMLCanvasElement>document.getElementById("myCanvas");
+    console.log(this.canvas);
+    this.context = this.canvas.getContext('2d');
+    console.log(this.context);
+    this.backgroundImage.src = "background.png";
+      this.context.drawImage(this.backgroundImage, 0, 0);
       //TODO: If you get the data. Draw the initial playing field.
       //TODO: If you are ready send out the event that you are ready.
       this.socket.emit("ready");

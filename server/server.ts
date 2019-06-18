@@ -50,7 +50,7 @@ export class Server {
         console.log(`The user with ID ${socket.id} is trying to connect...`);
 
         this.socket = socket;
-        this.addClient(socket);
+        this.clients.push(socket);
 
         //Determines if there are enough players to start a game and keeps players
         //in the waiting lobby.
@@ -75,11 +75,14 @@ export class Server {
           }
         });
 
+
+        /*
+        //This code is performed before the game even started.
         socket.on("keyPressed", (Array: any) => {
           Array.push(socket.id);
           this.keyHandler(Array);
         });
-
+        */
 
         socket.on("message", (message: any) => {
             let newMessage = "Other Person: " + message;
@@ -114,7 +117,7 @@ export class Server {
   //
   removeClient(socket:any){
     for(let i = 0; i < this.clients.length; i++){
-      if(this.clients[i].socket.id == socket.id){
+      if(this.clients[i].id == socket.id){
         this.clients.splice(i, 1);
       }
     }
@@ -158,6 +161,7 @@ export class Server {
     this.game = new Game();
     let players:[Player, Player] = this.game.getPlayers();
 
+
     if (players.length === this.clients.length){
       for(let i = 0; i < this.clients.length; i++){
           this.clients[i]['player'] = players[i];
@@ -165,7 +169,7 @@ export class Server {
     }
 
     // should eventually emit gamestate instead of players
-    this.io.emit("asset", this.gameState.h1);
+    this.io.emit("asset", this.game.getAssets());
 
      //Messages to Player and Console.
      this.io.emit("message", "Game has started.");

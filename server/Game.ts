@@ -3,6 +3,8 @@ import { Player } from "./Player";
 
 export class Game {
   private players:[Player, Player];
+  private background : string;
+  
 
   constructor() {
     this.players = [
@@ -13,5 +15,14 @@ export class Game {
 
   getPlayers():[Player, Player]{
     return this.players;
+  }
+
+
+  getAssets(){
+    return this.background;
+  }
+
+  getGameState(){
+
   }
 }

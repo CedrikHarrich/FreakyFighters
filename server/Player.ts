@@ -12,9 +12,11 @@ export class Player {
   private left: string;
   private right: string;
 
-  constructor(color:string, coords: {'x':number, 'y':number}){
+  constructor(color:string, coords: {'x': number, 'y':number}){
     this.color = color;
     this.coords = coords;
+    this.life = 100;
+    this.velocity = {'x' : 0, 'y' : 0};
   }
 
   getColor(){
@@ -85,11 +87,11 @@ export class Player {
     this.velocity.y *= y;
   }
 
-  getVelocityX(x:number){
+  getVelocityX(){
     return this.velocity.x;
   }
 
-  getVelocityY(y:number){
+  getVelocityY(){
     return this.velocity.y;
   }
 
