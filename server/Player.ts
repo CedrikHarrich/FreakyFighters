@@ -23,7 +23,6 @@ export class Player {
         this.isDownKeyPressed = false;
         this.isRightKeyPressed = false;
         this.isJumping = false;
-        
     }
 
     updatePosition(){
@@ -47,17 +46,17 @@ export class Player {
 
         //Player can run to the right and pops out on the left an vice versa.
         if (this.x < -120){
-            this.x = 960; 
+            this.x = 960;
         }
         if (this.x > 960){
             this.x = -120;
         }
         //Only change the positions if everything is checked.
         this.velocityY +=1.2;
-        this.x += this.velocityX; 
-        this.y += this.velocityY; 
-        this.velocityX *= 0.9; //friction 
-        this.velocityY *= 0.9; //friction 
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+        this.velocityX *= 0.9; //friction
+        this.velocityY *= 0.9; //friction
 
         //Don't fall through the platform.
         if (this.y > 640 - 80 - 120){
@@ -73,7 +72,7 @@ export class Player {
     getX(){
         return this.x;
     }
-    
+
     getY(){
         return this.y
     }
@@ -118,6 +117,6 @@ export class Player {
     setIsJumping(isJumping : boolean){
         this.isJumping = isJumping;
     }
-  
-    
+
+
 }

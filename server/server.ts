@@ -12,7 +12,7 @@ export class Server{
 
     //Variables for the actual game.
     private playerList : Array<Player> = [];
-    
+
 
     constructor(){
         //Initialize Variables used for the connection
@@ -22,16 +22,18 @@ export class Server{
 
         //Send Files to the client.
         this.app.get('/', function(req:any,res:any){
-            res.sendFile(path.join(__dirname, '../client/index.html'));
+            res.sendFile(path.join(__dirname, '../dist/index.html'));
         });
-        this.app.use(express.static(path.join(__dirname, '../client')));
+        this.app.use(
+          express.static(path.join(__dirname, '../dist/'))
+        );
 
         //Server starts listening.
         this.http.listen(3000);
 
         //Enable server to listen to specific events.
         this.io = require('socket.io')(this.http);
-        
+
 
         //EventHandler: Connection of Client
         this.io.sockets.on('connection', (socket:any)=>{
@@ -49,18 +51,18 @@ export class Server{
             socket.on('keyPressed', (data:any) =>{
                 switch (data.inputId){
                     case "ArrowUp":
-                        player.setIsUpKeyPressed(data.state); 
+                        player.setIsUpKeyPressed(data.state);
                         break;
                     case "ArrowLeft":
-                        player.setIsLeftKeyPressed(data.state); 
+                        player.setIsLeftKeyPressed(data.state);
                         break;
                     case "ArrowDown":
-                        player.setIsDownKeyPressed(data.state); 
+                        player.setIsDownKeyPressed(data.state);
                         break;
                     case "ArrowRight":
-                        player.setIsRightKeyPressed(data.state); 
+                        player.setIsRightKeyPressed(data.state);
                         break;
-                    
+
                     default:
                         return;
                 }
@@ -88,7 +90,7 @@ export class Server{
                     x: player.getX(),
                     y: player.getY(),
                     id: player.getId()
-                }); 
+                });
 
             }
             //Event: Send Gamestate to the clients.

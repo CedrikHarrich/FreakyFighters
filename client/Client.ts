@@ -1,87 +1,71 @@
+import { GlobalConstants as Const } from "../global/GlobalConstants"
+import { Keys as Keys } from "../global/Keys"
 
-export class Client{
-    private socket:any;
+export class Client {
+    private socket:any = io();
     private canvas:any;
     private context:any;
-    private character:any;
-    private background:any;
-    
+    private character:any = new Image();
+    private background:any = new Image();
+    private gameState:any;
+
     constructor(){
         console.log("A Client has started.");
-
-        //Server Connection Variables
-        this.socket = io();
 
         //HTML Variables
         this.canvas = <HTMLCanvasElement> document.getElementById("myCanvas");
         this.context = this.canvas.getContext("2d");
 
-        //Initially draw your field.
-        this.character = new Image();
-        //Randomizer for the character representation.
-        if (Math.random() > 0.5){
-            this.character.src = 'character.png';
-        } else {
-            this.character.src = 'noCookiesForFangli.png';
-        }
-        
-        this.background = new Image();
-        this.background.src = 'background.png';
-        this.background.onload = () => {
-            this.context.drawImage(this.background,0,0);
-        };
-        
-        //Event: Update with the new GameState
-        this.socket.on('update', (data:any) =>{
-            //console.log("Updates received.");
-            this.context.clearRect(0,0,960,640);
-            this.context.drawImage(this.background,0,0,960,640);
-            for (var i = 0; i < data.length; i++){
-                console.log(data[i].x);
-                this.context.drawImage(this.character, data[i].x, data[i].y, 120, 120);
-            }
-        });
+        // Image Sources
+        this.character.src = `./${Const.ASSET_FOLDER}character.png`;
+        this.background.src = `./${Const.ASSET_FOLDER}background.png`;
 
-        //Event: Signal the server that a key has been pressed.
-        window.addEventListener("keydown", (event : any) =>{
-            console.log(event.key);
-            switch (event.key){
-                case "ArrowUp":
-                   this.socket.emit('keyPressed', {inputId: 'ArrowUp', state : true});
-                   break;
-                case "ArrowLeft":
-                    this.socket.emit('keyPressed', {inputId: 'ArrowLeft', state : true});
-                    break;
-                case "ArrowDown":
-                    this.socket.emit('keyPressed', {inputId: 'ArrowDown', state : true});
-                    break;
-                case "ArrowRight":
-                   this.socket.emit('keyPressed', {inputId: 'ArrowRight', state : true});
-                   break;
-                default: 
-                    return;
-           }
-        }, true);
-
-        //Event: Stop moving when key is not pressed.
-        window.addEventListener("keyup", (event : any) =>{
-            switch (event.key){
-                case "ArrowUp":
-                  this.socket.emit('keyPressed', {inputId: 'ArrowUp', state : false});
-                  break;
-                case "ArrowLeft":
-                    this.socket.emit('keyPressed', {inputId: 'ArrowLeft', state : false});
-                    break;
-                case "ArrowDown":
-                    this.socket.emit('keyPressed', {inputId: 'ArrowDown', state : false});
-                    break;
-                case "ArrowRight":
-                   this.socket.emit('keyPressed', {inputId: 'ArrowRight', state : false});
-                   break;
-                default: 
-                    return;
-           }
-        }, true);
-
+        this.drawBackground();
+        this.registerEvents();
     }
+
+    registerEvents(){
+      //Event: Update with the new GameState
+      this.socket.on('update', (gameState:any) =>{
+          this.gameState = gameState;
+          this.draw();
+
+      });
+
+      //Event: Signal the server that a key has been pressed.
+      window.addEventListener("keydown", (event : any) =>{
+        console.log(event.key)
+          this.keyPressedHander(event.key, true)
+      }, true);
+
+      //Event: Stop moving when key is not pressed.
+      window.addEventListener("keyup", (event : any) =>{
+        this.keyPressedHander(event.key, false)
+      }, true);
+    }
+
+    keyPressedHander(inputId:string, state:boolean) {
+      if (Object.values(Keys).includes(inputId)){
+        this.socket.emit('keyPressed', {inputId: inputId, state : state});
+      }
+    }
+
+    draw(){
+      this.drawBackground()
+      this.drawCharacter();
+    }
+
+    drawCharacter(){
+      for (var i = 0; i < this.gameState.length; i++){
+          console.log(this.gameState[i].x);
+          this.context.drawImage(this.character, this.gameState[i].x, this.gameState[i].y, Const.PLAYER_HEIGHT, Const.PLAYER_WIDTH);
+      }
+    }
+
+    drawBackground(){
+      // this.context.clearRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
+      this.context.drawImage(this.background, 0 ,0 , Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
+    }
+
+
 }
