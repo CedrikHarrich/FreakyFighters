@@ -18,7 +18,13 @@ export class Client{
 
         //Initially draw your field.
         this.character = new Image();
-        this.character.src = 'character.png';
+        //Randomizer for the character representation.
+        if (Math.random() > 0.5){
+            this.character.src = 'character.png';
+        } else {
+            this.character.src = 'noCookiesForFangli.png';
+        }
+        
         this.background = new Image();
         this.background.src = 'background.png';
         this.background.onload = () => {
