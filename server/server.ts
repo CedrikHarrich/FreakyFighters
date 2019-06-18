@@ -1,119 +1,102 @@
-import * as express from "express";
-import * as path from "path";
+import * as express from 'express';
+import * as path from 'path';
+import { Player } from './Player';
 
-import { Game } from "./Game";
-import { Player } from "./Player";
+export class Server{
+    //Variables for the connection
+    private express:any;
+    private app:any;
+    private http:any;
+    private io:any;
+    private clientList : Array<any> = [];
 
-export class Server {
+    //Variables for the actual game.
+    private playerList : Array<Player> = [];
+    
 
-  private app:any = express();
-  private http:any;
-  private io:any;
-  private server:any;
-  private socket: any;
-  private users:number = 0;
-  private port:number = 3000;
-  private Game:Game;
-  private maxClients:number = 2;
-  private isReady: boolean = false;
-  private clients: Array<any> = [];
+    constructor(){
+        //Initialize Variables used for the connection
+        this.express = require('express');
+        this.app = express();
+        this.http = require('http').Server(this.app);
 
-  constructor(){
-    this.init()
-    this.registerEvents();
-  }
+        //Send Files to the client.
+        this.app.get('/', function(req:any,res:any){
+            res.sendFile(path.join(__dirname, '../client/index.html'));
+        });
+        this.app.use(express.static(path.join(__dirname, '../client')));
 
-  init(){
-    this.app.set("port", this.port);
-    this.app.use(express.static('dist'));
+        //Server starts listening.
+        this.http.listen(3000);
 
-    this.http = require("http").Server(this.app);
-    this.io = require("socket.io")(this.http);
+        //Enable server to listen to specific events.
+        this.io = require('socket.io')(this.http);
+        
 
-    this.server = this.http.listen(this.port, () => {
-        console.log("listening on *:" + this.port);
-    })
-  }
+        //EventHandler: Connection of Client
+        this.io.sockets.on('connection', (socket:any)=>{
+            //If a client connects. The socket will be registered and
+            //the client gets a counting ID. ID = Position in Array.
+            this.clientList.push(socket);
+            socket.id = this.clientList.length;
 
-  registerEvents(){
-    this.io.on("connection", (socket: any) => {
+            //A new player is created with the same ID as the socket.
+            var player = new Player(socket.id);
+            this.playerList.push(player);
 
-        this.socket = socket;
-        this.addClient(socket.id);
+            console.log(`The player with ID ${socket.id} has connected.`);
 
-        console.log("a user connected");
+            socket.on('keyPressed', (data:any) =>{
+                switch (data.inputId){
+                    case "ArrowUp":
+                        player.setIsUpKeyPressed(data.state); 
+                        break;
+                    case "ArrowLeft":
+                        player.setIsLeftKeyPressed(data.state); 
+                        break;
+                    case "ArrowDown":
+                        player.setIsDownKeyPressed(data.state); 
+                        break;
+                    case "ArrowRight":
+                        player.setIsRightKeyPressed(data.state); 
+                        break;
+                    
+                    default:
+                        return;
+                }
+            });
 
-        this.userCountHandler();
+            //EventHandler: Disconnection of Client
+            socket.on('disconnect', ()=>{
+                this.clientList.splice(socket.id - 1, socket.id);
+                this.playerList.splice(socket.id - 1, socket.id);
+                console.log(`The player with the ID ${socket.id} has disconnected.`);
+                console.log(`There are ${this.playerList.length} Players left.`);
+            });
 
-        socket.on('disconnect', () => {
-          console.log('disconnected');
-          this.removeClient(socket.id);
-          this.userCountHandler();
         });
 
-        socket.on("message", function(message: any) {
-            let newMessage = "Other Person: " + message;
+        //TODO: Start the Update Loop
+        setInterval(()=>{
+           //console.log('Updates are beeing sent');
+           var gameState : Array<any> = [];
+           //The Game State is being made here.
+            for(var i in this.playerList){
+                var player = this.playerList[i];
+                player.updatePosition();
+                gameState.push({
+                    x: player.getX(),
+                    y: player.getY(),
+                    id: player.getId()
+                }); 
 
-            socket.broadcast.emit("message", newMessage);
-        });
-
-        socket.on("keyup", function(event: any) {
-            console.log(event);
-        });
-    })
-  }
-
-  addClient(id:number){
-    this.clients.push({id: id, player: null});
-  }
-
-  removeClient(id:number){
-    for(let i = 0; i < this.clients.length; i++){
-      if(this.clients[i]['id'] == id){
-        this.clients.splice(i, 1);
-      }
+            }
+            //Event: Send Gamestate to the clients.
+            for(var i in this.clientList){
+                var socket = this.clientList[i];
+                socket.emit('update', gameState);
+            }
+        }, 1000/60);
     }
-  }
-
-  userCountHandler(){
-    if(this.clients.length == this.maxClients){
-      this.startGame();
-      console.log('new games')
-    }
-    else {
-      this.Game = null;
-
-      if(this.clients.length < this.maxClients){
-        // notifies specific client
-        this.socket.emit("message", "Waiting for somebody to join");
-      } else {
-        // notifies all clients
-        this.io.emit("message", "Too many Clients. Please sign off.");
-      }
-    }
-    console.log(this.clients);
-  }
-
-  sendGame(){
-
-  }
-
-  startGame(){
-    this.Game = new Game();
-    let players:[Player, Player] = this.Game.getPlayers();
-
-    if (players.length === this.clients.length){
-      for(let i = 0; i < this.clients.length; i++){
-          this.clients[i]['player'] = players[i];
-      }
-    }
-
-    // should eventually emit gamestate instead of players
-    this.io.emit("gameStarts", this.Game.getPlayers());
-  }
-
-  updateGame(){
-
-  }
 
 }

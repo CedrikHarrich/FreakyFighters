@@ -1,9 +1,10 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "esModuleInterop": false,
-    "target": "es5",
-    "noImplicitAny": true,
-    "sourceMap": true,
+    "compilerOptions": {
+      "module": "commonjs",
+      "esModuleInterop": false,
+      "target": "es5",
+      "noImplicitAny": true,
+      "sourceMap": true,
+    }
   }
-}
+  

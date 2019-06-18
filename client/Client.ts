@@ -1,94 +1,81 @@
-import * as io from "socket.io-client";
-import { Player } from "../server/Player";
 
-export class Client {
+export class Client{
+    private socket:any;
+    private canvas:any;
+    private context:any;
+    private character:any;
+    private background:any;
+    
+    constructor(){
+        console.log("A Client has started.");
 
-  private socket: SocketIOClient.Socket;
-  private form: HTMLElement;
-  private input: HTMLInputElement;
-  private textContainer: HTMLElement;
-  private gridSize:number = 30; // height and width in px
-  private grid: Array<any>;
-  private canvasID: string = "myCanvas";
-  private canvas: HTMLCanvasElement;
-  private context: CanvasRenderingContext2D;
-  private players: [Player, Player];
+        //Server Connection Variables
+        this.socket = io();
 
-  constructor(){
-    this.socket = io("http://localhost:3000");
-    this.form = document.getElementById("messenger");
-    this.input = <HTMLInputElement>document.getElementById("input");
-    this.textContainer = document.getElementById("textContainer");
-    this.canvas = <HTMLCanvasElement>document.getElementById(this.canvasID);
-    this.context = this.canvas.getContext('2d');
+        //HTML Variables
+        this.canvas = <HTMLCanvasElement> document.getElementById("myCanvas");
+        this.context = this.canvas.getContext("2d");
 
-    this.registerEvents();
-  }
+        //Initially draw your field.
+        this.character = new Image();
+        this.character.src = 'character.png';
+        this.background = new Image();
+        this.background.src = 'background.png';
+        this.background.onload = () => {
+            this.context.drawImage(this.background,0,0);
+        };
+        
+        //Event: Update with the new GameState
+        this.socket.on('update', (data:any) =>{
+            //console.log("Updates received.");
+            this.context.clearRect(0,0,960,640);
+            this.context.drawImage(this.background,0,0,960,640);
+            for (var i = 0; i < data.length; i++){
+                console.log(data[i].x);
+                this.context.drawImage(this.character, data[i].x, data[i].y, 120, 120);
+            }
+        });
 
-   registerEvents(){
-    // any data that is recieved from the socket will be printed
-    this.socket.on("message", (data:any) => {
-      this.logMsg(data);
-    });
+        //Event: Signal the server that a key has been pressed.
+        window.addEventListener("keydown", (event : any) =>{
+            console.log(event.key);
+            switch (event.key){
+                case "ArrowUp":
+                   this.socket.emit('keyPressed', {inputId: 'ArrowUp', state : true});
+                   break;
+                case "ArrowLeft":
+                    this.socket.emit('keyPressed', {inputId: 'ArrowLeft', state : true});
+                    break;
+                case "ArrowDown":
+                    this.socket.emit('keyPressed', {inputId: 'ArrowDown', state : true});
+                    break;
+                case "ArrowRight":
+                   this.socket.emit('keyPressed', {inputId: 'ArrowRight', state : true});
+                   break;
+                default: 
+                    return;
+           }
+        }, true);
 
-    this.socket.on("gameStarts", (players:[Player, Player]) => {
-      console.log("game starts");
-      this.players = players;
-      this.draw();
-    });
+        //Event: Stop moving when key is not pressed.
+        window.addEventListener("keyup", (event : any) =>{
+            switch (event.key){
+                case "ArrowUp":
+                  this.socket.emit('keyPressed', {inputId: 'ArrowUp', state : false});
+                  break;
+                case "ArrowLeft":
+                    this.socket.emit('keyPressed', {inputId: 'ArrowLeft', state : false});
+                    break;
+                case "ArrowDown":
+                    this.socket.emit('keyPressed', {inputId: 'ArrowDown', state : false});
+                    break;
+                case "ArrowRight":
+                   this.socket.emit('keyPressed', {inputId: 'ArrowRight', state : false});
+                   break;
+                default: 
+                    return;
+           }
+        }, true);
 
-    // text that is submited through the input will be sent to the server
-    this.form.addEventListener('submit', this.sendMsg.bind(this));
-
-    // name of pressed keys are sent to the server
-    document.addEventListener('keyup', this.keyupHandler.bind(this));
-  }
-
-  sendMsg(e:any) {
-      e.preventDefault();
-      this.socket.emit("message", this.input.value);
-      this.logMsg(this.input.value);
-      this.input.value = null;
-  }
-
-  logMsg(text:any){
-    let textNode = document.createElement("p");
-    textNode.innerHTML = text;
-    this.textContainer.appendChild(textNode);
-  }
-
-  keyupHandler(event:any){
-    this.socket.emit("keyup", event.key);
-  }
-
-  draw(){
-    this.drawGrid();
-    this.drawPlayers();
-  }
-
-  drawPlayers(){
-    for(let i = 0; i < this.players.length; i++){
-      let player = <Player>this.players[i];
     }
-  }
-
-  drawGrid(){
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    for(let i=1; i<this.canvas.height; i++){
-        this.drawLine(0, i*this.gridSize, this.canvas.width, i*this.gridSize);
-    }
-
-    for(let i=1; i<this.canvas.width; i++){
-        this.drawLine(i*this.gridSize, 0, i*this.gridSize, this.canvas.height);
-    }
-  }
-
-  drawLine(x1:number, y1:number, x2:number, y2:number) {
-    this.context.beginPath();
-    this.context.moveTo(x1, y1);
-    this.context.lineTo(x2, y2);
-    this.context.stroke();
-  }
-
 }

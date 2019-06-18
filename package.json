@@ -1,7 +1,7 @@
 {
-  "name": "fantastic",
+  "name": "gruppeff",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is the SEP project from gruppeff.",
   "main": "index.js",
   "dependencies": {
     "@types/express": "^4.16.1",
@@ -25,12 +25,11 @@
     "webpack-cli": "^3.3.2"
   },
   "scripts": {
-    "client": "webpack --watch",
+    "watch-client": "webpack --watch",
     "server": "ts-node --project ./server/tsconfig.json ./server/index.ts",
-    "build": "tsc",
-    "watch-ts": "tsc -w",
-    "watch-node": "nodemon dist/server.js"
+    "client": "start http://localhost:3000",
+    "game": "start http://localhost:3000 && start http://localhost:3000 && npm run server"
   },
-  "author": "",
+  "author": "gruppeff",
   "license": "ISC"
 }
