@@ -15,11 +15,11 @@ export class Client {
         //HTML Variables
         this.canvas = <HTMLCanvasElement> document.getElementById("myCanvas");
         this.context = this.canvas.getContext("2d");
-
+        
         // Image Sources
         this.character.src = `./${Const.ASSET_FOLDER}character.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
-
+        
         this.drawBackground();
         this.registerEvents();
     }

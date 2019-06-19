@@ -13,7 +13,7 @@ Thumbs.db
 *.sublime-workspace
 
 # compiled output
-/dist
+
 /tmp
 /out-tsc
 
