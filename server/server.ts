@@ -12,6 +12,8 @@ export class Server{
 
     //Variables for the actual game.
     private playerList : Array<Player> = [];
+    private idCounter : number = 1;
+    private idNumberStack :any = [];
 
 
     constructor(){
@@ -35,12 +37,19 @@ export class Server{
         this.io = require('socket.io')(this.http);
 
 
+
         //EventHandler: Connection of Client
         this.io.sockets.on('connection', (socket:any)=>{
+            if (this.idNumberStack.length == 0){
+                console.log(this.idCounter);
+                this.idNumberStack.push(this.idCounter);
+                this.idCounter ++;
+            }
             //If a client connects. The socket will be registered and
             //the client gets a counting ID. ID = Position in Array.
             this.clientList.push(socket);
-            socket.id = this.clientList.length;
+            socket.id = this.idNumberStack.pop();
+            //socket.id = this.clientList.length;
 
             //A new player is created with the same ID as the socket.
             var player = new Player(socket.id);
@@ -70,8 +79,20 @@ export class Server{
 
             //EventHandler: Disconnection of Client
             socket.on('disconnect', ()=>{
-                this.clientList.splice(socket.id - 1, socket.id);
-                this.playerList.splice(socket.id - 1, socket.id);
+                //When a player disconnects we need to delete him from clients and players.
+                //And we need to push his Id to the ID-Stack that the next player can take it.
+                for (let i = 0; i < this.clientList.length; i++){
+                    if(this.clientList[i].id == socket.id){
+                        this.clientList.splice(i, 1);
+                    }
+                }
+                for (let i = 0; i < this.playerList.length; i++){
+                    if(this.playerList[i].getId() == socket.id){
+                        this.playerList.splice(i, 1);
+                        this.idNumberStack.push(socket.id);
+                    }
+                }
+
                 console.log(`The player with the ID ${socket.id} has disconnected.`);
                 console.log(`There are ${this.playerList.length} Players left.`);
             });
