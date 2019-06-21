@@ -24,9 +24,11 @@ export class GlobalConstants {
   static readonly PLAYER_2_START_X_COORDS : number = 820;
 
   //Level Constants
-  static readonly GROUND_HEIGHT = 80;
+  static readonly GROUND_HEIGHT_FROM_BOTTOM = 80;
+  static readonly GROUND_HEIGHT_FROM_TOP = GlobalConstants.CANVAS_HEIGHT -GlobalConstants.GROUND_HEIGHT_FROM_BOTTOM - GlobalConstants.PLAYER_HEIGHT;
 
   // Mechanical Constants
   static readonly FRICTION = 0.9;
+  static readonly JUMP_HEIGHT = 60;
 
 }

@@ -18,10 +18,11 @@ export class Player {
     //Constants
     private jumpHeight : number = 80;
 
-    private groundHeight: number = Const.CANVAS_WIDTH - this.jumpHeight - Const.PLAYER_HEIGHT;
+    private groundHeight: number;
 
     constructor(id :number){
         this.id = id;
+        this.groundHeight = Const.GROUND_HEIGHT_FROM_TOP;
     }
 
     updatePosition(){
@@ -45,10 +46,10 @@ export class Player {
         }
 
         //Player can run to the right and pops out on the left an vice versa.
-        if (this.x < -1 * Const.PLAYER_WIDTH){
+        if (this.x < (-1 * Const.PLAYER_WIDTH)){
             this.x = Const.CANVAS_WIDTH;
         }
-        if (this.x > Const.PLAYER_WIDTH){
+        if (this.x > Const.CANVAS_WIDTH){
             this.x = -1 * Const.PLAYER_WIDTH;
         }
         
