@@ -38,6 +38,10 @@ export class Server{
         //Enable server to listen to specific events.
         this.io = require('socket.io')(this.http);
 
+        console.log(`The server has started and is now listening to the port: ${Const.PORT}`)
+
+        //The server starts listening to events and sends packages as soon
+        //as someone connects.
         this.registerEvents();
         this.init();
     }
@@ -46,7 +50,6 @@ export class Server{
       //EventHandler: Connection of Client
       this.io.sockets.on('connection', (socket:any)=>{
           if (this.idNumberStack.length == 0){
-              console.log(this.idCounter);
               this.idNumberStack.push(this.idCounter);
               this.idCounter ++;
           }
@@ -62,7 +65,10 @@ export class Server{
 
           console.log(`The player with ID ${socket.id} has connected.`);
 
+          //EventHandler: When a key is pressed do ...
           socket.on('keyPressed', (data:any) =>{
+              console.log(`${data.inputId} has been pressed by player ${socket.id}.`);
+
               switch (data.inputId){
                   case "ArrowUp":
                       player.setIsUpKeyPressed(data.state);

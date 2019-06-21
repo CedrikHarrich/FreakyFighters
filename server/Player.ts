@@ -15,33 +15,27 @@ export class Player {
     private isRightKeyPressed : boolean = false;
     private isJumping : boolean = false;
 
-    //Constants
-    private jumpHeight : number = 80;
-
-    private groundHeight: number;
-
     constructor(id :number){
         this.id = id;
-        this.groundHeight = Const.GROUND_HEIGHT_FROM_TOP;
     }
 
     updatePosition(){
         //Change the speed depending on the Input
         if (this.isRightKeyPressed){
-            this.velocityX += 1.5;
+            this.velocityX += Const.ACCELERATION_X;
         }
 
         if (this.isLeftKeyPressed){
-            this.velocityX -= 1.5;
+            this.velocityX -= Const.ACCELERATION_X;
         }
 
         if (this.isDownKeyPressed){
-            this.velocityY += 3;
+            this.velocityY += Const.ACCELERATION_Y;
         }
 
         //Check if you can jump
         if (this.isUpKeyPressed && this.isJumping == false){
-            this.velocityY -= this.jumpHeight;
+            this.velocityY -= Const.JUMP_HEIGHT;
             this.isJumping = true;
         }
 
@@ -54,16 +48,16 @@ export class Player {
         }
         
         //Only change the positions if everything is checked.
-        this.velocityY +=1.2;
+        this.velocityY += Const.GRAVITATION;
         this.x += this.velocityX;
         this.y += this.velocityY;
         this.velocityX *= Const.FRICTION;
         this.velocityY *= Const.FRICTION;
 
         //Don't fall through the platform.
-        if (this.y > this.groundHeight){
+        if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
             this.isJumping = false;
-            this.y = this.groundHeight;
+            this.y = Const.GROUND_HEIGHT_FROM_TOP;
             this.velocityY = 0;
         }
 

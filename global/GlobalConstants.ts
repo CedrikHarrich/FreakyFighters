@@ -28,9 +28,14 @@ export class GlobalConstants {
 
   // Mechanical Constants
   static readonly FRICTION = 0.9;
-  static readonly JUMP_HEIGHT = 60;
+  static readonly JUMP_HEIGHT = 95;
 
   //Time and Frames Constants
   static readonly FRAMES_PER_SECOND = 60;
+
+  //Acceleration Constants
+  static readonly ACCELERATION_X = 1.5;
+  static readonly ACCELERATION_Y = 2.0;
+  static readonly GRAVITATION = 3.0;
 
 }

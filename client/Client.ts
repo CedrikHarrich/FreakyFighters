@@ -20,6 +20,7 @@ export class Client {
         this.character.src = `./${Const.ASSET_FOLDER}character.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
         
+        //Draw the initial background and start to register Events.
         this.drawBackground();
         this.registerEvents();
     }
@@ -35,23 +36,23 @@ export class Client {
       //Event: Signal the server that a key has been pressed.
       window.addEventListener("keydown", (event : any) =>{
         console.log(event.key)
-          this.keyPressedHander(event.key, true)
+          this.keyPressedHandler(event.key, true)
       }, true);
 
       //Event: Stop moving when key is not pressed.
       window.addEventListener("keyup", (event : any) =>{
-        this.keyPressedHander(event.key, false)
+        this.keyPressedHandler(event.key, false)
       }, true);
     }
 
-    keyPressedHander(inputId:string, state:boolean) {
+    keyPressedHandler(inputId:string, state:boolean) {
       if (Object.values(Keys).includes(inputId)){
         this.socket.emit('keyPressed', {inputId: inputId, state : state});
       }
     }
 
     draw(){
-      this.drawBackground()
+      this.drawBackground();
       this.drawCharacter();
     }
 
@@ -63,9 +64,7 @@ export class Client {
     }
 
     drawBackground(){
-      // this.context.clearRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
       this.context.drawImage(this.background, 0 ,0 , Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
     }
-
 
 }

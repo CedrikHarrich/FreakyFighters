@@ -2,6 +2,7 @@ import { Server } from "./Server";
 
 function main(){
     console.log("The server is starting...");
+    
     new Server();
 }
 
