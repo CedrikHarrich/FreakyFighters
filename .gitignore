@@ -4,22 +4,23 @@ Thumbs.db
 
 # IDEs and editors
 .idea
-.vscode
 .project
 .classpath
+.vscode
 .c9/
 *.launch
 .settings/
 *.sublime-workspace
 
 # compiled output
-/dist
+
 /tmp
 /out-tsc
 
 # Logs
 logs
 *.log
+bash.exe.stackdump
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*

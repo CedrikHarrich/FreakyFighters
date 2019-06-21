@@ -1,5 +1,9 @@
 import { Client } from "./Client";
 
-new Client();
 
-export{};
+function main (){
+    new Client();
+}
+
+//Entrance point of our client program.
+main();
