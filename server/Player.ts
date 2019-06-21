@@ -59,13 +59,14 @@ export class Player {
             this.solidRoof();
         } 
         
-
-        //Only change the positions if everything is checked.
+        //Add physics.
         this.velocityY += Const.GRAVITATION;
-        this.x += this.velocityX;
-        this.y += this.velocityY;
         this.velocityX *= Const.FRICTION;
         this.velocityY *= Const.FRICTION;
+
+        //Update the actual positon
+        this.x += this.velocityX;
+        this.y += this.velocityY;
 
     }
 
