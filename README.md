@@ -8,7 +8,7 @@ in JavaScript" vor.
 Innerhalb der nächsten 6 Wochen wollen wir dieses Projekt fertigstellen.  
 Dazu halten wir uns strikt an unseren Milestoneplan:  
 - [x] Milestone 0 (-21.05.2019)
-- [ ] Milestone 1 (21.05.2019-11.06.2019)
+- [x] Milestone 1 (21.05.2019-11.06.2019)
 - [ ] Milestone 2 (11.06.2019-02.07.2019)
 - [ ] Milestone 3 (02.07.2019-23.07.2019)
 - [ ] Abschlussprüfung (29/30.07.2019)
@@ -45,17 +45,17 @@ Testing: Linter
 UML-Tool: Draw.io
 
 ### Milestone 1:
-- [ ] Leveldesign Prototyp
-- [ ] Characterdesign Prototyp
-- [ ] Server-Client funktioniert
-- [ ] 2 Spieler können sich einloggen und interagieren
+- [x] Leveldesign Prototyp
+- [x] Characterdesign Prototyp
+- [x] Server-Client funktioniert
+- [x] 2 Spieler können sich einloggen und interagieren
 
 ### Milestone 2:
 - [ ] Interaktion von Spielern ist möglich
 - [ ] Logik von Spiel wurde implementiert
-- [ ] Ladebildschirm
+- [x] Ladebildschirm
 - [ ] HUD
-- [ ] Leveldesign
+- [x] Leveldesign
 - [ ] Characterdesgin
 - [ ] MVP
 
