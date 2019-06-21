@@ -15,10 +15,15 @@ export class Client {
         //HTML Variables
         this.canvas = <HTMLCanvasElement> document.getElementById("myCanvas");
         this.context = this.canvas.getContext("2d");
+
+        //Set canvas size in html
+        this.canvas.height = Const.CANVAS_HEIGHT;
+        this.canvas.width = Const.CANVAS_WIDTH;
         
         // Image Sources
         this.character.src = `./${Const.ASSET_FOLDER}character.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
+
         
         //Draw the initial background and start to register Events.
         this.drawBackground();
