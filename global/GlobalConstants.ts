@@ -18,6 +18,7 @@ export class GlobalConstants {
   //Character Constants
   static readonly PLAYER_HEIGHT : number = 120;
   static readonly PLAYER_WIDTH : number  = 120;
+  static readonly JUMP_HEIGHT = 95;
 
   static readonly PLAYER_1_START_X_COORDS : number = 140;
   static readonly PLAYER_2_START_X_COORDS : number = 820;
@@ -26,9 +27,9 @@ export class GlobalConstants {
   static readonly GROUND_HEIGHT_FROM_BOTTOM = 80;
   static readonly GROUND_HEIGHT_FROM_TOP = GlobalConstants.CANVAS_HEIGHT -GlobalConstants.GROUND_HEIGHT_FROM_BOTTOM - GlobalConstants.PLAYER_HEIGHT;
 
-  // Mechanical Constants
+  //Physics Constants
   static readonly FRICTION = 0.9;
-  static readonly JUMP_HEIGHT = 95;
+  static readonly GRAVITATION = 3.0;
 
   //Time and Frames Constants
   static readonly FRAMES_PER_SECOND = 60;
@@ -36,7 +37,6 @@ export class GlobalConstants {
   //Acceleration Constants
   static readonly ACCELERATION_X = 1.5;
   static readonly ACCELERATION_Y = 2.0;
-  static readonly GRAVITATION = 3.0;
 
   //Level Settings Constants
   static readonly SOLID_WALLS = true;
