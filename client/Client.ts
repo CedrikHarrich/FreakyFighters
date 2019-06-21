@@ -35,7 +35,6 @@ export class Client {
       this.socket.on('update', (gameState:any) =>{
           this.gameState = gameState;
           this.draw();
-
       });
 
       //Event: Signal the server that a key has been pressed.
