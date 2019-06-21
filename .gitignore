@@ -16,6 +16,7 @@ Thumbs.db
 
 /tmp
 /out-tsc
+dist/bundle.js
 
 # Logs
 logs
