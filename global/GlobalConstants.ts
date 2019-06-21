@@ -26,4 +26,7 @@ export class GlobalConstants {
   //Level Constants
   static readonly GROUND_HEIGHT = 80;
 
+  // Mechanical Constants
+  static readonly FRICTION = 0.9;
+
 }

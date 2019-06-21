@@ -1,3 +1,5 @@
+import { GlobalConstants as Const } from "../global/GlobalConstants"
+
 export class Player {
     //Attributes of the player.
     private x : number = 0;
@@ -7,22 +9,19 @@ export class Player {
     private id :number = 0;
 
     //Actions the player can make
-    private isUpKeyPressed : boolean;
-    private isLeftKeyPressed : boolean;
-    private isDownKeyPressed : boolean;
-    private isRightKeyPressed : boolean;
-    private isJumping : boolean;
+    private isUpKeyPressed : boolean = false;
+    private isLeftKeyPressed : boolean = false;
+    private isDownKeyPressed : boolean = false;
+    private isRightKeyPressed : boolean = false;
+    private isJumping : boolean = false;
 
     //Constants
     private jumpHeight : number = 80;
 
+    private groundHeight: number = Const.CANVAS_WIDTH - this.jumpHeight - Const.PLAYER_HEIGHT;
+
     constructor(id :number){
         this.id = id;
-        this.isUpKeyPressed = false;
-        this.isLeftKeyPressed = false;
-        this.isDownKeyPressed = false;
-        this.isRightKeyPressed = false;
-        this.isJumping = false;
     }
 
     updatePosition(){
@@ -30,6 +29,7 @@ export class Player {
         if (this.isRightKeyPressed){
             this.velocityX += 1.5;
         }
+
         if (this.isLeftKeyPressed){
             this.velocityX -= 1.5;
         }
@@ -45,28 +45,28 @@ export class Player {
         }
 
         //Player can run to the right and pops out on the left an vice versa.
-        if (this.x < -120){
-            this.x = 960;
+        if (this.x < -1 * Const.PLAYER_WIDTH){
+            this.x = Const.CANVAS_WIDTH;
         }
-        if (this.x > 960){
-            this.x = -120;
+        if (this.x > Const.PLAYER_WIDTH){
+            this.x = -1 * Const.PLAYER_WIDTH;
         }
+        
         //Only change the positions if everything is checked.
         this.velocityY +=1.2;
         this.x += this.velocityX;
         this.y += this.velocityY;
-        this.velocityX *= 0.9; //friction
-        this.velocityY *= 0.9; //friction
+        this.velocityX *= Const.FRICTION;
+        this.velocityY *= Const.FRICTION;
 
         //Don't fall through the platform.
-        if (this.y > 640 - 80 - 120){
+        if (this.y > this.groundHeight){
             this.isJumping = false;
-            this.y = 640 - 80 - 120;
+            this.y = this.groundHeight;
             this.velocityY = 0;
         }
 
     }
-
 
     //Getter Methods
     getX(){
