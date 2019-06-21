@@ -24,35 +24,12 @@ export class Player {
         if (this.isRightKeyPressed){
             this.velocityX += Const.ACCELERATION_X;
         }
-
         if (this.isLeftKeyPressed){
             this.velocityX -= Const.ACCELERATION_X;
         }
-
         if (this.isDownKeyPressed){
             this.velocityY += Const.ACCELERATION_Y;
         }
-
-        //Check if you can jump
-        if (this.isUpKeyPressed && this.isJumping == false){
-            this.velocityY -= Const.JUMP_HEIGHT;
-            this.isJumping = true;
-        }
-
-        //Player can run to the right and pops out on the left an vice versa.
-        if (this.x < (-1 * Const.PLAYER_WIDTH)){
-            this.x = Const.CANVAS_WIDTH;
-        }
-        if (this.x > Const.CANVAS_WIDTH){
-            this.x = -1 * Const.PLAYER_WIDTH;
-        }
-        
-        //Only change the positions if everything is checked.
-        this.velocityY += Const.GRAVITATION;
-        this.x += this.velocityX;
-        this.y += this.velocityY;
-        this.velocityX *= Const.FRICTION;
-        this.velocityY *= Const.FRICTION;
 
         //Don't fall through the platform.
         if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
@@ -61,7 +38,65 @@ export class Player {
             this.velocityY = 0;
         }
 
+        //Check if you can jump
+        if (this.isUpKeyPressed && this.isJumping == false){
+            this.velocityY -= Const.JUMP_HEIGHT;
+            this.isJumping = true;
+        }
+
+        //Level Setting: SolidWalls
+        if (Const.SOLID_WALLS){
+            //When Canvas stops in x axis, player stops too
+            this.solidWalls();
+            
+        } else {
+            //Player can run to the right and pops out on the left an vice versa.
+            this.permeableWalls();
+        }
+
+        //Level Setting: SolidRoof
+        if (Const.SOLID_ROOF){
+            this.solidRoof();
+        } 
+        
+
+        //Only change the positions if everything is checked.
+        this.velocityY += Const.GRAVITATION;
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+        this.velocityX *= Const.FRICTION;
+        this.velocityY *= Const.FRICTION;
+
     }
+
+    solidRoof(){
+        //Don't jump over the canvas.
+        if (this.y < 0) {
+            this.y = 0;
+            this.velocityY = 0;
+        }
+    }
+
+    permeableWalls(){
+        //Player can run to the right and pops out on the left an vice versa.
+        if (this.x < (-1 * Const.PLAYER_WIDTH)){
+            this.x = Const.CANVAS_WIDTH;
+        }
+        if (this.x > Const.CANVAS_WIDTH){
+            this.x = -1 * Const.PLAYER_WIDTH;
+        }
+    }
+
+    solidWalls(){
+        //Player can run to the right and pops out on the left an vice versa.
+        if (this.x < 0){
+            this.x = 0;
+        }
+        if (this.x > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH){
+            this.x = Const.CANVAS_WIDTH - Const.PLAYER_WIDTH;
+        }
+    }
+
 
     //Getter Methods
     getX(){

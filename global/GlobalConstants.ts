@@ -38,4 +38,8 @@ export class GlobalConstants {
   static readonly ACCELERATION_Y = 2.0;
   static readonly GRAVITATION = 3.0;
 
+  //Level Settings Constants
+  static readonly SOLID_WALLS = true;
+  static readonly SOLID_ROOF = true;
+
 }
