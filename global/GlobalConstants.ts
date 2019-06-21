@@ -3,7 +3,6 @@ export class GlobalConstants {
   static readonly PORT : number = 3000;
   static readonly MAX_CLIENTS : number = 2;
   static readonly SERVER_URL : string = `http://localhost:${GlobalConstants.PORT}`;
-
   static readonly ASSET_FOLDER : string = "assets/"
 
   //Grid Constants
@@ -30,5 +29,8 @@ export class GlobalConstants {
   // Mechanical Constants
   static readonly FRICTION = 0.9;
   static readonly JUMP_HEIGHT = 60;
+
+  //Time and Frames Constants
+  static readonly FRAMES_PER_SECOND = 60;
 
 }

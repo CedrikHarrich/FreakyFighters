@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as path from 'path';
 import { Player } from './Player';
+import { GlobalConstants as Const } from '../global/GlobalConstants';
 
 export class Server{
     //Variables for the connection
@@ -105,11 +106,13 @@ export class Server{
     }
 
     init(){
-      //TODO: Start the Update Loop
+      //Start the Update Loop FRAMES_PER_SECOND times per second.
       setInterval(()=>{
-         //console.log('Updates are beeing sent');
-         var gameState : Array<any> = [];
-         //The Game State is being made here.
+          //The gameState holds all the information the client
+          //needs to draw the game
+          var gameState : Array<any> = [];
+
+          //GameStatePacker
           for(var i in this.playerList){
               var player = this.playerList[i];
               player.updatePosition();
@@ -120,11 +123,12 @@ export class Server{
               });
 
           }
+
           //Event: Send Gamestate to the clients.
           for(var i in this.clientList){
               var socket = this.clientList[i];
               socket.emit('update', gameState);
           }
-      }, 1000/60);
+      }, 1000/Const.FRAMES_PER_SECOND);
     }
 }
