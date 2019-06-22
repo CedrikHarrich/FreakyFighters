@@ -29,24 +29,7 @@ export class Client {
         this.block.src = `./${Const.ASSET_FOLDER}block.png`;
 
         //Load the grid
-        this.grid = [
-          [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1], //1
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //5
-          [0,0,0,0,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0], //6
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7
-          [0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0], //8
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //10
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //11
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //12
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //13
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //14
-          [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //15
-          [1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1]  //16
-        ];
+        this.grid = Const.TEST_GRID_24x16; 
         
         //Draw the initial background and start to register Events.
         this.drawBackground();
@@ -92,15 +75,18 @@ export class Client {
       }
     }
 
-    drawGrid(){    
-      for (let i : number = 0; i < Const.GRID_HEIGHT; i++){
-        for (let j : number = 0; j < Const.GRID_WIDTH; j++){
-             if (this.grid[i][j] === 1){
-                this.context.drawImage(this.block, Const.BLOCK_HEIGHT * j, Const.BLOCK_WIDTH * i, Const.BLOCK_HEIGHT, Const.BLOCK_WIDTH);
-             }
+    drawGrid(){
+      if (Const.WITH_GRID){
+        for (let i : number = 0; i < Const.GRID_HEIGHT; i++){
+          for (let j : number = 0; j < Const.GRID_WIDTH; j++){
+               if (this.grid[i][j] === 1){
+                  this.context.drawImage(this.block, Const.BLOCK_HEIGHT * j, Const.BLOCK_WIDTH * i, Const.BLOCK_HEIGHT, Const.BLOCK_WIDTH);
+               }
+          }
         }
-      }
+      }    
     }
+    
 
     drawBackground(){
       this.context.drawImage(this.background, 0 ,0 , Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
