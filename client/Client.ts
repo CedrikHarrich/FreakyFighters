@@ -50,7 +50,7 @@ export class Client {
         
         //Draw the initial background and start to register Events.
         this.drawBackground();
-        this.drawLevel();
+        this.drawGrid();
         this.registerEvents();
     }
 
@@ -81,7 +81,7 @@ export class Client {
 
     draw(){
       this.drawBackground();
-      this.drawLevel();
+      this.drawGrid();
       this.drawCharacter();
     }
 
@@ -92,7 +92,7 @@ export class Client {
       }
     }
 
-    drawLevel(){    
+    drawGrid(){    
       for (let i : number = 0; i < Const.GRID_HEIGHT; i++){
         for (let j : number = 0; j < Const.GRID_WIDTH; j++){
              if (this.grid[i][j] === 1){
