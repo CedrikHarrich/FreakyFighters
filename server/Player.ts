@@ -20,6 +20,14 @@ export class Player {
     }
 
     updatePosition(){
+
+        //Check if you can jump
+        if (this.isUpKeyPressed && this.isJumping == false){
+            this.velocityY -= Const.JUMP_HEIGHT;
+            this.isJumping = true;
+            console.log(`Player ${this.id} is jumping with velocityY: ${this.velocityY}`);
+        }
+
         //Change the speed depending on the Input
         if (this.isRightKeyPressed){
             this.velocityX += Const.ACCELERATION_X;
@@ -28,20 +36,23 @@ export class Player {
             this.velocityX -= Const.ACCELERATION_X;
         }
         if (this.isDownKeyPressed){
-            this.velocityY += Const.ACCELERATION_Y;
+            this.velocityY += 2*Const.ACCELERATION_Y;
         }
 
+        //Add physics.
+        this.velocityY += Const.GRAVITATION;
+        this.velocityX *= Const.FRICTION;
+        this.velocityY *= Const.FRICTION;
+
+        //Update the actual positon
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+        
         //Don't fall through the platform.
         if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
             this.isJumping = false;
             this.y = Const.GROUND_HEIGHT_FROM_TOP;
             this.velocityY = 0;
-        }
-
-        //Check if you can jump
-        if (this.isUpKeyPressed && this.isJumping == false){
-            this.velocityY -= Const.JUMP_HEIGHT;
-            this.isJumping = true;
         }
 
         //Level Setting: SolidWalls
@@ -59,14 +70,6 @@ export class Player {
             this.solidRoof();
         } 
         
-        //Add physics.
-        this.velocityY += Const.GRAVITATION;
-        this.velocityX *= Const.FRICTION;
-        this.velocityY *= Const.FRICTION;
-
-        //Update the actual positon
-        this.x += this.velocityX;
-        this.y += this.velocityY;
 
     }
 
@@ -89,7 +92,7 @@ export class Player {
     }
 
     solidWalls(){
-        //Player can run to the right and pops out on the left an vice versa.
+        //Player can not pass the walls on each side.
         if (this.x < 0){
             this.x = 0;
         }
@@ -98,6 +101,17 @@ export class Player {
         }
     }
 
+    checkDirection(){
+        if(this.isLeftKeyPressed){
+            return 0;
+        }
+        if(this.isLeftKeyPressed == false && this.isRightKeyPressed == false){
+            return 1;
+        }
+        if(this.isRightKeyPressed){
+            return 2;
+        }
+    }
 
     //Getter Methods
     getX(){
@@ -120,11 +134,11 @@ export class Player {
         return this.isLeftKeyPressed;
     }
 
-    getDownUpKeyPressed(){
+    getIsDownKeyPressed(){
         return this.isDownKeyPressed;
     }
 
-    getRightUpKeyPressed(){
+    getIsRightKeyPressed(){
         return this.isRightKeyPressed;
     }
 

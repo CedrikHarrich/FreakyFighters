@@ -21,7 +21,7 @@ export class Client {
         this.canvas.width = Const.CANVAS_WIDTH;
         
         // Image Sources
-        this.character.src = `./${Const.ASSET_FOLDER}character.png`;
+        this.character.src = `./${Const.ASSET_FOLDER}minions2.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
 
         
@@ -63,9 +63,21 @@ export class Client {
     drawCharacter(){
       for (var i = 0; i < this.gameState.length; i++){
           console.log(this.gameState[i].x);
-          this.context.drawImage(this.character, this.gameState[i].x, this.gameState[i].y, Const.PLAYER_HEIGHT, Const.PLAYER_WIDTH);
+
+          this.context.drawImage(
+            this.character, 
+            this.character.width*this.gameState[i].characterNumber/3, //x coordinate to start clipping
+            0,                        //y coordinate to start clipping
+            this.character.width/3,   //clipping width
+            this.character.height,    //clipping height
+            this.gameState[i].x, 
+            this.gameState[i].y, 
+            Const.PLAYER_WIDTH,       //resize to needed width
+            Const.PLAYER_HEIGHT,      //resize to needed height
+            );
       }
     }
+
 
     drawBackground(){
       this.context.drawImage(this.background, 0 ,0 , Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);

@@ -125,6 +125,7 @@ export class Server{
               gameState.push({
                   x: player.getX(),
                   y: player.getY(),
+                  characterNumber: player.checkDirection(),
                   id: player.getId()
               });
 
