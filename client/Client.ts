@@ -44,6 +44,13 @@ export class Client {
           this.draw();
       });
 
+      this.socket.on('wait', (data:any) =>{
+        console.log("Hello? Can i join now?");
+        setTimeout(this.socket.emit('reconnection', () =>{
+
+        }), 2000);
+      })
+
       //Event: Signal the server that a key has been pressed.
       window.addEventListener("keydown", (event : any) =>{
         console.log(event.key)

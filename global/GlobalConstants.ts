@@ -1,7 +1,7 @@
 export class GlobalConstants{
   //Network Constants
   static readonly PORT : number = 3000;
-  static readonly MAX_CLIENTS : number = 4;
+  static readonly MAX_CLIENTS : number = 2;
   static readonly SERVER_URL : string = `http://localhost:${GlobalConstants.PORT}`;
   static readonly ASSET_FOLDER : string = "assets/"
 

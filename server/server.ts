@@ -47,7 +47,11 @@ export class Server{
 
     registerEvents(){
       //EventHandler: Connection of Client
-      this.io.sockets.on('connection', (socket:any)=>{
+      this.io.sockets.on('connection' || 'reconnection', (socket:any)=>{
+
+          if(this.playerList.length < Const.MAX_CLIENTS){
+
+          
           //Ticketsystem: If someone connects make a new Ticket. 
           if (this.idNumberStack.length == 0){
               this.idNumberStack.push(this.idCounter);
@@ -55,6 +59,7 @@ export class Server{
           }
           //If a client connects. The socket will be registered and
           //the client gets a counting ID. ID = Position in Array.
+          
           this.clientList.push(socket);
           socket.id = this.idNumberStack.pop();
 
@@ -106,6 +111,13 @@ export class Server{
               console.log(`The player with the ID ${socket.id} has disconnected.`);
               console.log(`There are ${this.playerList.length} Players left.`);
           });
+        } else {
+            console.log("WAIT!");
+
+            socket.emit('wait', () =>{
+
+            });
+        }
 
       });
     }
