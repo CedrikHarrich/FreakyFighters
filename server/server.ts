@@ -57,7 +57,6 @@ export class Server{
           //the client gets a counting ID. ID = Position in Array.
           this.clientList.push(socket);
           socket.id = this.idNumberStack.pop();
-          //socket.id = this.clientList.length;
 
           //A new player is created with the same ID as the socket.
           var player = new Player(socket.id);
