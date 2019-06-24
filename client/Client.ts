@@ -26,7 +26,7 @@ export class Client {
         // Image Sources
         this.character.src = `./${Const.ASSET_FOLDER}minions2.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
-        this.block.src = `./${Const.ASSET_FOLDER}block.png`;
+        this.block.src = `./${Const.ASSET_FOLDER}clouds.png`;
 
         //Load the grid
         this.grid = Const.TEST_GRID_27x16; 
@@ -88,11 +88,42 @@ export class Client {
 
     drawGrid(){
       if (Const.WITH_GRID){
-        for (let i : number = 0; i < Const.GRID_HEIGHT; i++){
+        let preBlock: number; 
+        let clippingPosition: number;
+
+        //scan only in possible block positions
+        for (let i : number = Const.MAX_BLOCK_POSITION_Y; i < Const.MIN_BLOCK_POSITION_Y; i++){
+          preBlock = 0;
           for (let j : number = 0; j < Const.GRID_WIDTH; j++){
-               if (this.grid[i][j] === 1){
-                  this.context.drawImage(this.block, Const.BLOCK_HEIGHT * j, Const.BLOCK_WIDTH * i, Const.BLOCK_HEIGHT, Const.BLOCK_WIDTH);
-               }
+            //Front: preblock = 0 and now = 1
+            if (preBlock === 0 && this.grid[i][j] === 1){
+              clippingPosition = 0;
+            }
+            //Middle: preblock = 1, now = 1 and next = 1
+            if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] === 1){
+              clippingPosition = 1;
+            }
+            //Back: preblock = 1, now = 0 and next != 1
+            if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] !==1){
+              clippingPosition = 2;
+            }
+
+            //draw block elements relative to part position from image
+            if(this.grid[i][j] === 1){
+              this.context.drawImage(
+                this.block,
+                this.block.width*clippingPosition/3, //position to start clipping 
+                0,
+                this.block.width/3,
+                this.block.height,
+                Const.BLOCK_WIDTH * j,
+                Const.BLOCK_HEIGHT * i, 
+                Const.BLOCK_WIDTH,
+                Const.BLOCK_HEIGHT);
+            }
+            //previous Block is now current Block
+            preBlock = this.grid[i][j];
+
           }
         }
       }    

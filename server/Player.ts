@@ -69,7 +69,7 @@ export class Player {
         if (Const.SOLID_ROOF){
             this.solidRoof();
         } 
-        
+    
 
     }
 
