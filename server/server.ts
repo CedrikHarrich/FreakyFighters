@@ -16,7 +16,6 @@ export class Server{
     private idCounter : number = 1;
     private idNumberStack :any = [];
 
-
     constructor(){
         //Initialize Variables used for the connection
         this.express = require('express');
@@ -49,6 +48,7 @@ export class Server{
     registerEvents(){
       //EventHandler: Connection of Client
       this.io.sockets.on('connection', (socket:any)=>{
+          //Ticketsystem: If someone connects make a new Ticket. 
           if (this.idNumberStack.length == 0){
               this.idNumberStack.push(this.idCounter);
               this.idCounter ++;
@@ -90,7 +90,7 @@ export class Server{
 
           //EventHandler: Disconnection of Client
           socket.on('disconnect', ()=>{
-              //When a player disconnects we need to delete him from clients and players.
+              //Ticketsystem: When a player disconnects we need to delete him from clients and players.
               //And we need to push his Id to the ID-Stack that the next player can take it.
               for (let i = 0; i < this.clientList.length; i++){
                   if(this.clientList[i].id == socket.id){
