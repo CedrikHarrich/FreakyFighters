@@ -7,7 +7,9 @@ export class Client {
     private context:any;
     private character:any = new Image();
     private background:any = new Image();
+    private block : any = new Image();
     private gameState:any;
+    private grid : any = [];
 
     constructor(){
         console.log("A Client has started.");
@@ -17,16 +19,21 @@ export class Client {
         this.context = this.canvas.getContext("2d");
 
         //Set canvas size in html
+        
         this.canvas.height = Const.CANVAS_HEIGHT;
         this.canvas.width = Const.CANVAS_WIDTH;
         
         // Image Sources
         this.character.src = `./${Const.ASSET_FOLDER}minions2.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
+        this.block.src = `./${Const.ASSET_FOLDER}block.png`;
 
+        //Load the grid
+        this.grid = Const.TEST_GRID_27x16; 
         
         //Draw the initial background and start to register Events.
         this.drawBackground();
+        this.drawGrid();
         this.registerEvents();
     }
 
@@ -57,6 +64,7 @@ export class Client {
 
     draw(){
       this.drawBackground();
+      this.drawGrid();
       this.drawCharacter();
     }
 
@@ -78,6 +86,18 @@ export class Client {
       }
     }
 
+    drawGrid(){
+      if (Const.WITH_GRID){
+        for (let i : number = 0; i < Const.GRID_HEIGHT; i++){
+          for (let j : number = 0; j < Const.GRID_WIDTH; j++){
+               if (this.grid[i][j] === 1){
+                  this.context.drawImage(this.block, Const.BLOCK_HEIGHT * j, Const.BLOCK_WIDTH * i, Const.BLOCK_HEIGHT, Const.BLOCK_WIDTH);
+               }
+          }
+        }
+      }    
+    }
+    
 
     drawBackground(){
       this.context.drawImage(this.background, 0 ,0 , Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
