@@ -54,7 +54,7 @@ export class Server{
             console.log(`A Player from ${socket.id} is trying to reconnect...`);
             this.connectionHandler(socket);
         });
-
+        //Decide wheter to letting a player connect or not. Handle the outcome.
         this.connectionHandler(socket);
       });
     }

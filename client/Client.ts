@@ -44,10 +44,11 @@ export class Client {
           this.draw();
       });
 
+      //Event: Wait until the server has an open spot again.
       this.socket.on('wait', (time : number) =>{
         console.log("The server is full at the moment. Please wait for a bit.")
         this.delayedReconnection(time);
-      })
+      });
 
       //Event: Signal the server that a key has been pressed.
       window.addEventListener("keydown", (event : any) =>{
@@ -71,15 +72,6 @@ export class Client {
       this.drawBackground();
       this.drawGrid();
       this.drawCharacter();
-    }
-
-    Sleep(milliseconds : number) {
-      return new Promise(resolve => setTimeout(resolve, milliseconds));
-    }
-
-    async delayedReconnection(time : number) {
-      await this.Sleep(time);
-      this.socket.emit('reconnection');
     }
 
     drawCharacter(){
@@ -142,10 +134,18 @@ export class Client {
         }
       }    
     }
-    
 
     drawBackground(){
       this.context.drawImage(this.background, 0 ,0 , Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
+    }
+
+    Sleep(milliseconds : number) {
+      return new Promise(resolve => setTimeout(resolve, milliseconds));
+    }
+
+    async delayedReconnection(time : number) {
+      await this.Sleep(time);
+      this.socket.emit('reconnection');
     }
 
 }
