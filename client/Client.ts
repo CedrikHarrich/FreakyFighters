@@ -45,10 +45,9 @@ export class Client {
       });
 
       this.socket.on('wait', (data:any) =>{
+        this.test();
         console.log("Hello? Can i join now?");
-        setTimeout(this.socket.emit('reconnection', () =>{
-
-        }), 2000);
+       
       })
 
       //Event: Signal the server that a key has been pressed.
@@ -74,6 +73,17 @@ export class Client {
       this.drawGrid();
       this.drawCharacter();
     }
+
+     Sleep(milliseconds) {
+      return new Promise(resolve => setTimeout(resolve, milliseconds));
+   }
+
+   async test() {
+    console.log("Vor der sleep-Funktion");
+    await this.Sleep(3000); // Pausiert die Funktion für 3 Sekunden
+    this.socket.emit('reconnection');
+    console.log("Nach der Sleep Funktion");
+ }
 
     drawCharacter(){
       for (var i = 0; i < this.gameState.length; i++){
