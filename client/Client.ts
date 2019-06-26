@@ -44,10 +44,9 @@ export class Client {
           this.draw();
       });
 
-      this.socket.on('wait', (data:any) =>{
-        this.test();
-        console.log("Hello? Can i join now?");
-       
+      this.socket.on('wait', (time : number) =>{
+        console.log("The server is full at the moment. Please wait for a bit.")
+        this.delayedReconnection(time);
       })
 
       //Event: Signal the server that a key has been pressed.
@@ -74,16 +73,14 @@ export class Client {
       this.drawCharacter();
     }
 
-     Sleep(milliseconds) {
+    Sleep(milliseconds : number) {
       return new Promise(resolve => setTimeout(resolve, milliseconds));
-   }
+    }
 
-   async test() {
-    console.log("Vor der sleep-Funktion");
-    await this.Sleep(3000); // Pausiert die Funktion für 3 Sekunden
-    this.socket.emit('reconnection');
-    console.log("Nach der Sleep Funktion");
- }
+    async delayedReconnection(time : number) {
+      await this.Sleep(time);
+      this.socket.emit('reconnection');
+    }
 
     drawCharacter(){
       for (var i = 0; i < this.gameState.length; i++){
