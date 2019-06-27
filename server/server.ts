@@ -159,25 +159,33 @@ export class Server{
     }
 
     handleCollision(player : Player, grid: any){
+        
         for (let i = 0; i < grid.length; i++){
             for (let j = 0; j < grid[i].length; j++){
                 if(grid[i][j] === 1){
-                    if(player.getY() < Const.BLOCK_HEIGHT * (i+1) && player.getY() > Const.BLOCK_HEIGHT * i && player.getX() + Const.PLAYER_WIDTH > Const.BLOCK_WIDTH * j && player.getX() < Const.BLOCK_WIDTH * (j+1)){
-                        console.log(player.getY());
-                        console.log(player.getX());
-                        player.setY(Const.BLOCK_HEIGHT * (i+1));
-                        player.setVelocityY(0);
-                        //player.setY(Const.BLOCK_HEIGHT * (i + 1));
-                    } 
-                     else if(player.getY() + Const.PLAYER_HEIGHT > Const.BLOCK_HEIGHT * i && player.getY() + Const.PLAYER_HEIGHT < Const.BLOCK_HEIGHT * (i+1) && player.getX() + Const.PLAYER_WIDTH > Const.BLOCK_WIDTH * j && player.getX() < Const.BLOCK_WIDTH * (j+1)){
-                        player.setY(Const.BLOCK_HEIGHT * i - Const.PLAYER_HEIGHT);
-                        console.log("PlayerRight: +" + (player.getX() + Const.PLAYER_WIDTH) );
-                        console.log("BoxLeft: +" + (Const.BLOCK_WIDTH * j));
-                        console.log("PlayerLeft: +" +player.getX() );
-                        console.log("BoxRight: +" + (Const.BLOCK_WIDTH * (j+1)));
-                        player.setVelocityY(0);
-                        player.setIsJumping(false);
-                    }
+                    var blockPositionX = Const.BLOCK_WIDTH * j;
+                    var blockPositionY = Const.BLOCK_HEIGHT * i;
+                    var overlapping = 20;
+
+                    //Check if Players have collsions with blocks.
+                    //Overlapping: Since the arms of our creature are sticking out a lot.
+                    //We wannt to let oure creature fall through the edge of the block.
+                    if (player.getX() + Const.PLAYER_WIDTH > blockPositionX + overlapping &&
+                        player.getX() + overlapping < Const.BLOCK_WIDTH + blockPositionX &&
+                        player.getY() + Const.PLAYER_HEIGHT > blockPositionY &&
+                        player.getY() < Const.BLOCK_HEIGHT + blockPositionY) {
+                            //Hanlde Collisions accordingly
+                            if (player.getVelocityY() >= 0){
+                                player.setVelocityY(0);
+                                player.setY(blockPositionY - Const.PLAYER_HEIGHT);
+                                player.setIsJumping(false);
+                                
+                            }
+                            if (player.getVelocityY() < 0){
+                                player.setY(blockPositionY + Const.BLOCK_HEIGHT);
+                                player.setVelocityY(0);
+                            }
+                        }
                 }
             }
         }

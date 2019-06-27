@@ -142,6 +142,14 @@ export class Player {
         return this.isRightKeyPressed;
     }
 
+    getVelocityX(){
+        return this.velocityX;
+    }
+
+    getVelocityY(){
+        return this.velocityY;
+    }
+
     //Setter Methods
     setIsUpKeyPressed(isUpKeyPressed : boolean){
         this.isUpKeyPressed = isUpKeyPressed;
@@ -167,8 +175,16 @@ export class Player {
         this.y = y;
     }
 
+    setX(x : number){
+        this.x = x;
+    }
+
     setVelocityY(velocityY : number){
         this.velocityY = velocityY;
+    }
+
+    setVelocityX(velocityX : number){
+        this.velocityX = velocityX;
     }
 
 }
