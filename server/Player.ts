@@ -163,5 +163,12 @@ export class Player {
         this.isJumping = isJumping;
     }
 
+    setY(y : number){
+        this.y = y;
+    }
+
+    setVelocityY(velocityY : number){
+        this.velocityY = velocityY;
+    }
 
 }

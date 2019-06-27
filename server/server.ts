@@ -15,6 +15,7 @@ export class Server{
     private playerList : Array<Player> = [];
     private idCounter : number = 1;
     private idNumberStack :any = [];
+    private grid = Const.TEST_GRID_27x16;
 
     constructor(){
         //Initialize Variables used for the connection
@@ -139,6 +140,7 @@ export class Server{
           for(var i in this.playerList){
               var player = this.playerList[i];
               player.updatePosition();
+              this.handleCollision(player, this.grid);
               gameState.push({
                   x: player.getX(),
                   y: player.getY(),
@@ -154,5 +156,23 @@ export class Server{
               socket.emit('update', gameState);
           }
       }, 1000/Const.FRAMES_PER_SECOND);
+    }
+
+    handleCollision(player : Player, grid: any){
+        for (let i = 0; i < grid.length; i++){
+            for (let j = 0; j < grid[i].length; j++){
+                if(grid[i][j] === 1){
+                    if(player.getY() + Const.PLAYER_HEIGHT > Const.BLOCK_HEIGHT * i && player.getY() < Const.BLOCK_HEIGHT * (i+1) && player.getX() + Const.PLAYER_WIDTH > Const.BLOCK_WIDTH * j && player.getX() < Const.BLOCK_WIDTH * (j+1)){
+                        player.setIsJumping(false);
+                        player.setY(Const.BLOCK_HEIGHT * (i) -Const.PLAYER_HEIGHT);
+                        console.log("PlayerRight: +" + (player.getX() + Const.PLAYER_WIDTH) );
+                        console.log("BoxLeft: +" + (Const.BLOCK_WIDTH * j));
+                        console.log("PlayerLeft: +" +player.getX() );
+                        console.log("BoxRight: +" + (Const.BLOCK_WIDTH * (j+1)));
+                        player.setVelocityY(0);
+                    }
+                }
+            }
+        }
     }
 }
