@@ -162,14 +162,21 @@ export class Server{
         for (let i = 0; i < grid.length; i++){
             for (let j = 0; j < grid[i].length; j++){
                 if(grid[i][j] === 1){
-                    if(player.getY() + Const.PLAYER_HEIGHT > Const.BLOCK_HEIGHT * i && player.getY() < Const.BLOCK_HEIGHT * (i+1) && player.getX() + Const.PLAYER_WIDTH > Const.BLOCK_WIDTH * j && player.getX() < Const.BLOCK_WIDTH * (j+1)){
-                        player.setIsJumping(false);
-                        player.setY(Const.BLOCK_HEIGHT * (i) -Const.PLAYER_HEIGHT);
+                    if(player.getY() < Const.BLOCK_HEIGHT * (i+1) && player.getY() > Const.BLOCK_HEIGHT * i && player.getX() + Const.PLAYER_WIDTH > Const.BLOCK_WIDTH * j && player.getX() < Const.BLOCK_WIDTH * (j+1)){
+                        console.log(player.getY());
+                        console.log(player.getX());
+                        player.setY(Const.BLOCK_HEIGHT * (i+1));
+                        player.setVelocityY(0);
+                        //player.setY(Const.BLOCK_HEIGHT * (i + 1));
+                    } 
+                     else if(player.getY() + Const.PLAYER_HEIGHT > Const.BLOCK_HEIGHT * i && player.getY() + Const.PLAYER_HEIGHT < Const.BLOCK_HEIGHT * (i+1) && player.getX() + Const.PLAYER_WIDTH > Const.BLOCK_WIDTH * j && player.getX() < Const.BLOCK_WIDTH * (j+1)){
+                        player.setY(Const.BLOCK_HEIGHT * i - Const.PLAYER_HEIGHT);
                         console.log("PlayerRight: +" + (player.getX() + Const.PLAYER_WIDTH) );
                         console.log("BoxLeft: +" + (Const.BLOCK_WIDTH * j));
                         console.log("PlayerLeft: +" +player.getX() );
                         console.log("BoxRight: +" + (Const.BLOCK_WIDTH * (j+1)));
                         player.setVelocityY(0);
+                        player.setIsJumping(false);
                     }
                 }
             }
