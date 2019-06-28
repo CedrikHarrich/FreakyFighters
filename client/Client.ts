@@ -139,12 +139,12 @@ export class Client {
       this.context.drawImage(this.background, 0 ,0 , Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
     }
 
-    Sleep(milliseconds : number) {
+    sleep(milliseconds : number) {
       return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
 
     async delayedReconnection(time : number) {
-      await this.Sleep(time);
+      await this.sleep(time);
       this.socket.emit('reconnection');
     }
 
