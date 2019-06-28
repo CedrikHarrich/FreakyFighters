@@ -44,6 +44,16 @@ export class GlobalConstants{
   static readonly SOLID_ROOF = true;
   static readonly WITH_GRID = true;
   static readonly UNLIMITED_PLAYERS = false;
+  static readonly FALL_THROUGH_BLOCKS = true;
+
+  //The character is falling off the edge oddly if the edge is
+  //solid on its whole width.
+  static readonly PERMEABLE_EDGES = 20; // >= 0 but < than BLOCK_WIDTH
+
+  //When a character has to be set back on the top of a block, one
+  //needs to calibrate how deep they collide until this happens.
+  static readonly SETBACK = 30; // < BLOCK_HEIGHT
+
 
   //grid and block rules
   static readonly MIN_BLOCK_POSITION_Y : number = GlobalConstants.GROUND_HEIGHT_FROM_TOP/GlobalConstants.BLOCK_HEIGHT; //MinPosition: 10
@@ -69,7 +79,8 @@ export class GlobalConstants{
     [1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1]  //16
   ];
 
-  //grid for 1080x640 px canvas
+  //Grid for 1080x640 px canvas
+  //1: Blocks; 0: No Blocks
   static readonly TEST_GRID_27x16 = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //1
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2

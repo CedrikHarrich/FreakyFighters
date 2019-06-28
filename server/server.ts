@@ -159,34 +159,40 @@ export class Server{
     }
 
     handleCollision(player : Player, grid: any){
-        
+        //Check the grid for blocks.
         for (let i = 0; i < grid.length; i++){
             for (let j = 0; j < grid[i].length; j++){
                 if(grid[i][j] === 1){
+                    //Calculate the Coordinates of each Block (Left Upper Corner)
                     var blockPositionX = Const.BLOCK_WIDTH * j;
                     var blockPositionY = Const.BLOCK_HEIGHT * i;
-                    //
-                    var overlapping = 20;
-                    var setback = 30; 
-
+                  
                     //Check if Players have collsions with blocks.
-                    //Overlapping: Since the arms of our creature are sticking out a lot.
-                    //We wannt to let oure creature fall through the edge of the block.
-                    if (player.getX() + Const.PLAYER_WIDTH > blockPositionX + overlapping &&
-                        player.getX() + overlapping < Const.BLOCK_WIDTH + blockPositionX &&
-                        player.getY() + Const.PLAYER_HEIGHT > blockPositionY &&
-                        player.getY() < Const.BLOCK_HEIGHT + blockPositionY) {
-                            //Handle Collisions accordingly
+                    if (this.haveCollision(player, blockPositionX, blockPositionY)) {
 
-                            if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-setback < blockPositionY && player.getIsDownKeyPressed() == false){
-                                player.setVelocityY(0);
-                                player.setY(blockPositionY - Const.PLAYER_HEIGHT);
-                                player.setIsJumping(false);
-                                
+                            //Handle Collisions accordingly
+                            if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-Const.SETBACK < blockPositionY){
+                                if (player.getIsDownKeyPressed() == false && Const.FALL_THROUGH_BLOCKS){
+                                    player.setVelocityY(0);
+                                    player.setY(blockPositionY - Const.PLAYER_HEIGHT);
+                                    player.setIsJumping(false);
+                                }
                             }
                         }
                 }
             }
+        }
+    }
+
+    haveCollision(player : Player, blockPositionX : number, blockPositionY :number) : boolean {
+        if (player.getX() + Const.PLAYER_WIDTH > blockPositionX + Const.PERMEABLE_EDGES &&
+            player.getX() + Const.PERMEABLE_EDGES < Const.BLOCK_WIDTH + blockPositionX &&
+            player.getY() + Const.PLAYER_HEIGHT > blockPositionY &&
+            player.getY() < Const.BLOCK_HEIGHT + blockPositionY)
+        {
+            return true;
+        } else {
+            return false;
         }
     }
 }
