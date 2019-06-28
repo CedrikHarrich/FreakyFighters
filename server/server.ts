@@ -32,7 +32,7 @@ export class Server{
         );
 
         //Server starts listening.
-        this.http.listen(3000);
+        this.http.listen(Const.PORT);
 
         //Enable server to listen to specific events.
         this.io = require('socket.io')(this.http);
@@ -41,72 +41,50 @@ export class Server{
 
         //The server starts listening to events and sends packages as soon
         //as someone connects.
-        this.registerEvents();
+        this.registerConnection();
         this.init();
     }
 
-    registerEvents(){
+    registerConnection() {
       //EventHandler: Connection of Client
-      this.io.sockets.on('connection', (socket:any)=>{
-          //Ticketsystem: If someone connects make a new Ticket. 
-          if (this.idNumberStack.length == 0){
-              this.idNumberStack.push(this.idCounter);
-              this.idCounter ++;
-          }
-          //If a client connects. The socket will be registered and
-          //the client gets a counting ID. ID = Position in Array.
-          this.clientList.push(socket);
-          socket.id = this.idNumberStack.pop();
+      this.io.sockets.on('connection', (socket: any)=>{
 
-          //A new player is created with the same ID as the socket.
-          var player = new Player(socket.id);
-          this.playerList.push(player);
+        //Start with listening to reconnections.
+        socket.on('reconnection', () => {
+            console.log(`A Player from ${socket.id} is trying to reconnect...`);
+            this.connectionHandler(socket);
+        });
 
-          console.log(`The player with ID ${socket.id} has connected.`);
+        //Decide whether to let a player connect or not. Handle the outcome.
+        this.connectionHandler(socket);
+      });
 
-          //EventHandler: When a key is pressed do ...
-          socket.on('keyPressed', (data:any) =>{
-              console.log(`${data.inputId} has been pressed by player ${socket.id}.`);
+    }
 
-              switch (data.inputId){
-                  case "ArrowUp":
-                      player.setIsUpKeyPressed(data.state);
-                      break;
-                  case "ArrowLeft":
-                      player.setIsLeftKeyPressed(data.state);
-                      break;
-                  case "ArrowDown":
-                      player.setIsDownKeyPressed(data.state);
-                      break;
-                  case "ArrowRight":
-                      player.setIsRightKeyPressed(data.state);
-                      break;
+    connectionHandler(socket: any){
+      if (this.playerList.length < Const.MAX_CLIENTS || Const.UNLIMITED_PLAYERS){
+          this.addPlayerClient(socket);
+          this.registerPlayerEvents(socket);
+      } else {
+          //Send the Client the event that he has to wait.
+          socket.emit('wait', Const.WAITING_TIME);
+          console.log(`Putting Player on with socket ID: "${socket.id}" into the queue.`);
+        }
+    }
 
-                  default:
-                      return;
-              }
-          });
+    registerPlayerEvents(socket: any){
+      //EventHandler: When a key is pressed do ...
+      socket.on('keyPressed', (data: any) =>{
+          this.keyPressedHandler(data, socket.id);
+          console.log(`${data.inputId} has been pressed by player ${socket.id}.`);
+      });
 
-          //EventHandler: Disconnection of Client
-          socket.on('disconnect', ()=>{
-              //Ticketsystem: When a player disconnects we need to delete him from clients and players.
-              //And we need to push his Id to the ID-Stack that the next player can take it.
-              for (let i = 0; i < this.clientList.length; i++){
-                  if(this.clientList[i].id == socket.id){
-                      this.clientList.splice(i, 1);
-                  }
-              }
-              for (let i = 0; i < this.playerList.length; i++){
-                  if(this.playerList[i].getId() == socket.id){
-                      this.playerList.splice(i, 1);
-                      this.idNumberStack.push(socket.id);
-                  }
-              }
+      //EventHandler: Disconnection of Client
+      socket.on('disconnect', ()=>{
+          this.removePlayerClient(socket.id);
 
-              console.log(`The player with the ID ${socket.id} has disconnected.`);
-              console.log(`There are ${this.playerList.length} Players left.`);
-          });
-
+          console.log(`The player with the ID ${socket.id} has disconnected.`);
+          console.log(`There are ${this.playerList.length} Players left.`);
       });
     }
 
@@ -137,4 +115,67 @@ export class Server{
           }
       }, 1000/Const.FRAMES_PER_SECOND);
     }
+
+    addPlayerClient(socket: any){
+        //Ticketsystem: If someone connects make a new Ticket.
+        if (this.idNumberStack.length == 0){
+            this.idNumberStack.push(this.idCounter);
+            this.idCounter ++;
+        }
+        //If a client connects. The socket will be registered and
+        //the client gets a counting ID. ID = Position in Array.
+
+        this.clientList.push(socket);
+        socket.id = this.idNumberStack.pop();
+
+        //A new player is created with the same ID as the socket.
+        var player = new Player(socket.id);
+        this.playerList.push(player);
+
+        console.log(`The player with ID ${socket.id} has connected.`);
+    }
+
+    removePlayerClient(socketId: any){
+      //Ticketsystem: When a player disconnects we need to delete him from clients and players.
+      //And we need to push his Id to the ID-Stack that the next player can take it.
+      let playerId = this.getPlayerClientId(this.playerList, socketId),
+          clientId = this.getPlayerClientId(this.clientList, socketId);
+
+      this.clientList.splice(clientId, 1);
+      this.playerList.splice(playerId, 1);
+      this.idNumberStack.push(socketId);
+    }
+
+    getPlayerClientId(arr: Array<any>, socketId:any){
+      // returns the index a player or client have, given their socketId
+      for (let i = 0; i < arr.length; i++){
+          if(arr[i].id == socketId){
+              return i;
+          }
+      }
+    }
+
+    keyPressedHandler({inputId: inputId, state: state}:any, socketId:any){
+      let playerId = this.getPlayerClientId(this.playerList, socketId),
+          player = this.playerList[playerId];
+
+      switch (inputId){
+          case "ArrowUp":
+              player.setIsUpKeyPressed(state);
+              break;
+          case "ArrowLeft":
+              player.setIsLeftKeyPressed(state);
+              break;
+          case "ArrowDown":
+              player.setIsDownKeyPressed(state);
+              break;
+          case "ArrowRight":
+              player.setIsRightKeyPressed(state);
+              break;
+
+          default:
+              return;
+      }
+    }
+
 }

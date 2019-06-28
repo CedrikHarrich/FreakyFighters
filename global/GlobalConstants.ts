@@ -1,9 +1,10 @@
 export class GlobalConstants{
   //Network Constants
   static readonly PORT : number = 3000;
-  static readonly MAX_CLIENTS : number = 4;
+  static readonly MAX_CLIENTS : number = 2;
   static readonly SERVER_URL : string = `http://localhost:${GlobalConstants.PORT}`;
   static readonly ASSET_FOLDER : string = "assets/"
+  static readonly WAITING_TIME : number = 3000;
 
   //Grid Constants
   static readonly GRID_HEIGHT : number = 16; //Blocks
@@ -42,6 +43,7 @@ export class GlobalConstants{
   static readonly SOLID_WALLS = true;
   static readonly SOLID_ROOF = true;
   static readonly WITH_GRID = true;
+  static readonly UNLIMITED_PLAYERS = false;
 
   //grid and block rules
   static readonly MIN_BLOCK_POSITION_Y : number = GlobalConstants.GROUND_HEIGHT_FROM_TOP/GlobalConstants.BLOCK_HEIGHT; //MinPosition: 10

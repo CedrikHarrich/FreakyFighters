@@ -47,7 +47,7 @@ export class Player {
         //Update the actual positon
         this.x += this.velocityX;
         this.y += this.velocityY;
-        
+
         //Don't fall through the platform.
         if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
             this.isJumping = false;
@@ -59,7 +59,7 @@ export class Player {
         if (Const.SOLID_WALLS){
             //When Canvas stops in x axis, player stops too
             this.solidWalls();
-            
+
         } else {
             //Player can run to the right and pops out on the left an vice versa.
             this.permeableWalls();
@@ -68,8 +68,8 @@ export class Player {
         //Level Setting: SolidRoof
         if (Const.SOLID_ROOF){
             this.solidRoof();
-        } 
-    
+        }
+
 
     }
 
@@ -101,6 +101,7 @@ export class Player {
         }
     }
 
+    // determines which image sprite will be rendered
     checkDirection(){
         if(this.isLeftKeyPressed){
             return 0;
