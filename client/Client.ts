@@ -19,18 +19,18 @@ export class Client {
         this.context = this.canvas.getContext("2d");
 
         //Set canvas size in html
-        
+
         this.canvas.height = Const.CANVAS_HEIGHT;
         this.canvas.width = Const.CANVAS_WIDTH;
-        
+
         // Image Sources
         this.character.src = `./${Const.ASSET_FOLDER}minions2.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
         this.block.src = `./${Const.ASSET_FOLDER}clouds.png`;
 
         //Load the grid
-        this.grid = Const.TEST_GRID_27x16; 
-        
+        this.grid = Const.TEST_GRID_27x16;
+
         //Draw the initial background and start to register Events.
         this.drawBackground();
         this.drawGrid();
@@ -64,7 +64,7 @@ export class Client {
 
     keyPressedHandler(inputId:string, state:boolean) {
       if (Object.values(Keys).includes(inputId)){
-        this.socket.emit('keyPressed', {inputId: inputId, state : state});
+        this.socket.emit('keyPressed', {inputId: inputId, state: state});
       }
     }
 
@@ -79,13 +79,13 @@ export class Client {
           console.log(this.gameState[i].x);
 
           this.context.drawImage(
-            this.character, 
+            this.character,
             this.character.width*this.gameState[i].characterNumber/3, //x coordinate to start clipping
             0,                        //y coordinate to start clipping
             this.character.width/3,   //clipping width
             this.character.height,    //clipping height
-            this.gameState[i].x, 
-            this.gameState[i].y, 
+            this.gameState[i].x,
+            this.gameState[i].y,
             Const.PLAYER_WIDTH,       //resize to needed width
             Const.PLAYER_HEIGHT,      //resize to needed height
             );
@@ -94,7 +94,7 @@ export class Client {
 
     drawGrid(){
       if (Const.WITH_GRID){
-        let preBlock: number; 
+        let preBlock: number;
         let clippingPosition: number;
 
         //scan only in possible block positions
@@ -118,12 +118,12 @@ export class Client {
             if(this.grid[i][j] === 1){
               this.context.drawImage(
                 this.block,
-                this.block.width*clippingPosition/3, //position to start clipping 
+                this.block.width*clippingPosition/3, //position to start clipping
                 0,
                 this.block.width/3,
                 this.block.height,
                 Const.BLOCK_WIDTH * j,
-                Const.BLOCK_HEIGHT * i, 
+                Const.BLOCK_HEIGHT * i,
                 Const.BLOCK_WIDTH,
                 Const.BLOCK_HEIGHT);
             }
@@ -132,7 +132,7 @@ export class Client {
 
           }
         }
-      }    
+      }
     }
 
     drawBackground(){
