@@ -165,7 +165,9 @@ export class Server{
                 if(grid[i][j] === 1){
                     var blockPositionX = Const.BLOCK_WIDTH * j;
                     var blockPositionY = Const.BLOCK_HEIGHT * i;
+                    //
                     var overlapping = 20;
+                    var setback = 30; 
 
                     //Check if Players have collsions with blocks.
                     //Overlapping: Since the arms of our creature are sticking out a lot.
@@ -174,16 +176,13 @@ export class Server{
                         player.getX() + overlapping < Const.BLOCK_WIDTH + blockPositionX &&
                         player.getY() + Const.PLAYER_HEIGHT > blockPositionY &&
                         player.getY() < Const.BLOCK_HEIGHT + blockPositionY) {
-                            //Hanlde Collisions accordingly
-                            if (player.getVelocityY() >= 0){
+                            //Handle Collisions accordingly
+
+                            if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-setback < blockPositionY && player.getIsDownKeyPressed() == false){
                                 player.setVelocityY(0);
                                 player.setY(blockPositionY - Const.PLAYER_HEIGHT);
                                 player.setIsJumping(false);
                                 
-                            }
-                            if (player.getVelocityY() < 0){
-                                player.setY(blockPositionY + Const.BLOCK_HEIGHT);
-                                player.setVelocityY(0);
                             }
                         }
                 }
