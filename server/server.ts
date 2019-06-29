@@ -57,7 +57,6 @@ export class Server{
           //the client gets a counting ID. ID = Position in Array.
           this.clientList.push(socket);
           socket.id = this.idNumberStack.pop();
-          //socket.id = this.clientList.length;
 
           //A new player is created with the same ID as the socket.
           var player = new Player(socket.id);
@@ -65,27 +64,39 @@ export class Server{
 
           console.log(`The player with ID ${socket.id} has connected.`);
 
+          //Eventhandler for Mouse
+
           //EventHandler: When a key is pressed do ...
           socket.on('keyPressed', (data:any) =>{
               console.log(`${data.inputId} has been pressed by player ${socket.id}.`);
 
               switch (data.inputId){
-                  case "ArrowUp":
-                      player.setIsUpKeyPressed(data.state);
-                      break;
-                  case "ArrowLeft":
-                      player.setIsLeftKeyPressed(data.state);
-                      break;
-                  case "ArrowDown":
-                      player.setIsDownKeyPressed(data.state);
-                      break;
-                  case "ArrowRight":
-                      player.setIsRightKeyPressed(data.state);
-                      break;
-
-                  default:
+                case "ArrowUp":
+                    player.setIsUpKeyPressed(data.state);
+                    break;
+                case "ArrowLeft":
+                    player.setIsLeftKeyPressed(data.state);
+                    break;
+                case "ArrowDown":
+                    player.setIsDownKeyPressed(data.state);
+                    break;
+                case "ArrowRight":
+                    player.setIsRightKeyPressed(data.state);
+                    break;
+                case "a":
+                    if(player.getIsTakingAction() === false){
+                        console.log(`Player ${socket.id} is shooting`);
+                        player.setIsTakingAction(data.state);
+                    };
+                    break;
+                default:
                       return;
               }
+          });
+
+          socket.on('movingMouse', (data: any) => {
+            console.log(`Mouse of Player ID ${socket.id} is at X: ${data.cursor_X} and Y: ${data.cursor_Y}.`);
+            player.setCursorPosition(data.cursor_X, data.cursor_Y);
           });
 
           //EventHandler: Disconnection of Client
@@ -117,7 +128,7 @@ export class Server{
           //The gameState holds all the information the client
           //needs to draw the game
           var gameState : Array<any> = [];
-
+          var actionState : Array<any> = []
           //GameStatePacker
           for(var i in this.playerList){
               var player = this.playerList[i];
@@ -126,15 +137,24 @@ export class Server{
                   x: player.getX(),
                   y: player.getY(),
                   characterNumber: player.checkDirection(),
-                  id: player.getId()
+                  id: player.getId(),
+                  isTakingAction: player.getIsTakingAction()
               });
 
+              if(player.getIsTakingAction()){
+                actionState.push({
+                    player_ID : player.getId(),
+                    action_X : player.getActionX(),
+                    action_Y : player.getActionY()
+                })
+              }
           }
+
 
           //Event: Send Gamestate to the clients.
           for(var i in this.clientList){
               var socket = this.clientList[i];
-              socket.emit('update', gameState);
+              socket.emit('update', gameState, actionState);
           }
       }, 1000/Const.FRAMES_PER_SECOND);
     }

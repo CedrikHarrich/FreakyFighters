@@ -1,4 +1,5 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
+import { ShootAction } from "./ShootAction";
 
 export class Player {
     //Attributes of the player.
@@ -7,6 +8,8 @@ export class Player {
     private velocityX : number = 0;
     private velocityY : number = 0;
     private id :number = 0;
+    private cursor_X: number;
+    private cursor_Y: number;
 
     //Actions the player can make
     private isUpKeyPressed : boolean = false;
@@ -15,8 +18,21 @@ export class Player {
     private isRightKeyPressed : boolean = false;
     private isJumping : boolean = false;
 
+    private isTakingAction : boolean = false;
+    private action: any;
+
+    
+
+    //static readonly ASSET_FOLDER : string = "assets/"
+    //this.block.src = `./${Const.ASSET_FOLDER}clouds.png`;
     constructor(id :number){
         this.id = id;
+        this.isTakingAction = false;
+        if(this.id === 1){
+            this.x = Const.PLAYER_1_START_X_COORDS;
+        }else{
+            this.x = Const.PLAYER_2_START_X_COORDS;
+        }
     }
 
     updatePosition(){
@@ -47,6 +63,14 @@ export class Player {
         //Update the actual positon
         this.x += this.velocityX;
         this.y += this.velocityY;
+
+        //Update Shoot Object Position
+        if(this.isTakingAction){
+            if(this.action.getIsActionComplete()){
+                this.isTakingAction = false;
+            }    
+            this.action.updateShootObjectPosition();
+        }
         
         //Don't fall through the platform.
         if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
@@ -142,7 +166,35 @@ export class Player {
         return this.isRightKeyPressed;
     }
 
+    getIsTakingAction(){
+        return this.isTakingAction;
+    }
+
+    getActionX(){
+        return this.action.get_X();
+    }
+
+    getActionY(){
+        return this.action.get_Y();
+    }
+
     //Setter Methods
+    setCursorPosition(cursor_X: number, cursor_Y: number){
+        this.cursor_X = cursor_X;
+        this.cursor_Y = cursor_Y;
+    }
+
+    setIsTakingAction(isTakingAction : boolean){
+        this.isTakingAction = isTakingAction;
+        this.action = new ShootAction(
+            this,
+            this.x, 
+            this.y, 
+            this.cursor_X, 
+            this.cursor_Y
+            );
+    }
+
     setIsUpKeyPressed(isUpKeyPressed : boolean){
         this.isUpKeyPressed = isUpKeyPressed;
     }
