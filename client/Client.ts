@@ -131,7 +131,6 @@ export class Client {
           }
           //draws player image on right position
           this.context.drawImage(
-<<<<<<< HEAD
             character, 
             character.width*this.gameState[i].characterNumber/3, //x coordinate to start clipping
             0,                        //y coordinate to start clipping
@@ -139,15 +138,6 @@ export class Client {
             character.height,    //clipping height
             this.gameState[i].x, 
             this.gameState[i].y, 
-=======
-            this.character,
-            this.character.width*this.gameState[i].characterNumber/3, //x coordinate to start clipping
-            0,                        //y coordinate to start clipping
-            this.character.width/3,   //clipping width
-            this.character.height,    //clipping height
-            this.gameState[i].x,
-            this.gameState[i].y,
->>>>>>> e57db53b57557a594185fb4bbf50c2b8ca43fdf9
             Const.PLAYER_WIDTH,       //resize to needed width
             Const.PLAYER_HEIGHT,      //resize to needed height
             );
