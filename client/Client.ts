@@ -8,6 +8,8 @@ export class Client {
     private character1:any = new Image();
     private character2:any = new Image();
     private background:any = new Image();
+    private foreground: any = new Image();
+    private target : any = new Image();
     private block : any = new Image();
     private shootObject : any = new Image();
     private gameState:any;
@@ -30,15 +32,17 @@ export class Client {
         this.character1.src = `./${Const.ASSET_FOLDER}minions1.png`;
         this.character2.src = `./${Const.ASSET_FOLDER}minions2.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
+        this.foreground.src = `./${Const.ASSET_FOLDER}foreground.png`;
         this.block.src = `./${Const.ASSET_FOLDER}clouds.png`;
         this.shootObject.src = `./${Const.ASSET_FOLDER}block.png`;
+        this.target.src = `./${Const.ASSET_FOLDER}target.png`;
 
         //Load the grid
         this.grid = Const.TEST_GRID_27x16;
 
         //Draw the initial background and start to register Events.
         this.drawBackground();
-        this.drawGrid();
+        this.drawClouds();
         this.registerEvents();
     }
 
@@ -68,7 +72,6 @@ export class Client {
       }, true);
 
       //Event: Mouse Movement, Coordinates of Mouse
-      //TODO: Zeiger gibt momentan noch Koordinaten außerhalb von Canvas aus
       window.addEventListener('mousemove', (event: any) =>{
         let canvasRestrict = this.canvas.getBoundingClientRect();
         let scaleX = this.canvas.width / canvasRestrict.width;
@@ -89,8 +92,11 @@ export class Client {
     draw(){
       this.context.clearRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
       this.drawBackground();
-      this.drawGrid();
-      this.drawCharacter();
+      this.drawClouds();
+      this.drawPlayer();
+      this.drawTarget();
+      this.drawShootObject();
+      this.drawForeground();
     }
 
     drawShootObject(){
@@ -115,7 +121,23 @@ export class Client {
       }
     }
 
-    drawCharacter(){
+    drawTarget(){ //before: player:any
+      //var currentPlayer = player;
+      for (var i = 0; i < this.gameState.length; i++){
+        this.context.drawImage(
+          this.target,
+          this.gameState[i].cursor_X, 
+          this.gameState[i].cursor_Y, 
+          Const.SHOOT_OBJECT_SIZE, 
+          Const.SHOOT_OBJECT_SIZE
+        );
+      }
+    }
+
+    //Unbenennung von drawCharacter zu drawPlayer, 
+    //da die Methode das Schießobjekt und die Zielscheibe 
+    //des jeweiligen Spielers mit malt
+    drawPlayer(){
       let character: any = new Image();
       for (var i = 0; i < this.gameState.length; i++){
           console.log(this.gameState[i].x);
@@ -126,9 +148,6 @@ export class Client {
             character = this.character2;
           }
 
-          if(this.gameState[i].isTakingAction){
-            this.drawShootObject();
-          }
           //draws player image on right position
           this.context.drawImage(
             character, 
@@ -144,7 +163,7 @@ export class Client {
       }
     }
 
-    drawGrid(){
+    drawClouds(){
       if (Const.WITH_GRID){
         let preBlock: number;
         let clippingPosition: number;
@@ -188,7 +207,17 @@ export class Client {
     }
 
     drawBackground(){
-      this.context.drawImage(this.background, 0 ,0 , Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
+      this.context.drawImage(this.background, 0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
+    }
+
+    drawForeground(){
+      this.context.drawImage(
+        this.foreground, 
+        0, 
+        Const.CANVAS_HEIGHT - Const.FOREGROUND_HEIGHT, 
+        Const.CANVAS_WIDTH, 
+        Const.FOREGROUND_HEIGHT
+        );
     }
 
     sleep(milliseconds : number) {

@@ -60,72 +60,8 @@ export class Server{
         this.connectionHandler(socket);
       });
 
-      /*this.io.sockets.on('connection', (socket:any)=>{
-          if (this.idNumberStack.length == 0){
-              this.idNumberStack.push(this.idCounter);
-              this.idCounter ++;
-          }
-          //If a client connects. The socket will be registered and
-          //the client gets a counting ID. ID = Position in Array.
-          this.clientList.push(socket);
-          socket.id = this.idNumberStack.pop();
-
-          //A new player is created with the same ID as the socket.
-          var player = new Player(socket.id);
-          this.playerList.push(player);
-
-          console.log(`The player with ID ${socket.id} has connected.`);
-
-          //Eventhandler for Mouse
-
-          //EventHandler: When a key is pressed do ...
-          socket.on('keyPressed', (data:any) =>{
-              console.log(`${data.inputId} has been pressed by player ${socket.id}.`);
-
-              switch (data.inputId){
-                case "ArrowUp":
-                    player.setIsUpKeyPressed(data.state);
-                    break;
-                case "ArrowLeft":
-                    player.setIsLeftKeyPressed(data.state);
-                    break;
-                case "ArrowDown":
-                    player.setIsDownKeyPressed(data.state);
-                    break;
-                case "ArrowRight":
-                    player.setIsRightKeyPressed(data.state);
-                    break;
-                
-                default:
-                      return;
-              }
-          });
-
-          
-
-          //EventHandler: Disconnection of Client
-          socket.on('disconnect', ()=>{
-              //When a player disconnects we need to delete him from clients and players.
-              //And we need to push his Id to the ID-Stack that the next player can take it.
-              for (let i = 0; i < this.clientList.length; i++){
-                  if(this.clientList[i].id == socket.id){
-                      this.clientList.splice(i, 1);
-                  }
-              }
-              for (let i = 0; i < this.playerList.length; i++){
-                  if(this.playerList[i].getId() == socket.id){
-                      this.playerList.splice(i, 1);
-                      this.idNumberStack.push(socket.id);
-                  }
-              }
-
-              console.log(`The player with the ID ${socket.id} has disconnected.`);
-              console.log(`There are ${this.playerList.length} Players left.`);
-          });
-      
-
-    */
     }
+
     connectionHandler(socket: any){
       if (this.playerList.length < Const.MAX_CLIENTS || Const.UNLIMITED_PLAYERS){
           var player = this.addPlayerClient(socket);
@@ -145,7 +81,6 @@ export class Server{
       });
 
       socket.on('movingMouse', (data: any) => {
-        console.log(`Mouse of Player ID ${socket.id} is at X: ${data.cursor_X} and Y: ${data.cursor_Y}.`);
         player.setCursorPosition(data.cursor_X, data.cursor_Y);
       });
 
@@ -173,6 +108,8 @@ export class Server{
               gameState.push({
                   x: player.getX(),
                   y: player.getY(),
+                  cursor_X: player.getCursorX(),
+                  cursor_Y: player.getCursorY(),
                   characterNumber: player.checkDirection(),
                   id: player.getId(),
                   isTakingAction: player.getIsTakingAction()

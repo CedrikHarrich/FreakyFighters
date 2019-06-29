@@ -71,7 +71,8 @@ export class Player {
             }    
             this.action.updateShootObjectPosition();
         }
-        
+        // Set Cursor Positions within walls
+        this.checkCursorPosition();
         //Don't fall through the platform.
         if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
             this.isJumping = false;
@@ -125,6 +126,21 @@ export class Player {
         }
     }
 
+    //Target can only be positioned within walls and above ground
+    checkCursorPosition(){
+        if(this.cursor_X > Const.CANVAS_WIDTH - Const.TARGET_SIZE){
+            this.cursor_X = Const.CANVAS_WIDTH - Const.TARGET_SIZE;
+        }
+        if(this.cursor_X < 0){
+            this.cursor_X = 0;
+        }
+        if(this.cursor_Y < 0){
+            this.cursor_Y = 0;
+        }
+        if(this.cursor_Y > Const.GROUND_HEIGHT_Y - Const.TARGET_SIZE){
+            this.cursor_Y = Const.GROUND_HEIGHT_Y - Const.TARGET_SIZE;
+        }
+    }
     // determines which image sprite will be rendered
     checkDirection(){
         if(this.isLeftKeyPressed){
@@ -147,6 +163,13 @@ export class Player {
         return this.y
     }
 
+    getCursorX(){
+        return this.cursor_X;
+    }
+    getCursorY(){
+        return this.cursor_Y;
+    }
+    
     getId(){
         return this.id;
     }
@@ -196,7 +219,6 @@ export class Player {
     setIsTakingAction(isTakingAction : boolean){
         this.isTakingAction = isTakingAction;
         this.action = new ShootAction(
-            this,
             this.x, 
             this.y, 
             this.cursor_X, 
