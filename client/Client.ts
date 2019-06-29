@@ -22,10 +22,10 @@ export class Client {
         this.context = this.canvas.getContext("2d");
 
         //Set canvas size in html
-        
+
         this.canvas.height = Const.CANVAS_HEIGHT;
         this.canvas.width = Const.CANVAS_WIDTH;
-        
+
         // Image Sources
         this.character1.src = `./${Const.ASSET_FOLDER}minions1.png`;
         this.character2.src = `./${Const.ASSET_FOLDER}minions2.png`;
@@ -34,8 +34,8 @@ export class Client {
         this.shootObject.src = `./${Const.ASSET_FOLDER}block.png`;
 
         //Load the grid
-        this.grid = Const.TEST_GRID_27x16; 
-        
+        this.grid = Const.TEST_GRID_27x16;
+
         //Draw the initial background and start to register Events.
         this.drawBackground();
         this.drawGrid();
@@ -48,6 +48,12 @@ export class Client {
           this.gameState = gameState;
           this.actionState = actionState;
           this.draw();
+      });
+
+      //Event: Wait until the server has an open spot again.
+      this.socket.on('wait', (time : number) =>{
+        console.log("The server is full at the moment. Please wait for a bit.")
+        this.delayedReconnection(time);
       });
 
       //Event: Signal the server that a key has been pressed.
@@ -125,6 +131,7 @@ export class Client {
           }
           //draws player image on right position
           this.context.drawImage(
+<<<<<<< HEAD
             character, 
             character.width*this.gameState[i].characterNumber/3, //x coordinate to start clipping
             0,                        //y coordinate to start clipping
@@ -132,6 +139,15 @@ export class Client {
             character.height,    //clipping height
             this.gameState[i].x, 
             this.gameState[i].y, 
+=======
+            this.character,
+            this.character.width*this.gameState[i].characterNumber/3, //x coordinate to start clipping
+            0,                        //y coordinate to start clipping
+            this.character.width/3,   //clipping width
+            this.character.height,    //clipping height
+            this.gameState[i].x,
+            this.gameState[i].y,
+>>>>>>> e57db53b57557a594185fb4bbf50c2b8ca43fdf9
             Const.PLAYER_WIDTH,       //resize to needed width
             Const.PLAYER_HEIGHT,      //resize to needed height
             );
@@ -140,7 +156,7 @@ export class Client {
 
     drawGrid(){
       if (Const.WITH_GRID){
-        let preBlock: number; 
+        let preBlock: number;
         let clippingPosition: number;
 
         //scan only in possible block positions
@@ -164,12 +180,12 @@ export class Client {
             if(this.grid[i][j] === 1){
               this.context.drawImage(
                 this.block,
-                this.block.width*clippingPosition/3, //position to start clipping 
+                this.block.width*clippingPosition/3, //position to start clipping
                 0,
                 this.block.width/3,
                 this.block.height,
                 Const.BLOCK_WIDTH * j,
-                Const.BLOCK_HEIGHT * i, 
+                Const.BLOCK_HEIGHT * i,
                 Const.BLOCK_WIDTH,
                 Const.BLOCK_HEIGHT);
             }
@@ -178,12 +194,20 @@ export class Client {
 
           }
         }
-      }    
+      }
     }
-    
 
     drawBackground(){
       this.context.drawImage(this.background, 0 ,0 , Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
+    }
+
+    sleep(milliseconds : number) {
+      return new Promise(resolve => setTimeout(resolve, milliseconds));
+    }
+
+    async delayedReconnection(time : number) {
+      await this.sleep(time);
+      this.socket.emit('reconnection');
     }
 
 }

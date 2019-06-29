@@ -4,6 +4,7 @@ export class GlobalConstants{
   static readonly MAX_CLIENTS : number = 2;
   static readonly SERVER_URL : string = `http://localhost:${GlobalConstants.PORT}`;
   static readonly ASSET_FOLDER : string = "assets/"
+  static readonly WAITING_TIME : number = 3000;
 
   //Grid Constants
   static readonly GRID_HEIGHT : number = 16; //Blocks
@@ -44,6 +45,17 @@ export class GlobalConstants{
   static readonly SOLID_WALLS = true;
   static readonly SOLID_ROOF = true;
   static readonly WITH_GRID = true;
+  static readonly UNLIMITED_PLAYERS = false;
+  static readonly FALL_THROUGH_BLOCKS = true;
+
+  //The character is falling off the edge oddly if the edge is
+  //solid on its whole width.
+  static readonly PERMEABLE_EDGES = 35; // >= 0 but < than BLOCK_WIDTH
+
+  //When a character has to be set back on the top of a block, one
+  //needs to calibrate how deep they colide until this happens.
+  static readonly SETBACK = 30; // < BLOCK_HEIGHT
+
 
   //grid and block rules
   static readonly MIN_BLOCK_POSITION_Y : number = GlobalConstants.GROUND_HEIGHT_FROM_TOP/GlobalConstants.BLOCK_HEIGHT; //MinPosition: 10
@@ -51,7 +63,7 @@ export class GlobalConstants{
 
   //grid for 960x640 px canvas
   static readonly TEST_GRID_24x16 = [
-    [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1], //1
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //1
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4
@@ -69,18 +81,19 @@ export class GlobalConstants{
     [1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1]  //16
   ];
 
-  //grid for 1080x640 px canvas
+  //Grid for 1080x640 px canvas
+  //1: Blocks; 0: No Blocks
   static readonly TEST_GRID_27x16 = [
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0], //1
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //1
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2
-    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1], //4 highest possible block element for clouds
-    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //5
-    [0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //6
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
+    [0,0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0], //4 highest possible block element for clouds
+    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0], //5
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //6
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0], //8
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0], //8
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0], //10 lowest possible block element for clouds
+    [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0], //10 lowest possible block element for clouds
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //11
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //12
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //13

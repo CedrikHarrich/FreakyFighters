@@ -83,7 +83,7 @@ export class Player {
         if (Const.SOLID_WALLS){
             //When Canvas stops in x axis, player stops too
             this.solidWalls();
-            
+
         } else {
             //Player can run to the right and pops out on the left an vice versa.
             this.permeableWalls();
@@ -92,8 +92,8 @@ export class Player {
         //Level Setting: SolidRoof
         if (Const.SOLID_ROOF){
             this.solidRoof();
-        } 
-    
+        }
+
 
     }
 
@@ -125,6 +125,7 @@ export class Player {
         }
     }
 
+    // determines which image sprite will be rendered
     checkDirection(){
         if(this.isLeftKeyPressed){
             return 0;
@@ -177,6 +178,14 @@ export class Player {
     getActionY(){
         return this.action.get_Y();
     }
+    
+    getVelocityX(){
+        return this.velocityX;
+    }
+
+    getVelocityY(){
+        return this.velocityY;
+    }
 
     //Setter Methods
     setCursorPosition(cursor_X: number, cursor_Y: number){
@@ -215,5 +224,20 @@ export class Player {
         this.isJumping = isJumping;
     }
 
+    setY(y : number){
+        this.y = y;
+    }
+
+    setX(x : number){
+        this.x = x;
+    }
+
+    setVelocityY(velocityY : number){
+        this.velocityY = velocityY;
+    }
+
+    setVelocityX(velocityX : number){
+        this.velocityX = velocityX;
+    }
 
 }
