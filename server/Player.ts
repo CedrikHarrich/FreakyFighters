@@ -7,6 +7,8 @@ export class Player {
     private velocityX : number = 0;
     private velocityY : number = 0;
     private id :number = 0;
+    private health : number = 100;
+   
 
     //Actions the player can make
     private isUpKeyPressed : boolean = false;
@@ -14,6 +16,7 @@ export class Player {
     private isDownKeyPressed : boolean = false;
     private isRightKeyPressed : boolean = false;
     private isJumping : boolean = false;
+    
 
     constructor(id :number){
         this.id = id;
@@ -126,6 +129,10 @@ export class Player {
         return this.id;
     }
 
+    getHealth(){
+        return this.health;
+    }
+
     getIsUpKeyPressed(){
         return this.isUpKeyPressed;
     }
@@ -162,6 +169,5 @@ export class Player {
     setIsJumping(isJumping : boolean){
         this.isJumping = isJumping;
     }
-
 
 }

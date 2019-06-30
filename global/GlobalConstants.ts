@@ -23,6 +23,12 @@ export class GlobalConstants{
   static readonly PLAYER_1_START_X_COORDS : number = GlobalConstants.PLAYER_WIDTH + GlobalConstants.BLOCK_WIDTH + GlobalConstants.BLOCK_WIDTH;
   static readonly PLAYER_2_START_X_COORDS : number = GlobalConstants.CANVAS_WIDTH - GlobalConstants.PLAYER_WIDTH - GlobalConstants.BLOCK_WIDTH;
 
+  //Player Health Bar Constants
+  static readonly MAX_HEALTH : number = 100;
+  static readonly HEALTHBAR_HEIGHT : number = 20;
+  static readonly PLAYER_1_HEALTHBAR_X_COORD : number = 2;
+  static readonly PLAYER_1_HEALTHBAR_Y_COORD : number = 3;
+
   //Level Constants
   static readonly GROUND_HEIGHT_FROM_BOTTOM = 120;
   static readonly GROUND_HEIGHT_FROM_TOP = GlobalConstants.CANVAS_HEIGHT - GlobalConstants.GROUND_HEIGHT_FROM_BOTTOM - GlobalConstants.PLAYER_HEIGHT;
