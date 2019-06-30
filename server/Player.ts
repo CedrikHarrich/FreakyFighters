@@ -1,4 +1,5 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
+import { ShootAction } from "./ShootAction";
 
 export class Player {
     //Attributes of the player.
@@ -7,6 +8,8 @@ export class Player {
     private velocityX : number = 0;
     private velocityY : number = 0;
     private id :number = 0;
+    private cursor_X: number;
+    private cursor_Y: number;
 
     //Actions the player can make
     private isUpKeyPressed : boolean = false;
@@ -15,8 +18,21 @@ export class Player {
     private isRightKeyPressed : boolean = false;
     private isJumping : boolean = false;
 
+    private isTakingAction : boolean = false;
+    private action: any;
+
+    
+
+    //static readonly ASSET_FOLDER : string = "assets/"
+    //this.block.src = `./${Const.ASSET_FOLDER}clouds.png`;
     constructor(id :number){
         this.id = id;
+        this.isTakingAction = false;
+        if(this.id === 1){
+            this.x = Const.PLAYER_1_START_X_COORDS;
+        }else{
+            this.x = Const.PLAYER_2_START_X_COORDS;
+        }
     }
 
     updatePosition(){
@@ -48,6 +64,15 @@ export class Player {
         this.x += this.velocityX;
         this.y += this.velocityY;
 
+        //Update Shoot Object Position
+        if(this.isTakingAction){
+            if(this.action.getIsActionComplete()){
+                this.isTakingAction = false;
+            }    
+            this.action.updateShootObjectPosition();
+        }
+        // Set Cursor Positions within walls
+        this.checkCursorPosition();
         //Don't fall through the platform.
         if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
             this.isJumping = false;
@@ -101,6 +126,21 @@ export class Player {
         }
     }
 
+    //Target can only be positioned within walls and above ground
+    checkCursorPosition(){
+        if(this.cursor_X > Const.CANVAS_WIDTH - Const.TARGET_SIZE){
+            this.cursor_X = Const.CANVAS_WIDTH - Const.TARGET_SIZE;
+        }
+        if(this.cursor_X < 0){
+            this.cursor_X = 0;
+        }
+        if(this.cursor_Y < 0){
+            this.cursor_Y = 0;
+        }
+        if(this.cursor_Y > Const.GROUND_HEIGHT_Y - Const.TARGET_SIZE){
+            this.cursor_Y = Const.GROUND_HEIGHT_Y - Const.TARGET_SIZE;
+        }
+    }
     // determines which image sprite will be rendered
     checkDirection(){
         if(this.isLeftKeyPressed){
@@ -123,6 +163,13 @@ export class Player {
         return this.y
     }
 
+    getCursorX(){
+        return this.cursor_X;
+    }
+    getCursorY(){
+        return this.cursor_Y;
+    }
+    
     getId(){
         return this.id;
     }
@@ -143,6 +190,18 @@ export class Player {
         return this.isRightKeyPressed;
     }
 
+    getIsTakingAction(){
+        return this.isTakingAction;
+    }
+
+    getActionX(){
+        return this.action.get_X();
+    }
+
+    getActionY(){
+        return this.action.get_Y();
+    }
+    
     getVelocityX(){
         return this.velocityX;
     }
@@ -152,6 +211,21 @@ export class Player {
     }
 
     //Setter Methods
+    setCursorPosition(cursor_X: number, cursor_Y: number){
+        this.cursor_X = cursor_X;
+        this.cursor_Y = cursor_Y;
+    }
+
+    setIsTakingAction(isTakingAction : boolean){
+        this.isTakingAction = isTakingAction;
+        this.action = new ShootAction(
+            this.x, 
+            this.y, 
+            this.cursor_X, 
+            this.cursor_Y
+            );
+    }
+
     setIsUpKeyPressed(isUpKeyPressed : boolean){
         this.isUpKeyPressed = isUpKeyPressed;
     }

@@ -64,8 +64,8 @@ export class Server{
 
     connectionHandler(socket: any){
       if (this.playerList.length < Const.MAX_CLIENTS || Const.UNLIMITED_PLAYERS){
-          this.addPlayerClient(socket);
-          this.registerPlayerEvents(socket);
+          var player = this.addPlayerClient(socket);
+          this.registerPlayerEvents(socket, player);
       } else {
           //Send the Client the event that he has to wait.
           socket.emit('wait', Const.WAITING_TIME);
@@ -73,11 +73,15 @@ export class Server{
         }
     }
 
-    registerPlayerEvents(socket: any){
+    registerPlayerEvents(socket: any, player : any){
       //EventHandler: When a key is pressed do ...
       socket.on('keyPressed', (data: any) =>{
           this.keyPressedHandler(data, socket.id);
           console.log(`${data.inputId} has been pressed by player ${socket.id}.`);
+      });
+
+      socket.on('movingMouse', (data: any) => {
+        player.setCursorPosition(data.cursor_X, data.cursor_Y);
       });
 
       //EventHandler: Disconnection of Client
@@ -95,7 +99,7 @@ export class Server{
           //The gameState holds all the information the client
           //needs to draw the game
           var gameState : Array<any> = [];
-
+          var actionState : Array<any> = []
           //GameStatePacker
           for(var i in this.playerList){
               var player = this.playerList[i];
@@ -104,16 +108,27 @@ export class Server{
               gameState.push({
                   x: player.getX(),
                   y: player.getY(),
+                  cursor_X: player.getCursorX(),
+                  cursor_Y: player.getCursorY(),
                   characterNumber: player.checkDirection(),
-                  id: player.getId()
+                  id: player.getId(),
+                  isTakingAction: player.getIsTakingAction()
               });
 
+              if(player.getIsTakingAction()){
+                actionState.push({
+                    player_ID : player.getId(),
+                    action_X : player.getActionX(),
+                    action_Y : player.getActionY()
+                })
+              }
           }
+
 
           //Event: Send Gamestate to the clients.
           for(var i in this.clientList){
               var socket = this.clientList[i];
-              socket.emit('update', gameState);
+              socket.emit('update', gameState, actionState);
           }
       }, 1000/Const.FRAMES_PER_SECOND);
     }
@@ -172,6 +187,8 @@ export class Server{
         this.playerList.push(player);
 
         console.log(`The player with ID ${socket.id} has connected.`);
+
+        return player;
     }
 
     removePlayerClient(socketId: any){
@@ -199,18 +216,24 @@ export class Server{
           player = this.playerList[playerId];
 
       switch (inputId){
-          case "ArrowUp":
-              player.setIsUpKeyPressed(state);
-              break;
-          case "ArrowLeft":
-              player.setIsLeftKeyPressed(state);
-              break;
-          case "ArrowDown":
-              player.setIsDownKeyPressed(state);
-              break;
-          case "ArrowRight":
-              player.setIsRightKeyPressed(state);
-              break;
+        case "ArrowUp":
+            player.setIsUpKeyPressed(state);
+            break;
+        case "ArrowLeft":
+            player.setIsLeftKeyPressed(state);
+            break;
+        case "ArrowDown":
+            player.setIsDownKeyPressed(state);
+            break;
+        case "ArrowRight":
+            player.setIsRightKeyPressed(state);
+            break;
+        case "a":
+            if(player.getIsTakingAction() === false){
+                console.log(`Player ${socketId} is shooting`);
+                player.setIsTakingAction(state);
+            };
+            break;
 
           default:
               return;
