@@ -20,7 +20,7 @@ export class GlobalConstants{
   //Character Constants
   static readonly PLAYER_HEIGHT : number = 120;
   static readonly PLAYER_WIDTH : number  = 120;
-  static readonly JUMP_HEIGHT = 65;
+  static readonly JUMP_HEIGHT = 50;
 
   static readonly PLAYER_1_START_X_COORDS : number = GlobalConstants.PLAYER_WIDTH;
   static readonly PLAYER_2_START_X_COORDS : number = GlobalConstants.CANVAS_WIDTH - GlobalConstants.PLAYER_WIDTH - GlobalConstants.PLAYER_WIDTH;

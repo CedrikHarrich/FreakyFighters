@@ -33,7 +33,7 @@ export class Client {
         this.character2.src = `./${Const.ASSET_FOLDER}minions2.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
         this.foreground.src = `./${Const.ASSET_FOLDER}foreground.png`;
-        this.block.src = `./${Const.ASSET_FOLDER}clouds.png`;
+        this.block.src = `./${Const.ASSET_FOLDER}clouds_trans.png`;
         this.shootObject.src = `./${Const.ASSET_FOLDER}block.png`;
         this.target.src = `./${Const.ASSET_FOLDER}target.png`;
 
@@ -92,10 +92,10 @@ export class Client {
     draw(){
       this.context.clearRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
       this.drawBackground();
-      this.drawClouds();
       this.drawPlayer();
       this.drawTarget();
       this.drawShootObject();
+      this.drawClouds();
       this.drawForeground();
     }
 
