@@ -105,6 +105,7 @@ export class Server{
               var player = this.playerList[i];
               player.updatePosition();
               this.handleCollision(player, this.grid);
+              this.handlePlayerColission(i, this.playerList);
               gameState.push({
                   x: player.getX(),
                   y: player.getY(),
@@ -159,6 +160,37 @@ export class Server{
         }
     }
 
+    handlePlayerColission(main : any, playerList : Player[]){
+        var currentPlayer = playerList[main];
+        for(var i in playerList){
+            var otherPlayer = playerList[i];
+            if (i !== main){
+                if (this.havePlayerCollision(currentPlayer, otherPlayer)){
+                    if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() > otherPlayer.getVelocityX() * (-1)){
+                        console.log("Schubse!");
+                        otherPlayer.setX(currentPlayer.getX() + Const.PLAYER_WIDTH);
+                    } else if (currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() < otherPlayer.getVelocityX() * (-1)){
+                        console.log("Schubse!");
+                        currentPlayer.setX(otherPlayer.getX() - Const.PLAYER_WIDTH);
+                    }
+                }
+            }
+        }
+    }
+
+    havePlayerCollision(playerOne : Player, playerTwo : Player) : boolean {
+        if (playerOne.getX() + Const.PLAYER_WIDTH > playerTwo.getX() + Const.PERMEABLE_EDGES &&
+            playerOne.getX() + Const.PERMEABLE_EDGES < Const.BLOCK_WIDTH + playerTwo.getX() &&
+            playerOne.getY() + Const.PLAYER_HEIGHT > playerTwo.getY() &&
+            playerOne.getY() < Const.BLOCK_HEIGHT + playerTwo.getY())
+        {
+            console.log("Players are colliding");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     haveCollision(player : Player, blockPositionX : number, blockPositionY :number) : boolean {
         if (player.getX() + Const.PLAYER_WIDTH > blockPositionX + Const.PERMEABLE_EDGES &&
             player.getX() + Const.PERMEABLE_EDGES < Const.BLOCK_WIDTH + blockPositionX &&
@@ -170,6 +202,7 @@ export class Server{
             return false;
         }
     }
+
     addPlayerClient(socket: any){
         //Ticketsystem: If someone connects make a new Ticket.
         if (this.idNumberStack.length == 0){
