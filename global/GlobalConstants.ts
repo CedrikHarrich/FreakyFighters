@@ -20,12 +20,18 @@ export class GlobalConstants{
   //Character Constants
   static readonly PLAYER_HEIGHT : number = 120;
   static readonly PLAYER_WIDTH : number  = 120;
-  static readonly JUMP_HEIGHT = 65;
+  static readonly JUMP_HEIGHT = 50; //old: 65
 
   static readonly PLAYER_1_START_X_COORDS : number = GlobalConstants.PLAYER_WIDTH;
   static readonly PLAYER_2_START_X_COORDS : number = GlobalConstants.CANVAS_WIDTH - GlobalConstants.PLAYER_WIDTH - GlobalConstants.PLAYER_WIDTH;
+  
+  //Action Constants
   static readonly SHOOT_OBJECT_SIZE : number = 40;
+  static readonly SHOOT_OBJECT_SPEED : number = 18;
   static readonly TARGET_SIZE : number = GlobalConstants.SHOOT_OBJECT_SIZE;
+  static readonly BUBBLES_SIZE : number = 160;
+  static readonly BUBBLES_Y_DIFF : number = 30;
+  static readonly BUBBLES_X_DIFF : number = 20;
 
   //Level Constants
   static readonly GROUND_HEIGHT_FROM_BOTTOM = 120;
@@ -58,30 +64,17 @@ export class GlobalConstants{
   //needs to calibrate how deep they colide until this happens.
   static readonly SETBACK = 30; // < BLOCK_HEIGHT
 
+  //Spritesheet Constants
+  //TODO: width, height, rows, columns
+  static readonly LEFT_SPRITE = 0;
+  static readonly MIDDLE_SPRITE = 1;
+  static readonly RIGHT_SPRITE = 2;
+  static readonly SPRITES_IN_ROW = 3;
+  //static readonly SPRITES_IN_COLUMN
 
   //grid and block rules
   static readonly MIN_BLOCK_POSITION_Y : number = GlobalConstants.GROUND_HEIGHT_FROM_TOP/GlobalConstants.BLOCK_HEIGHT; //MinPosition: 10
-  static readonly MAX_BLOCK_POSITION_Y : number = GlobalConstants.PLAYER_HEIGHT/GlobalConstants.BLOCK_HEIGHT;
-
-  //grid for 960x640 px canvas
-  static readonly TEST_GRID_24x16 = [
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //1
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //5
-    [0,0,0,0,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0], //6
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7
-    [0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0], //8
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //10
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //11
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //12
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //13
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //14
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //15
-    [1,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1]  //16
-  ];
+  static readonly MAX_BLOCK_POSITION_Y : number = GlobalConstants.PLAYER_HEIGHT/GlobalConstants.BLOCK_HEIGHT + 1;
 
   //Grid for 1080x640 px canvas
   //1: Blocks; 0: No Blocks
@@ -89,13 +82,13 @@ export class GlobalConstants{
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //1
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
-    [0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4 highest possible block element for clouds
-    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //5
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4 highest possible block element for clouds: player no defence
+    [0,0,0,0,0,0,1,1,0,0,0,1,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0], //5 highest possible block element for clouds: player with defence
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //6
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0], //8
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
-    [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0], //10 lowest possible block element for clouds
+    [1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1], //7
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //8
+    [0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0], //9
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //10 lowest possible block element for clouds
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //11
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //12
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //13

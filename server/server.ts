@@ -84,6 +84,8 @@ export class Server{
         player.setCursorPosition(data.cursor_X, data.cursor_Y);
       });
 
+      //socket.on('clicking');
+
       //EventHandler: Disconnection of Client
       socket.on('disconnect', ()=>{
           this.removePlayerClient(socket.id);
@@ -99,7 +101,7 @@ export class Server{
           //The gameState holds all the information the client
           //needs to draw the game
           var gameState : Array<any> = [];
-          var actionState : Array<any> = []
+          var attackState : Array<any> = []
           //GameStatePacker
           for(var i in this.playerList){
               var player = this.playerList[i];
@@ -110,16 +112,18 @@ export class Server{
                   y: player.getY(),
                   cursor_X: player.getCursorX(),
                   cursor_Y: player.getCursorY(),
-                  characterNumber: player.checkDirection(),
+                  spriteSheetPosition: player.checkDirection(),
+                  isDefending: player.getIsDefending(),
+                  isInTheAir: player.getIsInTheAir(),
                   id: player.getId(),
-                  isTakingAction: player.getIsTakingAction()
+                  isTakingAction: player.getIsTakingAction(),
               });
 
               if(player.getIsTakingAction()){
-                actionState.push({
+                attackState.push({
                     player_ID : player.getId(),
-                    action_X : player.getActionX(),
-                    action_Y : player.getActionY()
+                    attack_X : player.getAttackX(),
+                    attack_Y : player.getAttackY()
                 })
               }
           }
@@ -128,7 +132,7 @@ export class Server{
           //Event: Send Gamestate to the clients.
           for(var i in this.clientList){
               var socket = this.clientList[i];
-              socket.emit('update', gameState, actionState);
+              socket.emit('update', gameState, attackState);
           }
       }, 1000/Const.FRAMES_PER_SECOND);
     }
@@ -231,12 +235,14 @@ export class Server{
         case "a":
             if(player.getIsTakingAction() === false){
                 console.log(`Player ${socketId} is shooting`);
-                player.setIsTakingAction(state);
+                player.setIsTakingAction(state, inputId);
             };
             break;
-
-          default:
-              return;
+        case "d":
+            player.getIsDefending ? player.setIsDefending(state) : player.setIsDefending(state);
+            break;
+        default:
+            return;
       }
     }
 

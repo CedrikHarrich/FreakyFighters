@@ -12,8 +12,9 @@ export class Client {
     private target : any = new Image();
     private block : any = new Image();
     private shootObject : any = new Image();
+    private defendObject : any = new Image();
     private gameState:any;
-    private actionState : any;
+    private attackState : any;
     private grid : any = [];
 
     constructor(){
@@ -33,24 +34,26 @@ export class Client {
         this.character2.src = `./${Const.ASSET_FOLDER}minions2.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
         this.foreground.src = `./${Const.ASSET_FOLDER}foreground.png`;
-        this.block.src = `./${Const.ASSET_FOLDER}clouds.png`;
+        this.block.src = `./${Const.ASSET_FOLDER}clouds_trans.png`;
         this.shootObject.src = `./${Const.ASSET_FOLDER}block.png`;
         this.target.src = `./${Const.ASSET_FOLDER}target.png`;
+        this.defendObject.src = `./${Const.ASSET_FOLDER}bubbles.png`;
+
 
         //Load the grid
         this.grid = Const.TEST_GRID_27x16;
 
         //Draw the initial background and start to register Events.
         this.drawBackground();
-        this.drawClouds();
+        this.drawGrid();
         this.registerEvents();
     }
 
     registerEvents(){
       //Event: Update with the new GameState
-      this.socket.on('update', (gameState:any, actionState:any) =>{
+      this.socket.on('update', (gameState:any, attackState:any) =>{
           this.gameState = gameState;
-          this.actionState = actionState;
+          this.attackState = attackState;
           this.draw();
       });
 
@@ -81,8 +84,12 @@ export class Client {
           cursor_Y: (event.clientY - canvasRestrict.top)*scaleY
         });
       });
-    }
 
+      window.addEventListener('click', (event: any) => {
+        this.socket.emit('clicking');
+      });
+    }
+   
     keyPressedHandler(inputId:string, state:boolean) {
       if (Object.values(Keys).includes(inputId)){
         this.socket.emit('keyPressed', {inputId: inputId, state: state});
@@ -92,29 +99,55 @@ export class Client {
     draw(){
       this.context.clearRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
       this.drawBackground();
-      this.drawClouds();
       this.drawPlayer();
+      this.drawDefendObject();
       this.drawTarget();
       this.drawShootObject();
+      this.drawGrid();
       this.drawForeground();
+    }
+
+    drawDefendObject(){
+      let defendObject_X: number;
+      let defendObject_Y: number;
+      let clippingPositionX: number;
+      let numberOfDefendImage = 2;
+      for (var i = 0; i < this.gameState.length; i++){
+        if(this.gameState[i].isDefending){
+          defendObject_X = this.gameState[i].x - Const.BUBBLES_X_DIFF;
+          defendObject_Y = this.gameState[i].y - Const.BUBBLES_Y_DIFF;
+          this.gameState[i].isInTheAir ? clippingPositionX = Const.MIDDLE_SPRITE : clippingPositionX = Const.LEFT_SPRITE ;
+          this.context.drawImage(
+            this.defendObject,
+            this.defendObject.width * clippingPositionX / numberOfDefendImage,
+            0,
+            this.defendObject.width / numberOfDefendImage,
+            this.defendObject.height,
+            defendObject_X,
+            defendObject_Y,
+            Const.BUBBLES_SIZE,
+            Const.BUBBLES_SIZE
+          )
+        }
+      }
     }
 
     drawShootObject(){
       let shootObject : any;
-      for(var i = 0; i < this.actionState.length; i++) {
-        if(this.actionState[i].player_ID === 1){
+      for(var i = 0; i < this.attackState.length; i++) {
+        if(this.attackState[i].player_ID === 1){
           shootObject = this.character1;
         }else{
           shootObject = this.character2;
         }
         this.context.drawImage(
           shootObject,
-          shootObject.width*this.gameState[this.actionState[i].player_ID-1].characterNumber/3,
+          shootObject.width*this.gameState[this.attackState[i].player_ID-1].spriteSheetPosition/Const.SPRITES_IN_ROW,
           0,                        
-          shootObject.width/3,   
+          shootObject.width/Const.SPRITES_IN_ROW,   
           shootObject.height,
-          this.actionState[i].action_X,
-          this.actionState[i].action_Y,
+          this.attackState[i].attack_X,
+          this.attackState[i].attack_Y,
           Const.SHOOT_OBJECT_SIZE,
           Const.SHOOT_OBJECT_SIZE
         )
@@ -134,6 +167,7 @@ export class Client {
       }
     }
 
+
     //Unbenennung von drawCharacter zu drawPlayer, 
     //da die Methode das Schießobjekt und die Zielscheibe 
     //des jeweiligen Spielers mit malt
@@ -151,7 +185,7 @@ export class Client {
           //draws player image on right position
           this.context.drawImage(
             character, 
-            character.width*this.gameState[i].characterNumber/3, //x coordinate to start clipping
+            character.width*this.gameState[i].spriteSheetPosition/Const.SPRITES_IN_ROW, //x coordinate to start clipping
             0,                        //y coordinate to start clipping
             character.width/3,   //clipping width
             character.height,    //clipping height
@@ -163,7 +197,7 @@ export class Client {
       }
     }
 
-    drawClouds(){
+    drawGrid(){
       if (Const.WITH_GRID){
         let preBlock: number;
         let clippingPosition: number;
@@ -174,24 +208,24 @@ export class Client {
           for (let j : number = 0; j < Const.GRID_WIDTH; j++){
             //Front: preblock = 0 and now = 1
             if (preBlock === 0 && this.grid[i][j] === 1){
-              clippingPosition = 0;
+              clippingPosition = Const.LEFT_SPRITE;
             }
             //Middle: preblock = 1, now = 1 and next = 1
             if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] === 1){
-              clippingPosition = 1;
+              clippingPosition = Const.MIDDLE_SPRITE;
             }
             //Back: preblock = 1, now = 0 and next != 1
             if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] !==1){
-              clippingPosition = 2;
+              clippingPosition = Const.RIGHT_SPRITE;
             }
 
             //draw block elements relative to part position from image
             if(this.grid[i][j] === 1){
               this.context.drawImage(
                 this.block,
-                this.block.width*clippingPosition/3, //position to start clipping
+                this.block.width*clippingPosition/Const.SPRITES_IN_ROW, //position to start clipping
                 0,
-                this.block.width/3,
+                this.block.width/Const.SPRITES_IN_ROW,
                 this.block.height,
                 Const.BLOCK_WIDTH * j,
                 Const.BLOCK_HEIGHT * i,

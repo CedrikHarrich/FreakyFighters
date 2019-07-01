@@ -10,6 +10,9 @@ export class Player {
     private id :number = 0;
     private cursor_X: number;
     private cursor_Y: number;
+    private bubble_X : number;
+    private bubble_Y : number;
+    private kindOfAction : string;
 
     //Actions the player can make
     private isUpKeyPressed : boolean = false;
@@ -17,9 +20,10 @@ export class Player {
     private isDownKeyPressed : boolean = false;
     private isRightKeyPressed : boolean = false;
     private isJumping : boolean = false;
+    private isDefending : boolean = false;
 
     private isTakingAction : boolean = false;
-    private action: any;
+    private attack: any;
 
     
 
@@ -28,11 +32,9 @@ export class Player {
     constructor(id :number){
         this.id = id;
         this.isTakingAction = false;
-        if(this.id === 1){
-            this.x = Const.PLAYER_1_START_X_COORDS;
-        }else{
-            this.x = Const.PLAYER_2_START_X_COORDS;
-        }
+        //Start Position depending on playerID
+        this.id === 1 ? this.x = Const.PLAYER_1_START_X_COORDS : this.x = Const.PLAYER_2_START_X_COORDS;
+        
     }
 
     updatePosition(){
@@ -64,15 +66,18 @@ export class Player {
         this.x += this.velocityX;
         this.y += this.velocityY;
 
-        //Update Shoot Object Position
+        //Update Action
         if(this.isTakingAction){
-            if(this.action.getIsActionComplete()){
+            if(this.attack.getIsActionComplete()){
                 this.isTakingAction = false;
-            }    
-            this.action.updateShootObjectPosition();
+            }else{
+                this.attack.updateShootObjectPosition();
+                }
         }
+
         // Set Cursor Positions within walls
         this.checkCursorPosition();
+
         //Don't fall through the platform.
         if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
             this.isJumping = false;
@@ -98,10 +103,13 @@ export class Player {
 
     }
 
+
     solidRoof(){
         //Don't jump over the canvas.
-        if (this.y < 0) {
-            this.y = 0;
+        let setValueTo: number;
+        this.isDefending ? setValueTo = Const.BUBBLES_Y_DIFF : setValueTo = 0;
+        if(this.y < setValueTo){
+            this.y = setValueTo;
             this.velocityY = 0;
         }
     }
@@ -118,13 +126,23 @@ export class Player {
 
     solidWalls(){
         //Player can not pass the walls on each side.
-        if (this.x < 0){
-            this.x = 0;
-        }
-        if (this.x > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH){
-            this.x = Const.CANVAS_WIDTH - Const.PLAYER_WIDTH;
+        if(this.isDefending){
+            if(this.x < Const.BUBBLES_X_DIFF) {
+                this.x = Const.BUBBLES_X_DIFF
+            }
+            if(this.x > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH - Const.BUBBLES_X_DIFF){
+                this.x = Const.CANVAS_WIDTH - Const.PLAYER_WIDTH - Const.BUBBLES_X_DIFF;
+            }
+        } else {
+            if (this.x < 0){
+                this.x = 0;
+            }
+            if (this.x > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH){
+                this.x = Const.CANVAS_WIDTH - Const.PLAYER_WIDTH;
+            }
         }
     }
+
 
     //Target can only be positioned within walls and above ground
     checkCursorPosition(){
@@ -141,16 +159,17 @@ export class Player {
             this.cursor_Y = Const.GROUND_HEIGHT_Y - Const.TARGET_SIZE;
         }
     }
+
     // determines which image sprite will be rendered
     checkDirection(){
         if(this.isLeftKeyPressed){
-            return 0;
+            return Const.LEFT_SPRITE;
         }
         if(this.isLeftKeyPressed == false && this.isRightKeyPressed == false){
-            return 1;
+            return Const.MIDDLE_SPRITE;
         }
         if(this.isRightKeyPressed){
-            return 2;
+            return Const.RIGHT_SPRITE;
         }
     }
 
@@ -170,6 +189,13 @@ export class Player {
         return this.cursor_Y;
     }
     
+    getBubblesX(){
+        return this.bubble_X;
+    }
+
+    getBubblesY(){
+        return this.bubble_Y;
+    }
     getId(){
         return this.id;
     }
@@ -190,16 +216,24 @@ export class Player {
         return this.isRightKeyPressed;
     }
 
+    getIsJumping(){
+        return this.isJumping;
+    }
+
     getIsTakingAction(){
         return this.isTakingAction;
     }
 
-    getActionX(){
-        return this.action.get_X();
+    getIsDefending(){
+        return this.isDefending;
     }
 
-    getActionY(){
-        return this.action.get_Y();
+    getAttackX(){
+        return this.attack.get_X();
+    }
+
+    getAttackY(){
+        return this.attack.get_Y();
     }
     
     getVelocityX(){
@@ -210,20 +244,42 @@ export class Player {
         return this.velocityY;
     }
 
+    //check if player is in the air
+    //if velocity is 0, player is not moving along y-axis
+    getIsInTheAir(){
+        return this.velocityY === 0 ? false : true ;
+    }
+
     //Setter Methods
+    setIsDefending(isDefending: boolean){
+        this.isDefending = isDefending;
+    }
     setCursorPosition(cursor_X: number, cursor_Y: number){
         this.cursor_X = cursor_X;
         this.cursor_Y = cursor_Y;
     }
 
-    setIsTakingAction(isTakingAction : boolean){
+    //only one action at the same time is allowed, if players is already takingAction
+    //another kind of action won't be executed
+    //TODO:Sync of shoot and defend
+    setIsTakingAction(isTakingAction : boolean, kindOfAction : string){
         this.isTakingAction = isTakingAction;
-        this.action = new ShootAction(
-            this.x, 
-            this.y, 
-            this.cursor_X, 
-            this.cursor_Y
-            );
+        this.kindOfAction = kindOfAction;
+        switch (kindOfAction) {
+            case "a": // a is attack
+                this.attack = new ShootAction(
+                    this.x, 
+                    this.y, 
+                    this.cursor_X, 
+                    this.cursor_Y
+                );
+                break;
+            // case "d": // d is defend
+            //     this.isDefending = true;
+            //     break;
+            default:
+                return;
+        }
     }
 
     setIsUpKeyPressed(isUpKeyPressed : boolean){
