@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as path from 'path';
 import { Player } from './Player';
 import { GlobalConstants as Const } from '../global/GlobalConstants';
+import { Keys as Keys } from '../global/Keys';
 
 export class Server{
     //Variables for the connection
@@ -249,19 +250,19 @@ export class Server{
           player = this.playerList[playerId];
 
       switch (inputId){
-        case "ArrowUp":
+        case Keys.Up:
             player.setIsUpKeyPressed(state);
             break;
-        case "ArrowLeft":
+        case Keys.Left:
             player.setIsLeftKeyPressed(state);
             break;
-        case "ArrowDown":
+        case Keys.Down:
             player.setIsDownKeyPressed(state);
             break;
-        case "ArrowRight":
+        case Keys.Right:
             player.setIsRightKeyPressed(state);
             break;
-        case "a":
+        case Keys.KeyA:
             if(player.getIsTakingAction() === false){
                 console.log(`Player ${socketId} is shooting`);
                 player.setIsTakingAction(state);
