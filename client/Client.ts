@@ -15,6 +15,7 @@ export class Client {
     private gameState:any;
     private actionState : any;
     private grid : any = [];
+    private time : number = -1;
 
     constructor(){
         console.log("A Client has started.");
@@ -51,9 +52,28 @@ export class Client {
       this.socket.on('update', (gameState:any, actionState:any) =>{
           this.gameState = gameState;
           this.actionState = actionState;
-          this.draw();
+
+          if(this.gameState[0].hasWinner === false){
+            this.draw();
+          } else {
+            if (this.socket.id == gameState[0].winner){
+              this.context.font = "30px Arial";
+              this.context.fillText("WINNER!", 10, 50);
+            } else {
+              console.log(`socket.id: ${this.socket.id}`);
+              console.log(`winner: gameState[0].winner`);
+              this.context.font = "30px Arial";
+              this.context.fillText("LOOSER!", 10, 50);
+            }
+          }
+          
       });
 
+      //Change your ID to the assigned new ID.
+      this.socket.on('ID', (id : number)=>{
+        this.socket.id = id;
+      })
+        
       //Event: Wait until the server has an open spot again.
       this.socket.on('wait', (time : number) =>{
         console.log("The server is full at the moment. Please wait for a bit.")
@@ -97,6 +117,14 @@ export class Client {
       this.drawShootObject();
       this.drawClouds();
       this.drawForeground();
+      this.drawTimer();
+    }
+
+   
+
+    drawTimer(){
+      var time = this.gameState[0].time;
+      console.log(`Current time is: ${time}.`);
     }
 
     drawShootObject(){

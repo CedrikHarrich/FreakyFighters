@@ -16,6 +16,11 @@ export class Server{
     private idCounter : number = 1;
     private idNumberStack :any = [];
     private grid = Const.TEST_GRID_27x16;
+    private startingTime : number = -1;
+    private timer : number = -1;
+    private countdown : number = 10;
+    private hasWinner : boolean = false;
+    private winner : number = -1; 
 
     constructor(){
         //Initialize Variables used for the connection
@@ -49,7 +54,6 @@ export class Server{
     registerConnection() {
       //EventHandler: Connection of Client
       this.io.sockets.on('connection', (socket: any)=>{
-
         //Start with listening to reconnections.
         socket.on('reconnection', () => {
             console.log(`A Player from ${socket.id} is trying to reconnect...`);
@@ -65,7 +69,9 @@ export class Server{
     connectionHandler(socket: any){
       if (this.playerList.length < Const.MAX_CLIENTS || Const.UNLIMITED_PLAYERS){
           var player = this.addPlayerClient(socket);
+          
           this.registerPlayerEvents(socket, player);
+          
       } else {
           //Send the Client the event that he has to wait.
           socket.emit('wait', Const.WAITING_TIME);
@@ -103,8 +109,19 @@ export class Server{
           //GameStatePacker
           for(var i in this.playerList){
               var player = this.playerList[i];
+              //handle the collisions and movements
               player.updatePosition();
               this.handleCollision(player, this.grid);
+              //set the timer
+              if(this.playerList.length == 2){
+                this.timer = this.countdown - Math.floor((Date.now() - this.startingTime) / 1000);
+              }
+              //Winning Condition
+              if (this.timer == 0){
+                this.hasWinner = true;
+                this.winner = 1;
+              }
+              //Make the gamestate
               gameState.push({
                   x: player.getX(),
                   y: player.getY(),
@@ -112,7 +129,10 @@ export class Server{
                   cursor_Y: player.getCursorY(),
                   characterNumber: player.checkDirection(),
                   id: player.getId(),
-                  isTakingAction: player.getIsTakingAction()
+                  isTakingAction: player.getIsTakingAction(),
+                  time : this.timer,
+                  hasWinner : this.hasWinner,
+                  winner : this.winner
               });
 
               if(player.getIsTakingAction()){
@@ -181,12 +201,17 @@ export class Server{
 
         this.clientList.push(socket);
         socket.id = this.idNumberStack.pop();
+        socket.emit('ID', socket.id);
 
         //A new player is created with the same ID as the socket.
         var player = new Player(socket.id);
         this.playerList.push(player);
 
         console.log(`The player with ID ${socket.id} has connected.`);
+
+        if(this.playerList.length == 2){
+            this.startingTime = Date.now();
+        }
 
         return player;
     }
@@ -200,6 +225,8 @@ export class Server{
       this.clientList.splice(clientId, 1);
       this.playerList.splice(playerId, 1);
       this.idNumberStack.push(socketId);
+
+      this.startingTime = -1;
     }
 
     getPlayerClientId(arr: Array<any>, socketId:any){
