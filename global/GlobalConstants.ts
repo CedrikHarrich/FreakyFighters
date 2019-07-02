@@ -17,6 +17,29 @@ export class GlobalConstants{
   static readonly CANVAS_WIDTH : number = GlobalConstants.GRID_WIDTH * GlobalConstants.BLOCK_WIDTH; //1080 Pixels
   static readonly FOREGROUND_HEIGHT : number = 200;
 
+  //Life bar Constants
+  static readonly DISPLAY_LIFE_BAR_WIDTH : number = 360;
+  static readonly DISPLAY_LIFE_BAR_HEIGHT : number = 120; //eigentlich 100, aber auf spritesheet format 120
+  static readonly DISPLAY_1_LIFE_BAR_X : number = 10;
+  static readonly DISPLAY_2_LIFE_BAR_X : number = GlobalConstants.CANVAS_WIDTH - GlobalConstants.DISPLAY_LIFE_BAR_WIDTH - GlobalConstants.DISPLAY_1_LIFE_BAR_X;
+  static readonly LIFE_BAR_DISPLAY_Y : number = 0;
+  static readonly PROFILPICTURE_SIZE : number = 80;
+  static readonly PROFIL_1_PICTURE_X : number = GlobalConstants.DISPLAY_1_LIFE_BAR_X + 10;
+  static readonly PROFIL_2_PICTURE_X : number = GlobalConstants.DISPLAY_2_LIFE_BAR_X + 10;
+  static readonly PROFILPICTURE_Y: number = GlobalConstants.LIFE_BAR_DISPLAY_Y + 20;
+  static readonly LIFE_BAR_WIDTH : number = 240;
+  static readonly LIFE_BAR_HEIGHT : number = GlobalConstants.PROFILPICTURE_SIZE;
+  static readonly LIFE_BAR_1_X : number = GlobalConstants.PROFIL_1_PICTURE_X + GlobalConstants.PROFILPICTURE_SIZE + 15 ;
+  static readonly LIFE_BAR_2_X : number = GlobalConstants.PROFIL_2_PICTURE_X + GlobalConstants.PROFILPICTURE_SIZE + 15 ;
+  static readonly LIFE_BAR_1_Y : number = GlobalConstants.PROFILPICTURE_Y;
+  //relavant for Player, compare to player.currentHealth 
+  static readonly LIFE_NUMBER : number = 10;
+  //to draw the life bar depending on currentHealth
+  static readonly LIFE_SIZE : number = GlobalConstants.LIFE_BAR_WIDTH / GlobalConstants.LIFE_NUMBER; 
+
+  
+
+
   //Character Constants
   static readonly PLAYER_HEIGHT : number = 120;
   static readonly PLAYER_WIDTH : number  = 120;
@@ -30,7 +53,7 @@ export class GlobalConstants{
   static readonly SHOOT_OBJECT_SPEED : number = 18;
   static readonly TARGET_SIZE : number = GlobalConstants.SHOOT_OBJECT_SIZE;
   static readonly BUBBLES_SIZE : number = 160;
-  static readonly BUBBLES_Y_DIFF : number = 30;
+  static readonly BUBBLES_Y_DIFF : number = 29;
   static readonly BUBBLES_X_DIFF : number = 20;
 
   //Level Constants
@@ -50,7 +73,7 @@ export class GlobalConstants{
   static readonly ACCELERATION_Y = 1.5;
 
   //Level Settings Constants
-  static readonly SOLID_WALLS = true;
+  static readonly SOLID_WALLS = false;
   static readonly SOLID_ROOF = true;
   static readonly WITH_GRID = true;
   static readonly UNLIMITED_PLAYERS = false;
