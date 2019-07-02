@@ -169,10 +169,10 @@ export class Server{
                 if (this.havePlayerCollision(currentPlayer, otherPlayer)){
                     if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() > otherPlayer.getVelocityX() * (-1)){
                         console.log("Schubse!");
-                        otherPlayer.setX(currentPlayer.getX() + Const.PLAYER_WIDTH);
+                        otherPlayer.setX(currentPlayer.getX() + Const.PLAYER_WIDTH - 40);
                     } else if (currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() < otherPlayer.getVelocityX() * (-1)){
                         console.log("Schubse!");
-                        currentPlayer.setX(otherPlayer.getX() - Const.PLAYER_WIDTH);
+                        currentPlayer.setX(otherPlayer.getX() - Const.PLAYER_WIDTH +40);
                     }
                 }
             }

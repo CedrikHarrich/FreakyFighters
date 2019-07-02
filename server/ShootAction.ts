@@ -8,7 +8,7 @@ export class ShootAction {
     private dx : number; //delta x
     private dy : number;
     private distance : number;
-    private speed : number = 12; //davor 8
+    private speed : number = 22; //davor 8
     private velocityX : number;
     private velocityY : number;
     private actionComplete : boolean = false;
