@@ -9,8 +9,6 @@ export class Client {
     private character:any = new Image();
     private background:any = new Image();
     private block : any = new Image();
-    private playerMaxHealth: any = new Image();
-    private playerCurrentHealth: any = new Image();
     private gameState:any;
     private grid : any = [];
 
@@ -30,8 +28,7 @@ export class Client {
         this.character.src = `./${Const.ASSET_FOLDER}minions2.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
         this.block.src = `./${Const.ASSET_FOLDER}clouds.png`;
-        this.playerMaxHealth.src = `./${Const.ASSET_FOLDER}playerMaxHealth.png`;
-        this.playerCurrentHealth.src = `./${Const.ASSET_FOLDER}playerCurrentHealth.png`;
+        
 
         //Load the grid
         this.grid = Const.TEST_GRID_27x16; 
@@ -71,7 +68,7 @@ export class Client {
       this.drawBackground();
       this.drawGrid();
       this.drawCharacter();
-      this.drawHealthbar();
+     
     }
 
     drawCharacter(){
@@ -89,6 +86,7 @@ export class Client {
             Const.PLAYER_WIDTH,       //resize to needed width
             Const.PLAYER_HEIGHT,      //resize to needed height
             );
+                     
         }
       }
     
@@ -141,9 +139,5 @@ export class Client {
       this.context.drawImage(this.background, 0 ,0 , Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
     }
 
-    drawHealthbar(){
-      this.context.drawImage(this.playerMaxHealth, Const.PLAYER_1_HEALTHBAR_X_COORD, Const.PLAYER_1_HEALTHBAR_Y_COORD, Const.MAX_HEALTH, Const.HEALTHBAR_HEIGHT);
-      this.context.drawImage(this.playerCurrentHealth, Const.PLAYER_1_HEALTHBAR_X_COORD, Const.PLAYER_1_HEALTHBAR_Y_COORD, 75 , Const.HEALTHBAR_HEIGHT);
-    }
-
+  
 }

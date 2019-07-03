@@ -6,7 +6,7 @@ export class Player {
     private y : number = 0;
     private velocityX : number = 0;
     private velocityY : number = 0;
-    private id :number = 0;
+    private id : number = 0;
     private health : number = 100;
    
 
