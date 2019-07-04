@@ -22,6 +22,8 @@ export class GlobalConstants{
   static readonly PLAYER_WIDTH : number  = 120;
   static readonly JUMP_HEIGHT = 50;
 
+  static readonly CHARACTER_SPRITE_COUNT = 3;
+
   static readonly PLAYER_1_START_X_COORDS : number = GlobalConstants.PLAYER_WIDTH;
   static readonly PLAYER_2_START_X_COORDS : number = GlobalConstants.CANVAS_WIDTH - GlobalConstants.PLAYER_WIDTH - GlobalConstants.PLAYER_WIDTH;
   static readonly SHOOT_OBJECT_SIZE : number = 40;
