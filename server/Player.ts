@@ -1,4 +1,6 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
+import { CollisionDetection } from './CollisionDetection'
+
 import { ShootAction } from "./ShootAction";
 
 export class Player {
@@ -33,27 +35,9 @@ export class Player {
 
     updatePosition(){
         //Check if you can jump
-        if (this.isUpKeyPressed && this.isJumping == false){
-            this.velocityY -= Const.JUMP_HEIGHT;
-            this.isJumping = true;
-            console.log(`Player ${this.id} is jumping with velocityY: ${this.velocityY}`);
-        }
+        this.checkJump();
 
-        //Change the speed depending on the Input
-        if (this.isRightKeyPressed){
-            this.velocityX += Const.ACCELERATION_X;
-        }
-        if (this.isLeftKeyPressed){
-            this.velocityX -= Const.ACCELERATION_X;
-        }
-        if (this.isDownKeyPressed){
-            this.velocityY += 2*Const.ACCELERATION_Y;
-        }
-
-        //Add physics.
-        this.velocityY += Const.GRAVITATION;
-        this.velocityX *= Const.FRICTION;
-        this.velocityY *= Const.FRICTION;
+        this.updateVelocity();
 
         //Update the actual positon
         this.x += this.velocityX;
@@ -66,8 +50,10 @@ export class Player {
             }
             this.action.updateShootObjectPosition();
         }
+
         // Set Cursor Positions within walls
         this.checkCursorPosition();
+
         //Don't fall through the platform.
         if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
             this.isJumping = false;
@@ -90,7 +76,33 @@ export class Player {
             this.solidRoof();
         }
 
+        CollisionDetection.handleCollision(this, Const.TEST_GRID_27x16);
+    }
 
+    checkJump(){
+      if (this.isUpKeyPressed && this.isJumping == false){
+          this.velocityY -= Const.JUMP_HEIGHT;
+          this.isJumping = true;
+          console.log(`Player ${this.id} is jumping with velocityY: ${this.velocityY}`);
+      }
+    }
+
+    updateVelocity(){
+      //Change the speed depending on the Input
+      if (this.isRightKeyPressed){
+          this.velocityX += Const.ACCELERATION_X;
+      }
+      if (this.isLeftKeyPressed){
+          this.velocityX -= Const.ACCELERATION_X;
+      }
+      if (this.isDownKeyPressed){
+          this.velocityY += 2*Const.ACCELERATION_Y;
+      }
+
+      //Add physics.
+      this.velocityY += Const.GRAVITATION;
+      this.velocityX *= Const.FRICTION;
+      this.velocityY *= Const.FRICTION;
     }
 
     solidRoof(){
