@@ -113,12 +113,13 @@ export class Server{
       //Start the Update Loop Calculations_PER_SECOND times per second.      
 
       setInterval(()=>{   
-
+        if (this.gameState.winner >= 1 || this.gameState.timeLeft === 0){
+          //End the game.
+        } else {
           //GameStatePacker
           for(var i in this.clientList){
             
-            //Timer
-            
+            //Timer: starts when 2 Players are in the lobby.
             if(this.clientList.length === 2){
               if(this.gameState.getTimerStarted() === false){
                 this.gameState.startTimer();
@@ -126,12 +127,9 @@ export class Server{
               console.log(this.gameState.getTimeLeft());
               this.gameState.calculateTimeLeft();
             }
-            
 
             //Winning Condition
-            if (this.gameState.winner >= 1){
-                //End the game.
-            }
+            
 
               var player = this.clientList[i].player;
               player.updatePosition();
@@ -156,7 +154,8 @@ export class Server{
               })
 
               this.gameState.addPlayerState(playerState);
-          }
+            }
+          
 
 
           //Event: Send Gamestate to the clients.
@@ -167,6 +166,7 @@ export class Server{
 
           //The Array with the player Information will be deleted after it was sent.
           this.gameState.resetPlayerStates();
+        }
       }, 1000/Const.CALCULATIONS_PER_SECOND);
     }
 
