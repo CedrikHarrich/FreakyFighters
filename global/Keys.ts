@@ -3,5 +3,6 @@ export enum Keys {
     Down = "ArrowDown",
     Left = "ArrowLeft",
     Right = "ArrowRight",
-    Attack = "a"
+    Attack = "a",
+    Defense = "d"
 }
