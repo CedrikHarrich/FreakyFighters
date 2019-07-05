@@ -1,4 +1,5 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
+import { SpriteSheet } from "../global/SpriteSheet"
 import { Keys as Keys } from "../global/Keys"
 import { GameState, PlayerState, ActionState } from "../global/GameState"
 
@@ -6,6 +7,7 @@ export class Client {
     private socket: any = io();
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
+    private sharedSpriteSheet: HTMLImageElement = new Image();
     private character1: HTMLImageElement = new Image();
     private character2: HTMLImageElement = new Image();
     private background: HTMLImageElement = new Image();
@@ -28,6 +30,7 @@ export class Client {
         this.canvas.width = Const.CANVAS_WIDTH;
 
         // Image Sources
+        this.sharedSpriteSheet.src = `./${Const.ASSET_FOLDER}SpriteSheet_Shared.png`;
         this.character1.src = `./${Const.ASSET_FOLDER}minions1.png`;
         this.character2.src = `./${Const.ASSET_FOLDER}minions2.png`;
         this.background.src = `./${Const.ASSET_FOLDER}background.png`;
@@ -37,7 +40,7 @@ export class Client {
         this.target.src = `./${Const.ASSET_FOLDER}target.png`;
 
         //Load the grid
-        this.grid = Const.TEST_GRID_27x16;
+        this.grid = Const.GRID_1;
 
         //Draw the initial background and start to register Events.
         this.drawBackground();
@@ -102,11 +105,50 @@ export class Client {
     draw(){
       this.context.clearRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
       this.drawBackground();
+      this.drawSunTimer();
       this.drawPlayer();
+      this.drawDefendObject();
       this.drawTarget();
       this.drawShootObject();
       this.drawClouds();
       this.drawForeground();
+    }
+
+    drawSunTimer(){
+      this.context.beginPath();
+      this.context.moveTo(540, 30);
+      this.context.lineTo(540, 70);
+      this.context.arc(540, 70, 40, -0.5*Math.PI *1/60, 1.5 * Math.PI); //(2*Math.PI)*1/60
+      this.context.fillStyle = "#F5A9AF";
+      this.context.fill();
+    }
+
+    drawDefendObject(){
+      let defendObject_X: number;
+      let defendObject_Y: number;
+      let clippingPositionX: number;
+      let playerStates = this.gameState.getPlayerStates();
+
+      for(var i = 0; i < playerStates.length; i++) {
+        let playerState = this.gameState.getPlayerState(i);
+        if(playerState.getIsDefending()){
+          defendObject_X = playerState.getX() - Const.DEFENCE_X_DIFF;
+          defendObject_Y = playerState.getY() - Const.DEFENCE_Y_DIFF;
+          clippingPositionX = playerState.getIsInTheAir() ? SpriteSheet.MIDDLE_SPRITE : SpriteSheet.LEFT_SPRITE;
+          
+          this.context.drawImage(
+            this.sharedSpriteSheet,
+            this.sharedSpriteSheet.width * clippingPositionX / SpriteSheet.SPRITES_IN_ROW,
+            this.sharedSpriteSheet.height * 1 /SpriteSheet.SPRITES_IN_COLUMN, //die 1 änder ich noch! SpriteSheet noch nicht fertig
+            this.sharedSpriteSheet.width / SpriteSheet.SPRITES_IN_ROW,
+            this.sharedSpriteSheet.height / SpriteSheet.SPRITES_IN_COLUMN,
+            defendObject_X,
+            defendObject_Y,
+            Const.DEFENCE_SIZE,
+            Const.DEFENCE_SIZE
+          );
+        }
+      }
     }
 
     drawShootObject(){
@@ -125,9 +167,9 @@ export class Client {
 
           this.context.drawImage(
             shootObject,
-            shootObject.width / Const.CHARACTER_SPRITE_COUNT ,
+            shootObject.width / SpriteSheet.SPRITES_IN_ROW ,
             0,
-            shootObject.width/3,
+            shootObject.width / SpriteSheet.SPRITES_IN_ROW,
             shootObject.height,
             playerState.getActionX(),
             playerState.getActionY(),
@@ -175,9 +217,9 @@ export class Client {
           //draws player image on right position
           this.context.drawImage(
             character,
-            character.width * playerState.getSpriteNumber() / Const.CHARACTER_SPRITE_COUNT, //x coordinate to start clipping
+            character.width * playerState.getSpriteNumber() / SpriteSheet.SPRITES_IN_ROW, //x coordinate to start clipping
             0,                        //y coordinate to start clipping
-            character.width/Const.CHARACTER_SPRITE_COUNT,   //clipping width
+            character.width/SpriteSheet.SPRITES_IN_ROW,   //clipping width
             character.height,    //clipping height
             playerState.getX(),
             playerState.getY(),
@@ -190,7 +232,7 @@ export class Client {
     drawClouds(){
       if (Const.WITH_GRID){
         let preBlock: number;
-        let clippingPosition: number;
+        let clippingPositionX: number;
 
         //scan only in possible block positions
         for (let i : number = Const.MAX_BLOCK_POSITION_Y; i < Const.MIN_BLOCK_POSITION_Y; i++){
@@ -198,24 +240,24 @@ export class Client {
           for (let j : number = 0; j < Const.GRID_WIDTH; j++){
             //Front: preblock = 0 and now = 1
             if (preBlock === 0 && this.grid[i][j] === 1){
-              clippingPosition = 0;
+              clippingPositionX = SpriteSheet.LEFT_SPRITE;
             }
             //Middle: preblock = 1, now = 1 and next = 1
             if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] === 1){
-              clippingPosition = 1;
+              clippingPositionX = SpriteSheet.MIDDLE_SPRITE;
             }
             //Back: preblock = 1, now = 0 and next != 1
             if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] !==1){
-              clippingPosition = 2;
+              clippingPositionX = SpriteSheet.RIGHT_SPRITE;
             }
 
             //draw block elements relative to part position from image
             if(this.grid[i][j] === 1){
               this.context.drawImage(
                 this.block,
-                this.block.width*clippingPosition/3, //position to start clipping
+                this.block.width*clippingPositionX / SpriteSheet.SPRITES_IN_ROW, //position to start clipping
                 0,
-                this.block.width/3,
+                this.block.width / SpriteSheet.SPRITES_IN_ROW,
                 this.block.height,
                 Const.BLOCK_WIDTH * j,
                 Const.BLOCK_HEIGHT * i,

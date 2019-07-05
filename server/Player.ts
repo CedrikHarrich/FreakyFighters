@@ -1,4 +1,5 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
+import { SpriteSheet } from "../global/SpriteSheet"
 import { CollisionDetection } from './CollisionDetection'
 
 import { ShootAction } from "./ShootAction";
@@ -22,6 +23,7 @@ export class Player {
 
     private isTakingAction : boolean = false;
     private action: ShootAction;
+    private isDefending: boolean = false;
 
     constructor(id :number){
         this.id = id;
@@ -76,7 +78,7 @@ export class Player {
             this.solidRoof();
         }
 
-        CollisionDetection.handleCollision(this, Const.TEST_GRID_27x16);
+        CollisionDetection.handleCollision(this, Const.GRID_1);
     }
 
     checkJump(){
@@ -152,13 +154,13 @@ export class Player {
     // determines which image sprite will be rendered
     checkDirection(){
         if(this.isLeftKeyPressed){
-            return 0;
+            return SpriteSheet.LEFT_SPRITE;
         }
         if(this.isLeftKeyPressed == false && this.isRightKeyPressed == false){
-            return 1;
+            return SpriteSheet.MIDDLE_SPRITE;
         }
         if(this.isRightKeyPressed){
-            return 2;
+            return SpriteSheet.RIGHT_SPRITE;
         }
     }
 
@@ -202,6 +204,14 @@ export class Player {
         return this.isTakingAction;
     }
 
+    getIsDefending(){
+        return this.isDefending;
+    }
+
+    getIsInTheAir(){
+        return this.velocityY === 0 ? false : true ;
+    }
+
     getActionX(){
         return this.action.getX();
     }
@@ -232,6 +242,10 @@ export class Player {
             this.cursorX,
             this.cursorY
             );
+    }
+
+    setIsDefending(isDefending: boolean){
+        this.isDefending = isDefending;
     }
 
     setIsUpKeyPressed(isUpKeyPressed : boolean){

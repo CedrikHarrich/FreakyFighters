@@ -63,17 +63,24 @@ export class GameState {
 }
 
 export class PlayerState extends Player {
+  private isInTheAir: boolean;
   private spriteNumber: number;
   private actionState: ActionState;
 
-  constructor({x, y, cursorX, cursorY, spriteNumber, id, isTakingAction, actionState} : {x:number, y:number, cursorX: number, cursorY: number, spriteNumber:number, id:number, isTakingAction: boolean, actionState:ActionState}){
+  constructor({x, y, cursorX, cursorY, spriteNumber, id, isTakingAction, isDefending, isInTheAir, actionState} : {x:number, y:number, cursorX: number, cursorY: number, spriteNumber:number, id:number, isTakingAction: boolean, isDefending:boolean, isInTheAir:boolean, actionState:ActionState}){
     super(id);
     this.setX(x);
     this.setY(y);
     this.setCursorPosition(cursorX, cursorY);
     this.setIsTakingAction(isTakingAction);
+    this.setIsDefending(isDefending);
+    this.isInTheAir = isInTheAir;
     this.actionState = actionState
     this.spriteNumber = spriteNumber;
+  }
+
+  getIsInTheAir(){
+    return this.isInTheAir;
   }
 
   getSpriteNumber(){
