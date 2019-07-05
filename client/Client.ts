@@ -119,7 +119,7 @@ export class Client {
       this.context.moveTo(540, 30);
       this.context.lineTo(540, 70);
       this.context.arc(540, 70, 40, -0.5*Math.PI *1/60, 1.5 * Math.PI); //(2*Math.PI)*1/60
-      this.context.fillStyle = "F5A9AF";
+      this.context.fillStyle = "#F5A9AF";
       this.context.fill();
     }
 
