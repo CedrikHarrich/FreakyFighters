@@ -108,6 +108,20 @@ export class Server{
 
           //GameStatePacker
           for(var i in this.clientList){
+            
+            //Timer
+            if(gameState.playerStates.length === 2){
+              if(gameState.timerStarted === false){
+                gameState.startTimer();
+              }
+              gameState.calculateTimeLeft();
+            }
+
+            //Winning Condition
+            if (gameState.winner >= 1){
+                //End the game.
+            }
+
               var player = this.clientList[i].player;
               player.updatePosition();
 
