@@ -79,7 +79,6 @@ export class Server{
     
     //start Listening to all the Events when connected.
     registerPlayerEvents({player, socket} : {player: Player, socket: any}){
-
       //EventHandler: When a key is pressed do ...
       socket.on('keyPressed', (data: any) => {
           this.keyPressedHandler(data, socket.id);
@@ -93,10 +92,15 @@ export class Server{
 
       //EventHandler: Disconnection of Client
       socket.on('disconnect', ()=>{
-          this.removeClient(socket.id);
+        //Client is removed
+        this.removeClient(socket.id);
 
-          console.log(`The player with the ID ${socket.id} has disconnected.`);
-          console.log(`There are ${this.clientList.length} Players left.`);
+        //The game is getting resetted.
+        this.gameState.timeLeft = Const.COUNTDOWN;
+        this.gameState.timerStarted = false;
+
+        console.log(`The player with the ID ${socket.id} has disconnected.`);
+        console.log(`There are ${this.clientList.length} Players left.`);
       });
     }
 
