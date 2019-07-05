@@ -18,6 +18,7 @@ export class Server{
     //Variables for the actual game.
     private idCounter: number = 1;
     private idNumberStack: Array<number> = [];
+    private gameState : GameState;
 
     constructor(){
         //Initialize Variables used for the connection
@@ -103,7 +104,7 @@ export class Server{
     init(){
 
       //The gameState that collects all the information for the client
-      var gameState = new GameState();
+      this.gameState = new GameState();
 
       //Start the Update Loop Calculations_PER_SECOND times per second.      
 
@@ -115,16 +116,16 @@ export class Server{
             //Timer
             
             if(this.clientList.length === 2){
-              if(gameState.getTimerStarted() === false){
-                gameState.startTimer();
+              if(this.gameState.getTimerStarted() === false){
+                this.gameState.startTimer();
               }
-              console.log(gameState.getTimeLeft());
-              gameState.calculateTimeLeft();
+              console.log(this.gameState.getTimeLeft());
+              this.gameState.calculateTimeLeft();
             }
             
 
             //Winning Condition
-            if (gameState.winner >= 1){
+            if (this.gameState.winner >= 1){
                 //End the game.
             }
 
@@ -139,7 +140,7 @@ export class Server{
 
              let playerState = new PlayerState({
                   x: player.getX(),
-                  y:  player.getY(),
+                  y: player.getY(),
                   cursorX: player.getCursorX(),
                   cursorY: player.getCursorY(),
                   spriteNumber: player.checkDirection(),
@@ -150,18 +151,18 @@ export class Server{
                   actionState: actionState
               })
 
-              gameState.addPlayerState(playerState);
+              this.gameState.addPlayerState(playerState);
           }
 
 
           //Event: Send Gamestate to the clients.
           for(var i in this.clientList){
               var socket = this.clientList[i].socket;
-              socket.emit('update', gameState);
+              socket.emit('update', this.gameState);
           }
 
           //The Array with the player Information will be deleted after it was sent.
-          gameState.resetPlayerStates();
+          this.gameState.resetPlayerStates();
       }, 1000/Const.CALCULATIONS_PER_SECOND);
     }
 
