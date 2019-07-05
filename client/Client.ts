@@ -49,6 +49,15 @@ export class Client {
     }
 
     registerEvents(){
+      this.socket.on('end', (winner : number) => {
+        if(this.socket.id === winner){
+          this.drawWinnerScreen();
+        } else {
+          this.drawLooserScreen();
+        }
+      })
+
+
       this.socket.on('update', (gameState:any) => {
         //Delete old GameState
         this.gameState.resetPlayerStates();
@@ -70,6 +79,11 @@ export class Client {
         //Draw the current Gamestate
         this.draw();
       });
+
+       //Change your ID to the assigned new ID.
+       this.socket.on('ID', (id : number)=>{
+        this.socket.id = id;
+      })
 
       //Event: Wait until the server has an open spot again.
       this.socket.on('wait', (time: number) =>{
@@ -289,6 +303,21 @@ export class Client {
         Const.CANVAS_WIDTH,
         Const.FOREGROUND_HEIGHT
         );
+    }
+
+    drawWinnerScreen(){
+      this.context.fillStyle = "green";
+      this.context.font = "100px Arial";
+      this.context.textAlign = "center";
+      this.context.fillText("Pretty U ;)!", Const.CANVAS_WIDTH/2, Const.CANVAS_HEIGHT/2);
+
+    }
+
+    drawLooserScreen(){
+      this.context.fillStyle = "red";
+      this.context.font = "100px Arial";
+      this.context.textAlign = "center";
+      this.context.fillText("U Ugly!", Const.CANVAS_WIDTH/2, Const.CANVAS_HEIGHT/2);
     }
 
     sleep(milliseconds : number) {

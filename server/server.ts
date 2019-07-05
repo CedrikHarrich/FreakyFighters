@@ -113,8 +113,12 @@ export class Server{
       //Start the Update Loop Calculations_PER_SECOND times per second.      
 
       setInterval(()=>{   
+        //Stop calculating if the game has been won already or time is up.
         if (this.gameState.winner >= 1 || this.gameState.timeLeft === 0){
-          //End the game.
+          for(var i in this.clientList){
+            var socket = this.clientList[i].socket;
+            socket.emit('end', 1);//this.gameState.winner
+          }
         } else {
           //GameStatePacker
           for(var i in this.clientList){
@@ -182,6 +186,7 @@ export class Server{
         //If a client connects. The socket will be registered and
         //the client gets a counting ID. ID = Position in Array.
         socket.id = this.idNumberStack.pop();
+        socket.emit('ID', socket.id);
 
         //A new player is created with the same ID as the socket.
         var player = new Player(socket.id);
