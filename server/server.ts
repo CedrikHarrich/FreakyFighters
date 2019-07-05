@@ -100,22 +100,27 @@ export class Server{
 
     //Starts the LOOP on the server that is calculating the Logic.
     init(){
-      //Start the Update Loop FRAMES_PER_SECOND times per second.
-      setInterval(()=>{
-          //The gameState holds all the information the client
-          //needs to draw the game
-          var gameState = new GameState();
+
+      //The gameState that collects all the information for the client
+      var gameState = new GameState();
+
+      //Start the Update Loop Calculations_PER_SECOND times per second.      
+
+      setInterval(()=>{   
 
           //GameStatePacker
           for(var i in this.clientList){
             
             //Timer
-            if(gameState.playerStates.length === 2){
-              if(gameState.timerStarted === false){
+            
+            if(this.clientList.length === 2){
+              if(gameState.getTimerStarted() === false){
                 gameState.startTimer();
               }
+              console.log(gameState.getTimeLeft());
               gameState.calculateTimeLeft();
             }
+            
 
             //Winning Condition
             if (gameState.winner >= 1){
@@ -151,6 +156,9 @@ export class Server{
               var socket = this.clientList[i].socket;
               socket.emit('update', gameState);
           }
+
+          //The Array with the player Information will be deleted after it was sent.
+          gameState.resetPlayerStates();
       }, 1000/Const.CALCULATIONS_PER_SECOND);
     }
 

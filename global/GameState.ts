@@ -2,12 +2,12 @@ import { Player } from "../server/Player";
 import { GlobalConstants as Const } from "../global/GlobalConstants";
 
 export class GameState {
-  readonly playerStates: Array<PlayerState>;
-  readonly winner : number = -1;
-  timerStarted : boolean = false;
-  startingTime : number = -1;
-  currentTime : number = -1;
-  timeLeft : number = -1;
+  playerStates: Array<PlayerState>;
+  winner : number = -1;
+  private timerStarted : boolean = false;
+  private startingTime : number = -1;
+  private currentTime : number = -1;
+  private timeLeft : number = -1;
 
   constructor(){
     this.playerStates = [];
@@ -22,10 +22,14 @@ export class GameState {
   }
 
   startTimer(){
-      this.startingTime = Date.now();
-      this.currentTime = this.startingTime;
-      this.timeLeft = Const.COUNTDOWN;
-      this.timerStarted = true;
+    this.startingTime = Date.now();
+    this.currentTime = this.startingTime;
+    this.timeLeft = Const.COUNTDOWN;
+    this.timerStarted = true;
+  }
+
+  resetPlayerStates(){
+    this.playerStates = [];
   }
 
   addPlayerState(playerState: PlayerState){
@@ -48,6 +52,13 @@ export class GameState {
     }
   }
 
+  getTimeLeft(){
+    return this.timeLeft;
+  }
+
+  getTimerStarted(){
+    return this.timerStarted; 
+  }
 
 }
 
