@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as path from 'path';
 import { Player } from './Player';
 import { GlobalConstants as Const } from '../global/GlobalConstants';
+//import { SpriteSheet} from '../global/SpriteSheet';
 import { Keys } from '../global/Keys';
 import { GameState, PlayerState, ActionState } from '../global/GameState';
 // import { CollisionDetection } from './CollisionDetection'
@@ -125,6 +126,8 @@ export class Server{
                   spriteNumber: player.checkDirection(),
                   id: player.getId(),
                   isTakingAction: player.getIsTakingAction(),
+                  isDefending: player.getIsDefending(),
+                  isInTheAir: player.getIsInTheAir(),
                   actionState: actionState
               })
 
@@ -204,7 +207,9 @@ export class Server{
                 player.setIsTakingAction(state);
             };
             break;
-
+        case Keys.Defense:
+            player.getIsDefending ? player.setIsDefending(state) : player.setIsDefending(state);
+            break;
           default:
               return;
       }
