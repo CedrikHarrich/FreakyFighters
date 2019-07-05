@@ -1,20 +1,20 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
 import { Keys as Keys } from "../global/Keys"
+import { GameState, PlayerState, ActionState } from "../global/GameState"
 
 export class Client {
-    private socket:any = io();
-    private canvas:any;
-    private context:any;
-    private character1:any = new Image();
-    private character2:any = new Image();
-    private background:any = new Image();
-    private foreground: any = new Image();
-    private target : any = new Image();
-    private block : any = new Image();
-    private shootObject : any = new Image();
-    private gameState:any;
-    private actionState : any;
-    private grid : any = [];
+    private socket: any = io();
+    private canvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D;
+    private character1: HTMLImageElement = new Image();
+    private character2: HTMLImageElement = new Image();
+    private background: HTMLImageElement = new Image();
+    private foreground: HTMLImageElement = new Image();
+    private target: HTMLImageElement = new Image();
+    private block: HTMLImageElement = new Image();
+    private shootObject: HTMLImageElement = new Image();
+    private gameState: GameState;
+    private grid: Array<Array<number>> = [];
 
     constructor(){
         console.log("A Client has started.");
@@ -24,7 +24,6 @@ export class Client {
         this.context = this.canvas.getContext("2d");
 
         //Set canvas size in html
-
         this.canvas.height = Const.CANVAS_HEIGHT;
         this.canvas.width = Const.CANVAS_WIDTH;
 
@@ -47,43 +46,54 @@ export class Client {
     }
 
     registerEvents(){
-      //Event: Update with the new GameState
-      this.socket.on('update', (gameState:any, actionState:any) =>{
-          this.gameState = gameState;
-          this.actionState = actionState;
-          this.draw();
+      this.socket.on('update', (gameState:any) =>{
+         this.gameState = new GameState();
+
+         for(var i in gameState.playerStates){
+
+           if(gameState.playerStates[i].actionState != undefined){
+             let actionState = new ActionState({x: gameState.playerStates[i].actionState.x, y: gameState.playerStates[i].actionState.y});
+             Object.assign(gameState.playerStates[i], {'actionState': actionState});
+           }
+
+           let playerState = new PlayerState(gameState.playerStates[i]);
+
+           this.gameState.addPlayerState(playerState);
+         }
+
+         this.draw();
       });
 
       //Event: Wait until the server has an open spot again.
-      this.socket.on('wait', (time : number) =>{
+      this.socket.on('wait', (time: number) =>{
         console.log("The server is full at the moment. Please wait for a bit.")
         this.delayedReconnection(time);
       });
 
       //Event: Signal the server that a key has been pressed.
-      window.addEventListener('keydown', (event : any) =>{
+      window.addEventListener('keydown', (event: KeyboardEvent) =>{
         console.log(event.key)
         this.keyPressedHandler(event.key, true)
       }, true);
 
       //Event: Stop moving when key is not pressed.
-      window.addEventListener('keyup', (event : any) =>{
+      window.addEventListener('keyup', (event: KeyboardEvent) =>{
         this.keyPressedHandler(event.key, false)
       }, true);
 
       //Event: Mouse Movement, Coordinates of Mouse
-      window.addEventListener('mousemove', (event: any) =>{
+      window.addEventListener('mousemove', (event: MouseEvent) =>{
         let canvasRestrict = this.canvas.getBoundingClientRect();
         let scaleX = this.canvas.width / canvasRestrict.width;
         let scaleY = this.canvas.height / canvasRestrict.height;
         this.socket.emit('movingMouse', {
-          cursor_X: (event.clientX - canvasRestrict.left)*scaleX,
-          cursor_Y: (event.clientY - canvasRestrict.top)*scaleY
+          cursorX: (event.clientX - canvasRestrict.left)*scaleX,
+          cursorY: (event.clientY - canvasRestrict.top)*scaleY
         });
       });
     }
 
-    keyPressedHandler(inputId:string, state:boolean) {
+    keyPressedHandler(inputId: string, state: boolean) {
       if (Object.values(Keys).includes(inputId)){
         this.socket.emit('keyPressed', {inputId: inputId, state: state});
       }
@@ -100,63 +110,77 @@ export class Client {
     }
 
     drawShootObject(){
-      let shootObject : any;
-      for(var i = 0; i < this.actionState.length; i++) {
-        if(this.actionState[i].player_ID === 1){
-          shootObject = this.character1;
-        }else{
-          shootObject = this.character2;
+      let shootObject: HTMLImageElement,
+          playerStates = this.gameState.getPlayerStates();
+
+      for(var i = 0; i < playerStates.length; i++) {
+        let playerState = this.gameState.getPlayerState(i);
+
+        if(playerState.getIsTakingAction()){
+          if(playerState.getId() === 1){
+            shootObject = this.character1;
+          }else{
+            shootObject = this.character2;
+          }
+
+          this.context.drawImage(
+            shootObject,
+            shootObject.width / Const.CHARACTER_SPRITE_COUNT ,
+            0,
+            shootObject.width/3,
+            shootObject.height,
+            playerState.getActionX(),
+            playerState.getActionY(),
+            Const.SHOOT_OBJECT_SIZE,
+            Const.SHOOT_OBJECT_SIZE
+          )
         }
-        this.context.drawImage(
-          shootObject,
-          shootObject.width*this.gameState[this.actionState[i].player_ID-1].characterNumber/3,
-          0,                        
-          shootObject.width/3,   
-          shootObject.height,
-          this.actionState[i].action_X,
-          this.actionState[i].action_Y,
-          Const.SHOOT_OBJECT_SIZE,
-          Const.SHOOT_OBJECT_SIZE
-        )
+
       }
     }
 
     drawTarget(){ //before: player:any
-      //var currentPlayer = player;
-      for (var i = 0; i < this.gameState.length; i++){
+      let playerStates = this.gameState.getPlayerStates();
+
+      for (var i = 0; i < playerStates.length; i++){
+        let playerState = this.gameState.getPlayerState(i);
+
         this.context.drawImage(
           this.target,
-          this.gameState[i].cursor_X, 
-          this.gameState[i].cursor_Y, 
-          Const.SHOOT_OBJECT_SIZE, 
+          playerState.getCursorX(),
+          playerState.getCursorY(),
+          Const.SHOOT_OBJECT_SIZE,
           Const.SHOOT_OBJECT_SIZE
         );
       }
     }
 
-    //Unbenennung von drawCharacter zu drawPlayer, 
-    //da die Methode das Schießobjekt und die Zielscheibe 
+    //Unbenennung von drawCharacter zu drawPlayer,
+    //da die Methode das Schießobjekt und die Zielscheibe
     //des jeweiligen Spielers mit malt
     drawPlayer(){
-      let character: any = new Image();
-      for (var i = 0; i < this.gameState.length; i++){
-          console.log(this.gameState[i].x);
+      let character: HTMLImageElement = new Image(),
+          playerStates = this.gameState.getPlayerStates();
+
+      for (var i = 0; i < playerStates.length; i++){
+        let playerState = this.gameState.getPlayerState(i);
+
           //use different image for each player
-          if(this.gameState[i].id === 1){
+          if(playerState.getId() === 1){
             character = this.character1;
-          }else{
+          } else {
             character = this.character2;
           }
 
           //draws player image on right position
           this.context.drawImage(
-            character, 
-            character.width*this.gameState[i].characterNumber/3, //x coordinate to start clipping
+            character,
+            character.width * playerState.getSpriteNumber() / Const.CHARACTER_SPRITE_COUNT, //x coordinate to start clipping
             0,                        //y coordinate to start clipping
-            character.width/3,   //clipping width
+            character.width/Const.CHARACTER_SPRITE_COUNT,   //clipping width
             character.height,    //clipping height
-            this.gameState[i].x, 
-            this.gameState[i].y, 
+            playerState.getX(),
+            playerState.getY(),
             Const.PLAYER_WIDTH,       //resize to needed width
             Const.PLAYER_HEIGHT,      //resize to needed height
             );
@@ -212,10 +236,10 @@ export class Client {
 
     drawForeground(){
       this.context.drawImage(
-        this.foreground, 
-        0, 
-        Const.CANVAS_HEIGHT - Const.FOREGROUND_HEIGHT, 
-        Const.CANVAS_WIDTH, 
+        this.foreground,
+        0,
+        Const.CANVAS_HEIGHT - Const.FOREGROUND_HEIGHT,
+        Const.CANVAS_WIDTH,
         Const.FOREGROUND_HEIGHT
         );
     }

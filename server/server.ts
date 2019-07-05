@@ -2,19 +2,20 @@ import * as express from 'express';
 import * as path from 'path';
 import { Player } from './Player';
 import { GlobalConstants as Const } from '../global/GlobalConstants';
+import { GameState, PlayerState, ActionState } from '../global/GameState';
 
 export class Server{
     //Variables for the connection
-    private express:any;
-    private app:any;
-    private http:any;
-    private io:any;
+    private express: any;
+    private app: any;
+    private http: any;
+    private io: any;
     private clientList : Array<any> = [];
 
     //Variables for the actual game.
-    private playerList : Array<Player> = [];
-    private idCounter : number = 1;
-    private idNumberStack :any = [];
+    private playerList: Array<Player> = [];
+    private idCounter: number = 1;
+    private idNumberStack: Array<number> = [];
     private grid = Const.TEST_GRID_27x16;
 
     constructor(){
@@ -24,7 +25,7 @@ export class Server{
         this.http = require('http').Server(this.app);
 
         //Send Files to the client.
-        this.app.get('/', function(req:any,res:any){
+        this.app.get('/', function(req: any, res: any){
             res.sendFile(path.join(__dirname, '../dist/index.html'));
         });
 
@@ -73,7 +74,7 @@ export class Server{
         }
     }
 
-    registerPlayerEvents(socket: any, player : any){
+    registerPlayerEvents(socket: any, player: Player){
       //EventHandler: When a key is pressed do ...
       socket.on('keyPressed', (data: any) =>{
           this.keyPressedHandler(data, socket.id);
@@ -81,7 +82,7 @@ export class Server{
       });
 
       socket.on('movingMouse', (data: any) => {
-        player.setCursorPosition(data.cursor_X, data.cursor_Y);
+        player.setCursorPosition(data.cursorX, data.cursorY);
       });
 
       //EventHandler: Disconnection of Client
@@ -98,37 +99,39 @@ export class Server{
       setInterval(()=>{
           //The gameState holds all the information the client
           //needs to draw the game
-          var gameState : Array<any> = [];
-          var actionState : Array<any> = []
+          var gameState = new GameState();
+
           //GameStatePacker
           for(var i in this.playerList){
               var player = this.playerList[i];
               player.updatePosition();
               this.handleCollision(player, this.grid);
-              gameState.push({
-                  x: player.getX(),
-                  y: player.getY(),
-                  cursor_X: player.getCursorX(),
-                  cursor_Y: player.getCursorY(),
-                  characterNumber: player.checkDirection(),
-                  id: player.getId(),
-                  isTakingAction: player.getIsTakingAction()
-              });
 
               if(player.getIsTakingAction()){
-                actionState.push({
-                    player_ID : player.getId(),
-                    action_X : player.getActionX(),
-                    action_Y : player.getActionY()
-                })
+                var actionState: ActionState = new ActionState({x: player.getActionX(), y: player.getActionY()});
+              } else {
+                var actionState: ActionState = new ActionState({x: 0, y: 0});
               }
+
+             let playerState = new PlayerState({
+                  x: player.getX(),
+                  y:  player.getY(),
+                  cursorX: player.getCursorX(),
+                  cursorY: player.getCursorY(),
+                  spriteNumber: player.checkDirection(),
+                  id: player.getId(),
+                  isTakingAction: player.getIsTakingAction(),
+                  actionState: actionState
+              })
+
+              gameState.addPlayerState(playerState);
           }
 
 
           //Event: Send Gamestate to the clients.
           for(var i in this.clientList){
               var socket = this.clientList[i];
-              socket.emit('update', gameState, actionState);
+              socket.emit('update', gameState);
           }
       }, 1000/Const.FRAMES_PER_SECOND);
     }
@@ -141,7 +144,7 @@ export class Server{
                     //Calculate the Coordinates of each Block (Left Upper Corner)
                     var blockPositionX = Const.BLOCK_WIDTH * j;
                     var blockPositionY = Const.BLOCK_HEIGHT * i;
-                  
+
                     //Check if Players have collsions with blocks.
                     if (this.haveCollision(player, blockPositionX, blockPositionY)) {
 
@@ -170,6 +173,7 @@ export class Server{
             return false;
         }
     }
+
     addPlayerClient(socket: any){
         //Ticketsystem: If someone connects make a new Ticket.
         if (this.idNumberStack.length == 0){
@@ -191,7 +195,7 @@ export class Server{
         return player;
     }
 
-    removePlayerClient(socketId: any){
+    removePlayerClient(socketId: number){
       //Ticketsystem: When a player disconnects we need to delete him from clients and players.
       //And we need to push his Id to the ID-Stack that the next player can take it.
       let playerId = this.getPlayerClientId(this.playerList, socketId),
@@ -202,7 +206,7 @@ export class Server{
       this.idNumberStack.push(socketId);
     }
 
-    getPlayerClientId(arr: Array<any>, socketId:any){
+    getPlayerClientId(arr: Array<any>, socketId: number){
       // returns the index a player or client have, given their socketId
       for (let i = 0; i < arr.length; i++){
           if(arr[i].id == socketId){
@@ -211,7 +215,7 @@ export class Server{
       }
     }
 
-    keyPressedHandler({inputId: inputId, state: state}:any, socketId:any){
+    keyPressedHandler({inputId: inputId, state: state}:{inputId: string, state: boolean}, socketId:number){
       let playerId = this.getPlayerClientId(this.playerList, socketId),
           player = this.playerList[playerId];
 
