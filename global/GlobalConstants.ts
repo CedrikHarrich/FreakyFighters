@@ -39,7 +39,7 @@ export class GlobalConstants{
   static readonly GRAVITATION = 1.2;
 
   //Time and Frames Constants
-  static readonly FRAMES_PER_SECOND = 60;
+  static readonly CALCULATIONS_PER_SECOND = 60;
 
   //Acceleration Constants
   static readonly ACCELERATION_X = 1.5;

@@ -41,8 +41,7 @@ export class Server{
 
         console.log(`The server has started and is now listening to the port: ${Const.PORT}`)
 
-        //The server starts listening to events and sends packages as soon
-        //as someone connects.
+        //The server starts listening to events and sends packages as soon as someone connects.
         this.registerConnection();
         this.init();
     }
@@ -63,24 +62,29 @@ export class Server{
 
     }
 
+    //Handle everything needed when a Client connects.
     connectionHandler(socket: any){
+      //Check if the game needs another player.
       if (this.clientList.length < Const.MAX_PLAYERS || Const.UNLIMITED_PLAYERS){
           var client = this.addClient(socket);
           this.registerPlayerEvents(client);
       } else {
-          //Send the Client the event that he has to wait.
+          //Otherwise send the Client the event that he has to wait.
           socket.emit('wait', Const.WAITING_TIME);
           console.log(`Putting Player on with socket ID: "${socket.id}" into the queue.`);
         }
     }
-
+    
+    //start Listening to all the Events when connected.
     registerPlayerEvents({player, socket} : {player: Player, socket: any}){
+
       //EventHandler: When a key is pressed do ...
-      socket.on('keyPressed', (data: any) =>{
+      socket.on('keyPressed', (data: any) => {
           this.keyPressedHandler(data, socket.id);
           console.log(`${data.inputId} has been pressed by player ${socket.id}.`);
       });
 
+      //EventHandler: When mouse is moved ...
       socket.on('movingMouse', (data: any) => {
         player.setCursorPosition(data.cursorX, data.cursorY);
       });
@@ -94,6 +98,7 @@ export class Server{
       });
     }
 
+    //Starts the LOOP on the server that is calculating the Logic.
     init(){
       //Start the Update Loop FRAMES_PER_SECOND times per second.
       setInterval(()=>{
@@ -132,7 +137,7 @@ export class Server{
               var socket = this.clientList[i].socket;
               socket.emit('update', gameState);
           }
-      }, 1000/Const.FRAMES_PER_SECOND);
+      }, 1000/Const.CALCULATIONS_PER_SECOND);
     }
 
     addClient(socket: any){
