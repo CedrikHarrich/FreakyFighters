@@ -39,4 +39,36 @@ export class CollisionDetection {
           return false;
       }
   }
+
+  static handlePlayerColission(main : any, clientList : any[]){
+    var currentPlayer = clientList[main].player;
+    for(var i in clientList){
+        var otherPlayer = clientList[i].player;
+        if (i !== main){
+            if (this.havePlayerCollision(currentPlayer, otherPlayer)){
+                if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() > otherPlayer.getVelocityX() * (-1)){
+                    console.log("Schubse!");
+                    otherPlayer.setX(currentPlayer.getX() + Const.PLAYER_WIDTH - 40);
+                } else if (currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() < otherPlayer.getVelocityX() * (-1)){
+                    console.log("Schubse!");
+                    currentPlayer.setX(otherPlayer.getX() - Const.PLAYER_WIDTH +40);
+                    }
+                }
+            }
+        }
+    }
+
+  private static havePlayerCollision(playerOne: Player, playerTwo: Player) : boolean {
+    if (    playerOne.getX() + Const.PLAYER_WIDTH > playerTwo.getX() + Const.PERMEABLE_EDGES &&
+            playerOne.getX() + Const.PERMEABLE_EDGES < Const.BLOCK_WIDTH + playerTwo.getX() &&
+            playerOne.getY() + Const.PLAYER_HEIGHT > playerTwo.getY() &&
+            playerOne.getY() < Const.BLOCK_HEIGHT + playerTwo.getY())
+        {
+            console.log("Players are colliding");
+            return true;
+        } else {
+            return false;
+        }
+
+  }
 }

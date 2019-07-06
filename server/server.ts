@@ -5,7 +5,7 @@ import { GlobalConstants as Const } from '../global/GlobalConstants';
 //import { SpriteSheet} from '../global/SpriteSheet';
 import { Keys } from '../global/Keys';
 import { GameState, PlayerState, ActionState } from '../global/GameState';
-// import { CollisionDetection } from './CollisionDetection'
+import { CollisionDetection } from './CollisionDetection'
 
 export class Server{
     //Variables for the connection
@@ -132,11 +132,11 @@ export class Server{
               this.gameState.calculateTimeLeft();
             }
 
-            //Winning Condition
             
 
               var player = this.clientList[i].player;
               player.updatePosition();
+              CollisionDetection.handlePlayerColission(i, this.clientList);
 
               if(player.getIsTakingAction()){
                 var actionState: ActionState = new ActionState({x: player.getActionX(), y: player.getActionY()});
