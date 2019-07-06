@@ -149,7 +149,7 @@ export class Server{
                   y: player.getY(),
                   cursorX: player.getCursorX(),
                   cursorY: player.getCursorY(),
-                  spriteNumber: player.checkDirection(),
+                  clippingPosition: player.checkLookingDirection(),
                   id: player.getId(),
                   isTakingAction: player.getIsTakingAction(),
                   isDefending: player.getIsDefending(),
