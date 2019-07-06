@@ -45,12 +45,20 @@ export class CollisionDetection {
     for(var i in clientList){
         var otherPlayer = clientList[i].player;
         if (i !== main){
-            if (this.havePlayerCollision(currentPlayer, otherPlayer)){
-                if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() > otherPlayer.getVelocityX() * (-1)){
-                    console.log("Schubse!");
+            if (this.havePlayerCollision(currentPlayer, otherPlayer) ){
+                //Don't push on the left
+                if(currentPlayer.getX() < Const.PLAYER_WIDTH -40 && otherPlayer.getX() < Const.PLAYER_WIDTH -40){
+
+                }
+                else if(currentPlayer.getX() + Const.PLAYER_WIDTH -40 > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH && otherPlayer.getX()+ Const.PLAYER_WIDTH -40 > Const.CANVAS_WIDTH- Const.PLAYER_WIDTH){}
+                
+
+                //Push player to the right
+                else if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() > otherPlayer.getVelocityX() * (-1)){
                     otherPlayer.setX(currentPlayer.getX() + Const.PLAYER_WIDTH - 40);
-                } else if (currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() < otherPlayer.getVelocityX() * (-1)){
-                    console.log("Schubse!");
+                }
+                //Push player to the left
+                else if (currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() < otherPlayer.getVelocityX() * (-1)){
                     currentPlayer.setX(otherPlayer.getX() - Const.PLAYER_WIDTH +40);
                     }
                 }
