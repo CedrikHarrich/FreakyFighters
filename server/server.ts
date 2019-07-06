@@ -18,6 +18,7 @@ export class Server{
     //Variables for the actual game.
     private idCounter: number = 1;
     private idNumberStack: Array<number> = [];
+    private gameState : GameState;
 
     constructor(){
         //Initialize Variables used for the connection
@@ -78,7 +79,6 @@ export class Server{
     
     //start Listening to all the Events when connected.
     registerPlayerEvents({player, socket} : {player: Player, socket: any}){
-
       //EventHandler: When a key is pressed do ...
       socket.on('keyPressed', (data: any) => {
           this.keyPressedHandler(data, socket.id);
@@ -92,23 +92,49 @@ export class Server{
 
       //EventHandler: Disconnection of Client
       socket.on('disconnect', ()=>{
-          this.removeClient(socket.id);
+        //Client is removed
+        this.removeClient(socket.id);
 
-          console.log(`The player with the ID ${socket.id} has disconnected.`);
-          console.log(`There are ${this.clientList.length} Players left.`);
+        //The game is getting resetted.
+        this.gameState.timeLeft = Const.COUNTDOWN;
+        this.gameState.timerStarted = false;
+
+        console.log(`The player with the ID ${socket.id} has disconnected.`);
+        console.log(`There are ${this.clientList.length} Players left.`);
       });
     }
 
     //Starts the LOOP on the server that is calculating the Logic.
     init(){
-      //Start the Update Loop FRAMES_PER_SECOND times per second.
-      setInterval(()=>{
-          //The gameState holds all the information the client
-          //needs to draw the game
-          var gameState = new GameState();
 
+      //The gameState that collects all the information for the client
+      this.gameState = new GameState();
+
+      //Start the Update Loop Calculations_PER_SECOND times per second.      
+
+      setInterval(()=>{   
+        //Stop calculating if the game has been won already or time is up.
+        if (this.gameState.winner >= 1 || this.gameState.timeLeft === 0){
+          for(var i in this.clientList){
+            var socket = this.clientList[i].socket;
+            socket.emit('end', 1);//this.gameState.winner
+          }
+        } else {
           //GameStatePacker
           for(var i in this.clientList){
+            
+            //Timer: starts when 2 Players are in the lobby.
+            if(this.clientList.length === 2){
+              if(this.gameState.getTimerStarted() === false){
+                this.gameState.startTimer();
+              }
+              console.log(this.gameState.getTimeLeft());
+              this.gameState.calculateTimeLeft();
+            }
+
+            //Winning Condition
+            
+
               var player = this.clientList[i].player;
               player.updatePosition();
 
@@ -120,7 +146,7 @@ export class Server{
 
              let playerState = new PlayerState({
                   x: player.getX(),
-                  y:  player.getY(),
+                  y: player.getY(),
                   cursorX: player.getCursorX(),
                   cursorY: player.getCursorY(),
                   spriteNumber: player.checkDirection(),
@@ -131,15 +157,20 @@ export class Server{
                   actionState: actionState
               })
 
-              gameState.addPlayerState(playerState);
-          }
+              this.gameState.addPlayerState(playerState);
+            }
+          
 
 
           //Event: Send Gamestate to the clients.
           for(var i in this.clientList){
               var socket = this.clientList[i].socket;
-              socket.emit('update', gameState);
+              socket.emit('update', this.gameState);
           }
+
+          //The Array with the player Information will be deleted after it was sent.
+          this.gameState.resetPlayerStates();
+        }
       }, 1000/Const.CALCULATIONS_PER_SECOND);
     }
 
@@ -155,6 +186,7 @@ export class Server{
         //If a client connects. The socket will be registered and
         //the client gets a counting ID. ID = Position in Array.
         socket.id = this.idNumberStack.pop();
+        socket.emit('ID', socket.id);
 
         //A new player is created with the same ID as the socket.
         var player = new Player(socket.id);

@@ -1,8 +1,8 @@
 export enum Keys {
-    Up = "ArrowUp",
-    Down = "ArrowDown",
-    Left = "ArrowLeft",
-    Right = "ArrowRight",
-    Attack = "a",
-    Defense = "d"
+    Up = "w",
+    Down = "s",
+    Left = "a",
+    Right = "d",
+    Attack = " ",
+    Defense = "v"
 }

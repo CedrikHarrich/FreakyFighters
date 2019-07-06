@@ -15,7 +15,7 @@ export class Client {
     private target: HTMLImageElement = new Image();
     private block: HTMLImageElement = new Image();
     private shootObject: HTMLImageElement = new Image();
-    private gameState: GameState;
+    private gameState: GameState = new GameState();
     private grid: Array<Array<number>> = [];
 
     constructor(){
@@ -49,23 +49,41 @@ export class Client {
     }
 
     registerEvents(){
-      this.socket.on('update', (gameState:any) =>{
-         this.gameState = new GameState();
+      this.socket.on('end', (winner : number) => {
+        if(this.socket.id === winner){
+          this.drawWinnerScreen();
+        } else {
+          this.drawLooserScreen();
+        }
+      })
 
-         for(var i in gameState.playerStates){
 
-           if(gameState.playerStates[i].actionState != undefined){
-             let actionState = new ActionState({x: gameState.playerStates[i].actionState.x, y: gameState.playerStates[i].actionState.y});
-             Object.assign(gameState.playerStates[i], {'actionState': actionState});
-           }
+      this.socket.on('update', (gameState:any) => {
+        //Delete old GameState
+        this.gameState.resetPlayerStates();
+        
+        //Make the GameState
+        for(var i in gameState.playerStates){
+          if(gameState.playerStates[i].actionState != undefined){
+            let actionState = new ActionState({x: gameState.playerStates[i].actionState.x, y: gameState.playerStates[i].actionState.y});
+            Object.assign(gameState.playerStates[i], {'actionState': actionState});
+          }
 
-           let playerState = new PlayerState(gameState.playerStates[i]);
+          let playerState = new PlayerState(gameState.playerStates[i]);
 
-           this.gameState.addPlayerState(playerState);
-         }
-
-         this.draw();
+          this.gameState.addPlayerState(playerState);
+        }
+        this.gameState.winner = gameState.winner;
+        this.gameState.timeLeft = gameState.timeLeft;
+        
+        //Draw the current Gamestate
+        this.draw();
       });
+
+       //Change your ID to the assigned new ID.
+       this.socket.on('ID', (id : number)=>{
+        this.socket.id = id;
+      })
 
       //Event: Wait until the server has an open spot again.
       this.socket.on('wait', (time: number) =>{
@@ -116,9 +134,10 @@ export class Client {
 
     drawSunTimer(){
       this.context.beginPath();
-      this.context.moveTo(540, 30);
+      this.context.arc(540, 70, 40, -0.5 * Math.PI , (2* (this.gameState.timeLeft / Const.COUNTDOWN) - 0.5) * Math.PI);
       this.context.lineTo(540, 70);
-      this.context.arc(540, 70, 40, -0.5*Math.PI *1/60, 1.5 * Math.PI); //(2*Math.PI)*1/60
+      this.context.lineTo(540, 30);
+      
       this.context.fillStyle = "#F5A9AF";
       this.context.fill();
     }
@@ -284,6 +303,21 @@ export class Client {
         Const.CANVAS_WIDTH,
         Const.FOREGROUND_HEIGHT
         );
+    }
+
+    drawWinnerScreen(){
+      this.context.fillStyle = "green";
+      this.context.font = "100px Arial";
+      this.context.textAlign = "center";
+      this.context.fillText("Pretty U ;)!", Const.CANVAS_WIDTH/2, Const.CANVAS_HEIGHT/2);
+
+    }
+
+    drawLooserScreen(){
+      this.context.fillStyle = "red";
+      this.context.font = "100px Arial";
+      this.context.textAlign = "center";
+      this.context.fillText("U Ugly!", Const.CANVAS_WIDTH/2, Const.CANVAS_HEIGHT/2);
     }
 
     sleep(milliseconds : number) {

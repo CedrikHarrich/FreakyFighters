@@ -1,9 +1,34 @@
 import { Player } from "../server/Player";
+import { GlobalConstants as Const } from "../global/GlobalConstants";
 
 export class GameState {
-  readonly playerStates: Array<PlayerState>;
+  playerStates: Array<PlayerState>;
+  winner : number = -1;
+  timerStarted : boolean = false;
+  startingTime : number = Const.COUNTDOWN;
+  currentTime : number = -1;
+  timeLeft : number = Const.COUNTDOWN;
 
   constructor(){
+    this.playerStates = [];
+  }
+
+  calculateTimeLeft(){
+    if (this.timeLeft <= 0 ){
+      this.timeLeft = 0;
+    } else {
+      this.timeLeft = Const.COUNTDOWN - Math.floor((Date.now()- this.startingTime) / 1000);
+    }
+  }
+
+  startTimer(){
+    this.startingTime = Date.now();
+    this.currentTime = this.startingTime;
+    this.timeLeft = Const.COUNTDOWN;
+    this.timerStarted = true;
+  }
+
+  resetPlayerStates(){
     this.playerStates = [];
   }
 
@@ -18,7 +43,7 @@ export class GameState {
   }
 
   getPlayerStates(){
-    return this.playerStates
+    return this.playerStates;
   }
 
   getPlayerState(i: number){
@@ -26,6 +51,15 @@ export class GameState {
       return this.playerStates[i]
     }
   }
+
+  getTimeLeft(){
+    return this.timeLeft;
+  }
+
+  getTimerStarted(){
+    return this.timerStarted; 
+  }
+
 }
 
 export class PlayerState extends Player {
