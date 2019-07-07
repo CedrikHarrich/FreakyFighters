@@ -233,7 +233,7 @@ export class Server{
           };
           break;
         case Keys.defense:
-            player.getIsDefending ? player.setIsDefending(state) : player.setIsDefending(state);
+            player.setIsDefending(state);
             break;
         default:
           return;
@@ -264,7 +264,7 @@ export class Server{
             };
             break;
         case Keys.Defense:
-            player.getIsDefending ? player.setIsDefending(state) : player.setIsDefending(state);
+            player.setIsDefending(state);
             break;
           default:
               return;
