@@ -90,6 +90,11 @@ export class Server{
         player.setCursorPosition(data.cursorX, data.cursorY);
       });
 
+      socket.on('buttonClicked', (data: any) => {
+        this.mouseButtonPressedHandler(data, socket.id);
+        console.log(`${data.button} has been pressed by player ${socket.id}.`);
+      });
+
       //EventHandler: Disconnection of Client
       socket.on('disconnect', ()=>{
         //Client is removed
@@ -213,6 +218,25 @@ export class Server{
           if(this.clientList[i].socket.id == socketId){
               return i;
           }
+      }
+    }
+
+    mouseButtonPressedHandler({button: button, state: state}:{button: number, state: boolean}, socketId:number){
+      let clientId = this.getClientId(socketId),
+          player = this.clientList[clientId].player;
+      
+      switch(button){
+        case Keys.attack:
+            if(player.getIsTakingAction() === false){
+              console.log(`Player ${socketId} is shooting`);
+              player.setIsTakingAction(state);
+          };
+          break;
+        case Keys.defense:
+            player.getIsDefending ? player.setIsDefending(state) : player.setIsDefending(state);
+            break;
+        default:
+          return;
       }
     }
 

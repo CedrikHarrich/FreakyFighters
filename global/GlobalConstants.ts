@@ -47,7 +47,7 @@ export class GlobalConstants{
   static readonly TIMER_Y = 70;
   static readonly TIMER_RADIUS = GlobalConstants.BLOCK_WIDTH;
   static readonly CALCULATIONS_PER_SECOND = 60;
-  static readonly COUNTDOWN = 2;
+  static readonly COUNTDOWN = 10;
 
   //Game Over Constants
   static readonly GAMEOVER_WINNER_X = 450;

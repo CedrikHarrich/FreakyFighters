@@ -107,12 +107,28 @@ export class Client {
           cursorY: (event.clientY - canvasRestrict.top)*scaleY
         });
       });
+
+      window.addEventListener('mousedown', (event: MouseEvent) => {
+        this.mouseClickedHandler(event.button, true);
+      });
+
+      window.addEventListener('mouseup', (event: MouseEvent) => {
+        this.mouseClickedHandler(event.button, false);
+      });
+
+      window.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+      })
     }
 
     keyPressedHandler(inputId: string, state: boolean) {
       if (Object.values(Keys).includes(inputId)){
         this.socket.emit('keyPressed', {inputId: inputId, state: state});
       }
+    }
+
+    mouseClickedHandler(button: number, state: boolean){
+     this.socket.emit('buttonClicked', {button: button, state: state});
     }
 
     draw(){
