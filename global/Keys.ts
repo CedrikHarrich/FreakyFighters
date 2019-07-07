@@ -4,5 +4,7 @@ export enum Keys {
     Left = "a",
     Right = "d",
     Attack = " ",
-    Defense = "v"
+    Defense = "v",
+    attack = 0,
+    defense = 2
 }

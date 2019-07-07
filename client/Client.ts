@@ -2,19 +2,17 @@ import { GlobalConstants as Const } from "../global/GlobalConstants"
 import { SpriteSheet } from "../global/SpriteSheet"
 import { Keys as Keys } from "../global/Keys"
 import { GameState, PlayerState, ActionState } from "../global/GameState"
+import { lookup } from "dns";
 
 export class Client {
     private socket: any = io();
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
     private sharedSpriteSheet: HTMLImageElement = new Image();
-    private character1: HTMLImageElement = new Image();
-    private character2: HTMLImageElement = new Image();
-    private background: HTMLImageElement = new Image();
+    private player_1_sprites: HTMLImageElement = new Image();
+    private player_2_sprites: HTMLImageElement = new Image();
+    private screens: HTMLImageElement = new Image();
     private foreground: HTMLImageElement = new Image();
-    private target: HTMLImageElement = new Image();
-    private block: HTMLImageElement = new Image();
-    private shootObject: HTMLImageElement = new Image();
     private gameState: GameState = new GameState();
     private grid: Array<Array<number>> = [];
 
@@ -31,13 +29,10 @@ export class Client {
 
         // Image Sources
         this.sharedSpriteSheet.src = `./${Const.ASSET_FOLDER}SpriteSheet_Shared.png`;
-        this.character1.src = `./${Const.ASSET_FOLDER}minions1.png`;
-        this.character2.src = `./${Const.ASSET_FOLDER}minions2.png`;
-        this.background.src = `./${Const.ASSET_FOLDER}background.png`;
+        this.player_1_sprites.src = `./${Const.ASSET_FOLDER}SpriteSheet_Player_1.png`;
+        this.player_2_sprites.src = `./${Const.ASSET_FOLDER}SpriteSheet_Player_2.png`;
+        this.screens.src = `./${Const.ASSET_FOLDER}Screens.png`;
         this.foreground.src = `./${Const.ASSET_FOLDER}foreground.png`;
-        this.block.src = `./${Const.ASSET_FOLDER}clouds_trans.png`;
-        this.shootObject.src = `./${Const.ASSET_FOLDER}block.png`;
-        this.target.src = `./${Const.ASSET_FOLDER}target.png`;
 
         //Load the grid
         this.grid = Const.GRID_1;
@@ -51,9 +46,9 @@ export class Client {
     registerEvents(){
       this.socket.on('end', (winner : number) => {
         if(this.socket.id === winner){
-          this.drawWinnerScreen();
+          this.drawWinnerScreen(this.socket.id);
         } else {
-          this.drawLooserScreen();
+          this.drawLoserScreen(this.socket.id);
         }
       })
 
@@ -112,12 +107,28 @@ export class Client {
           cursorY: (event.clientY - canvasRestrict.top)*scaleY
         });
       });
+
+      window.addEventListener('mousedown', (event: MouseEvent) => {
+        this.mouseClickedHandler(event.button, true);
+      });
+
+      window.addEventListener('mouseup', (event: MouseEvent) => {
+        this.mouseClickedHandler(event.button, false);
+      });
+
+      window.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+      })
     }
 
     keyPressedHandler(inputId: string, state: boolean) {
       if (Object.values(Keys).includes(inputId)){
         this.socket.emit('keyPressed', {inputId: inputId, state: state});
       }
+    }
+
+    mouseClickedHandler(button: number, state: boolean){
+     this.socket.emit('buttonClicked', {button: button, state: state});
     }
 
     draw(){
@@ -134,9 +145,9 @@ export class Client {
 
     drawSunTimer(){
       this.context.beginPath();
-      this.context.arc(540, 70, 40, -0.5 * Math.PI , (2* (this.gameState.timeLeft / Const.COUNTDOWN) - 0.5) * Math.PI);
-      this.context.lineTo(540, 70);
-      this.context.lineTo(540, 30);
+      this.context.arc(Const.TIMER_X, Const.TIMER_Y, Const.TIMER_RADIUS, -0.5 * Math.PI , (2* (this.gameState.timeLeft / Const.COUNTDOWN) - 0.5) * Math.PI);
+      this.context.lineTo(Const.TIMER_X, Const.TIMER_Y);
+      this.context.lineTo(Const.TIMER_X, Const.TIMER_Y - Const.BLOCK_HEIGHT);
       
       this.context.fillStyle = "#F5A9AF";
       this.context.fill();
@@ -145,26 +156,26 @@ export class Client {
     drawDefendObject(){
       let defendObject_X: number;
       let defendObject_Y: number;
-      let clippingPositionX: number;
+      let clippingPosition: {x: number, y: number};
       let playerStates = this.gameState.getPlayerStates();
 
       for(var i = 0; i < playerStates.length; i++) {
         let playerState = this.gameState.getPlayerState(i);
         if(playerState.getIsDefending()){
-          defendObject_X = playerState.getX() - Const.DEFENCE_X_DIFF;
-          defendObject_Y = playerState.getY() - Const.DEFENCE_Y_DIFF;
-          clippingPositionX = playerState.getIsInTheAir() ? SpriteSheet.MIDDLE_SPRITE : SpriteSheet.LEFT_SPRITE;
+          defendObject_X = playerState.getX() - Const.DEFENSE_X_DIFF;
+          defendObject_Y = playerState.getY() - Const.DEFENSE_Y_DIFF;
+          clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.DEFENSE_AIR : SpriteSheet.DEFENSE_GROUND;
           
           this.context.drawImage(
             this.sharedSpriteSheet,
-            this.sharedSpriteSheet.width * clippingPositionX / SpriteSheet.SPRITES_IN_ROW,
-            this.sharedSpriteSheet.height * 1 /SpriteSheet.SPRITES_IN_COLUMN, //die 1 änder ich noch! SpriteSheet noch nicht fertig
+            this.sharedSpriteSheet.width * clippingPosition.x / SpriteSheet.SPRITES_IN_ROW,
+            this.sharedSpriteSheet.height * clippingPosition.y /SpriteSheet.SPRITES_IN_COLUMN_SHARED,
             this.sharedSpriteSheet.width / SpriteSheet.SPRITES_IN_ROW,
-            this.sharedSpriteSheet.height / SpriteSheet.SPRITES_IN_COLUMN,
+            this.sharedSpriteSheet.height / SpriteSheet.SPRITES_IN_COLUMN_SHARED,
             defendObject_X,
             defendObject_Y,
-            Const.DEFENCE_SIZE,
-            Const.DEFENCE_SIZE
+            Const.DEFENSE_SIZE,
+            Const.DEFENSE_SIZE
           );
         }
       }
@@ -178,18 +189,15 @@ export class Client {
         let playerState = this.gameState.getPlayerState(i);
 
         if(playerState.getIsTakingAction()){
-          if(playerState.getId() === 1){
-            shootObject = this.character1;
-          }else{
-            shootObject = this.character2;
-          }
+          
+          shootObject = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
 
           this.context.drawImage(
             shootObject,
-            shootObject.width / SpriteSheet.SPRITES_IN_ROW ,
-            0,
+            shootObject.width * SpriteSheet.SHOOT.x/ SpriteSheet.SPRITES_IN_ROW ,
+            shootObject.height * SpriteSheet.SHOOT.y / SpriteSheet.SPRITES_IN_COLUMN,
             shootObject.width / SpriteSheet.SPRITES_IN_ROW,
-            shootObject.height,
+            shootObject.height / SpriteSheet.SPRITES_IN_COLUMN,
             playerState.getActionX(),
             playerState.getActionY(),
             Const.SHOOT_OBJECT_SIZE,
@@ -200,14 +208,21 @@ export class Client {
       }
     }
 
-    drawTarget(){ //before: player:any
-      let playerStates = this.gameState.getPlayerStates();
+    drawTarget(){ 
+      let playerStates = this.gameState.getPlayerStates(),
+        target: HTMLImageElement = new Image();
 
       for (var i = 0; i < playerStates.length; i++){
         let playerState = this.gameState.getPlayerState(i);
 
+        target = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
+
         this.context.drawImage(
-          this.target,
+          target,
+          target.width * SpriteSheet.TARGET.x / SpriteSheet.SPRITES_IN_ROW,
+          target.height * SpriteSheet.TARGET.y / SpriteSheet.SPRITES_IN_COLUMN,
+          target.width / SpriteSheet.SPRITES_IN_ROW,
+          target.height / SpriteSheet.SPRITES_IN_COLUMN,
           playerState.getCursorX(),
           playerState.getCursorY(),
           Const.SHOOT_OBJECT_SIZE,
@@ -216,9 +231,7 @@ export class Client {
       }
     }
 
-    //Unbenennung von drawCharacter zu drawPlayer,
-    //da die Methode das Schießobjekt und die Zielscheibe
-    //des jeweiligen Spielers mit malt
+    
     drawPlayer(){
       let character: HTMLImageElement = new Image(),
           playerStates = this.gameState.getPlayerStates();
@@ -228,18 +241,18 @@ export class Client {
 
           //use different image for each player
           if(playerState.getId() === 1){
-            character = this.character1;
+            character = this.player_1_sprites;
           } else {
-            character = this.character2;
+            character = this.player_2_sprites;
           }
 
           //draws player image on right position
           this.context.drawImage(
             character,
-            character.width * playerState.getSpriteNumber() / SpriteSheet.SPRITES_IN_ROW, //x coordinate to start clipping
-            0,                        //y coordinate to start clipping
-            character.width/SpriteSheet.SPRITES_IN_ROW,   //clipping width
-            character.height,    //clipping height
+            character.width * playerState.getClippingPosition().x / SpriteSheet.SPRITES_IN_ROW, //x coordinate to start clipping
+            character.height * playerState.getClippingPosition().y / SpriteSheet.SPRITES_IN_COLUMN,                        //y coordinate to start clipping
+            character.width / SpriteSheet.SPRITES_IN_ROW,   //clipping width
+            character.height / SpriteSheet.SPRITES_IN_COLUMN,    //clipping height
             playerState.getX(),
             playerState.getY(),
             Const.PLAYER_WIDTH,       //resize to needed width
@@ -251,7 +264,7 @@ export class Client {
     drawClouds(){
       if (Const.WITH_GRID){
         let preBlock: number;
-        let clippingPositionX: number;
+        let clippingPosition: {x:number, y:number};
 
         //scan only in possible block positions
         for (let i : number = Const.MAX_BLOCK_POSITION_Y; i < Const.MIN_BLOCK_POSITION_Y; i++){
@@ -259,25 +272,24 @@ export class Client {
           for (let j : number = 0; j < Const.GRID_WIDTH; j++){
             //Front: preblock = 0 and now = 1
             if (preBlock === 0 && this.grid[i][j] === 1){
-              clippingPositionX = SpriteSheet.LEFT_SPRITE;
+              clippingPosition = SpriteSheet.CLOUD_LEFT;
             }
             //Middle: preblock = 1, now = 1 and next = 1
             if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] === 1){
-              clippingPositionX = SpriteSheet.MIDDLE_SPRITE;
+              clippingPosition = SpriteSheet.CLOUD_MIDDLE;
             }
             //Back: preblock = 1, now = 0 and next != 1
             if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] !==1){
-              clippingPositionX = SpriteSheet.RIGHT_SPRITE;
+              clippingPosition = SpriteSheet.CLOUD_RIGHT;
             }
 
-            //draw block elements relative to part position from image
             if(this.grid[i][j] === 1){
               this.context.drawImage(
-                this.block,
-                this.block.width*clippingPositionX / SpriteSheet.SPRITES_IN_ROW, //position to start clipping
-                0,
-                this.block.width / SpriteSheet.SPRITES_IN_ROW,
-                this.block.height,
+                this.sharedSpriteSheet,
+                this.sharedSpriteSheet.width * clippingPosition['x'] / SpriteSheet.SPRITES_IN_ROW,
+                this.sharedSpriteSheet.height * clippingPosition['y'] / SpriteSheet.SPRITES_IN_COLUMN_SHARED,
+                this.sharedSpriteSheet.width / SpriteSheet.SPRITES_IN_ROW,
+                this.sharedSpriteSheet.height / SpriteSheet.SPRITES_IN_COLUMN_SHARED,
                 Const.BLOCK_WIDTH * j,
                 Const.BLOCK_HEIGHT * i,
                 Const.BLOCK_WIDTH,
@@ -292,7 +304,7 @@ export class Client {
     }
 
     drawBackground(){
-      this.context.drawImage(this.background, 0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
+      this.context.drawImage(this.screens, 0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT,0,0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
     }
 
     drawForeground(){
@@ -305,19 +317,63 @@ export class Client {
         );
     }
 
-    drawWinnerScreen(){
-      this.context.fillStyle = "green";
-      this.context.font = "100px Arial";
-      this.context.textAlign = "center";
-      this.context.fillText("Pretty U ;)!", Const.CANVAS_WIDTH/2, Const.CANVAS_HEIGHT/2);
+    drawWinnerScreen(playerId:number){
+      let winner : HTMLImageElement = new Image();
 
+      this.context.drawImage(
+        this.screens,
+        0,
+        Const.CANVAS_HEIGHT,
+        Const.CANVAS_WIDTH,
+        Const.CANVAS_HEIGHT,
+        0,
+        0,
+        Const.CANVAS_WIDTH,
+        Const.CANVAS_HEIGHT
+      )
+
+      winner = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
+
+      this.context.drawImage(
+        winner,
+        winner.width * SpriteSheet.WINNER.x / SpriteSheet.SPRITES_IN_ROW,
+        winner.height * SpriteSheet.WINNER.y / SpriteSheet.SPRITES_IN_COLUMN,
+        winner.width / SpriteSheet.SPRITES_IN_ROW,
+        winner.height / SpriteSheet.SPRITES_IN_COLUMN,
+        Const.GAMEOVER_WINNER_X,
+        Const.GAMEOVER_WINNER_Y,
+        Const.GAMEOVER_WINNER_SIZE,
+        Const.GAMEOVER_WINNER_SIZE
+      )
     }
 
-    drawLooserScreen(){
-      this.context.fillStyle = "red";
-      this.context.font = "100px Arial";
-      this.context.textAlign = "center";
-      this.context.fillText("U Ugly!", Const.CANVAS_WIDTH/2, Const.CANVAS_HEIGHT/2);
+    drawLoserScreen(playerId:number){
+      let loser: HTMLImageElement = new Image();
+      this.context.drawImage(
+        this.screens,
+        0,
+        Const.CANVAS_HEIGHT*SpriteSheet.SPRITES_IN_COLUMN_SHARED,
+        Const.CANVAS_WIDTH,
+        Const.CANVAS_HEIGHT,
+        0,
+        0,
+        Const.CANVAS_WIDTH,
+        Const.CANVAS_HEIGHT
+      )
+
+      loser = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
+      
+      this.context.drawImage(
+        loser,
+        loser.width * SpriteSheet.LOSER.x / SpriteSheet.SPRITES_IN_ROW,
+        loser.height * SpriteSheet.LOSER.y / SpriteSheet.SPRITES_IN_COLUMN,
+        loser.width / SpriteSheet.SPRITES_IN_ROW,
+        loser.height / SpriteSheet.SPRITES_IN_COLUMN,
+        Const.GAMEOVER_LOSER_X,
+        Const.GAMEOVER_LOSER_Y,
+        Const.GAMEOVER_LOSER_SIZE,
+        Const.GAMEOVER_LOSER_SIZE
+      )
     }
 
     sleep(milliseconds : number) {

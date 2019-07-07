@@ -64,10 +64,10 @@ export class GameState {
 
 export class PlayerState extends Player {
   private isInTheAir: boolean;
-  private spriteNumber: number;
+  private clippingPosition: {x:number, y:number};
   private actionState: ActionState;
 
-  constructor({x, y, cursorX, cursorY, spriteNumber, id, isTakingAction, isDefending, isInTheAir, actionState} : {x:number, y:number, cursorX: number, cursorY: number, spriteNumber:number, id:number, isTakingAction: boolean, isDefending:boolean, isInTheAir:boolean, actionState:ActionState}){
+  constructor({x, y, cursorX, cursorY, clippingPosition, id, isTakingAction, isDefending, isInTheAir, actionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, isTakingAction: boolean, isDefending:boolean, isInTheAir:boolean, actionState:ActionState}){
     super(id);
     this.setX(x);
     this.setY(y);
@@ -76,15 +76,15 @@ export class PlayerState extends Player {
     this.setIsDefending(isDefending);
     this.isInTheAir = isInTheAir;
     this.actionState = actionState
-    this.spriteNumber = spriteNumber;
+    this.clippingPosition = clippingPosition;
   }
 
   getIsInTheAir(){
     return this.isInTheAir;
   }
 
-  getSpriteNumber(){
-    return this.spriteNumber;
+  getClippingPosition(){
+    return this.clippingPosition;
   }
 
   getActionState(){
