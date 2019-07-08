@@ -1,7 +1,6 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
 import { SpriteSheet } from "../global/SpriteSheet"
 import { CollisionDetection } from './CollisionDetection'
-
 import { ShootAction } from "./ShootAction";
 
 export class Player {

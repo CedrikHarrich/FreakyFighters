@@ -60,6 +60,14 @@ export class GameState {
     return this.timerStarted; 
   }
 
+  getWinner(){
+    return this.playerStates[0].getHealthPoints() > this.playerStates[1].getHealthPoints() ? this.playerStates[0].getId() : this.playerStates[1].getId();
+  }
+
+  noHealthPointsLeft(){
+    return this.playerStates[0].getHealthPoints() === 0 || this.playerStates[1].getHealthPoints() === 0 ;
+  }
+
 }
 
 export class PlayerState extends Player {

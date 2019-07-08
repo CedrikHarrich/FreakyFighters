@@ -53,7 +53,8 @@ export class Client {
 
           this.gameState.addPlayerState(playerState);
         }
-        this.gameState.winner = gameState.winner;
+        //TODO: nochmal anschauen
+        this.gameState.winner = gameState.getWinner();
         this.gameState.timeLeft = gameState.timeLeft;
         
         //Draw the current Gamestate

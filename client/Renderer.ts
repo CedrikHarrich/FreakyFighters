@@ -32,9 +32,9 @@ export class Renderer {
         this.drawSunTimer();
         this.drawPlayer();
         this.drawDefendObject();
+        this.drawClouds();
         this.drawTarget();
         this.drawShootObject();
-        this.drawClouds();
         this.drawLifeBar();
         this.drawForeground();
     }

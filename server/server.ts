@@ -119,10 +119,10 @@ export class Server{
 
       setInterval(()=>{   
         //Stop calculating if the game has been won already or time is up.
-        if (this.gameState.winner >= 1 || this.gameState.timeLeft === 0){
+        if (this.gameState.noHealthPointsLeft() || this.gameState.timeLeft === 0){
           for(var i in this.clientList){
             var socket = this.clientList[i].socket;
-            socket.emit('end', 2);//this.gameState.winner
+            socket.emit('end', this.gameState.getWinner());
           }
         } else {
           //GameStatePacker
