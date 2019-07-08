@@ -122,7 +122,7 @@ export class Server{
         if (this.gameState.winner >= 1 || this.gameState.timeLeft === 0){
           for(var i in this.clientList){
             var socket = this.clientList[i].socket;
-            socket.emit('end', 1);//this.gameState.winner
+            socket.emit('end', 2);//this.gameState.winner
           }
         } else {
           //GameStatePacker
@@ -156,6 +156,7 @@ export class Server{
                   cursorY: player.getCursorY(),
                   clippingPosition: player.checkLookingDirection(),
                   id: player.getId(),
+                  healthPoints: player.getHealthPoints(),
                   isTakingAction: player.getIsTakingAction(),
                   isDefending: player.getIsDefending(),
                   isInTheAir: player.getIsInTheAir(),
