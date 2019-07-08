@@ -109,10 +109,13 @@ export class Player {
 
     solidRoof(){
         //Don't jump over the canvas.
-        if (this.y < 0) {
-            this.y = 0;
+        let setValueTo: number;
+        this.isDefending ? setValueTo = Const.DEFENSE_Y_DIFF : setValueTo = 0;
+        if(this.y < setValueTo){
+            this.y = setValueTo;
             this.velocityY = 0;
         }
+
     }
 
     permeableWalls(){
@@ -127,12 +130,22 @@ export class Player {
 
     solidWalls(){
         //Player can not pass the walls on each side.
-        if (this.x < 0){
-            this.x = 0;
+        if(this.isDefending){
+            if(this.x < Const.DEFENSE_X_DIFF) {
+                this.x = Const.DEFENSE_X_DIFF
+            }
+            if(this.x > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH - Const.DEFENSE_X_DIFF){
+                this.x = Const.CANVAS_WIDTH - Const.PLAYER_WIDTH - Const.DEFENSE_X_DIFF;
+            }
+        } else {
+            if (this.x < 0){
+                this.x = 0;
+            }
+            if (this.x > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH){
+                this.x = Const.CANVAS_WIDTH - Const.PLAYER_WIDTH;
+            }
         }
-        if (this.x > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH){
-            this.x = Const.CANVAS_WIDTH - Const.PLAYER_WIDTH;
-        }
+
     }
 
     //Target can only be positioned within walls and above ground
@@ -152,15 +165,15 @@ export class Player {
     }
 
     // determines which image sprite will be rendered
-    checkDirection(){
+    checkLookingDirection(){
         if(this.isLeftKeyPressed){
-            return SpriteSheet.LEFT_SPRITE;
+            return SpriteSheet.PLAYER_LEFT;
         }
         if(this.isLeftKeyPressed == false && this.isRightKeyPressed == false){
-            return SpriteSheet.MIDDLE_SPRITE;
+            return SpriteSheet.PLAYER_FRONT;
         }
         if(this.isRightKeyPressed){
-            return SpriteSheet.RIGHT_SPRITE;
+            return SpriteSheet.PLAYER_RIGHT;
         }
     }
 

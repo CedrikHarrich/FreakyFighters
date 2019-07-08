@@ -29,9 +29,9 @@ export class GlobalConstants{
   static readonly SHOOT_OBJECT_SIZE : number = 40;
   static readonly SHOOT_OBJECT_SPEED : number = 18;
   static readonly TARGET_SIZE : number = GlobalConstants.SHOOT_OBJECT_SIZE;
-  static readonly DEFENCE_SIZE : number = 160;
-  static readonly DEFENCE_Y_DIFF : number = 29;
-  static readonly DEFENCE_X_DIFF : number = 20;
+  static readonly DEFENSE_SIZE : number = 160;
+  static readonly DEFENSE_Y_DIFF : number = 29;
+  static readonly DEFENSE_X_DIFF : number = 20;
 
   //Level Constants
   static readonly GROUND_HEIGHT_FROM_BOTTOM = 120;
@@ -42,9 +42,21 @@ export class GlobalConstants{
   static readonly FRICTION = 0.9;
   static readonly GRAVITATION = 1.2;
 
-  //Time and Frames Constants
+  //Timer and Frames Constants
+  static readonly TIMER_X = GlobalConstants.CANVAS_WIDTH / 2; //in the middle of the canvas
+  static readonly TIMER_Y = 70;
+  static readonly TIMER_RADIUS = GlobalConstants.BLOCK_WIDTH;
   static readonly CALCULATIONS_PER_SECOND = 60;
-  static readonly COUNTDOWN = 60;
+  static readonly COUNTDOWN = 10;
+
+  //Game Over Constants
+  static readonly GAMEOVER_WINNER_X = 450;
+  static readonly GAMEOVER_WINNER_Y = 330;
+  static readonly GAMEOVER_WINNER_SIZE = 180;
+  static readonly GAMEOVER_LOSER_X = 450;
+  static readonly GAMEOVER_LOSER_Y = 360;
+  static readonly GAMEOVER_LOSER_SIZE = 190;
+ 
 
   //Acceleration Constants
   static readonly ACCELERATION_X = 1.5;
