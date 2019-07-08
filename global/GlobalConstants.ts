@@ -27,7 +27,7 @@ export class GlobalConstants{
   
   //Action Constants
   static readonly SHOOT_OBJECT_SIZE : number = 40;
-  static readonly SHOOT_OBJECT_SPEED : number = 18;
+  static readonly SHOOT_OBJECT_SPEED : number = 22;
   static readonly TARGET_SIZE : number = GlobalConstants.SHOOT_OBJECT_SIZE;
   static readonly DEFENSE_SIZE : number = 160;
   static readonly DEFENSE_Y_DIFF : number = 29;
@@ -47,10 +47,10 @@ export class GlobalConstants{
   static readonly TIMER_Y = 70;
   static readonly TIMER_RADIUS = GlobalConstants.BLOCK_WIDTH;
   static readonly CALCULATIONS_PER_SECOND = 60;
-  static readonly COUNTDOWN = 10;
+  static readonly COUNTDOWN = 120;
 
   //Life Bar Constants
-  static readonly MAX_HP: number = 20;
+  static readonly MAX_HP: number = 200;
   static readonly LIFE_BAR_FRAME_WIDTH = 360;
   static readonly LIFE_BAR_FRAME_HEIGHT = 120;
   static readonly LIFE_BAR_FRAME_1_COORDS: {x: number, y: number} = {x: 10, y: 0};

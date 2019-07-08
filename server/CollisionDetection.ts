@@ -105,8 +105,17 @@ export class CollisionDetection {
                 //Schuss be gone
                 console.log("Project hits");
                 clientList[main].player.getAction().setShootActionComplete(true);
+                
 
-                //Healtpoints be gone
+                //Shield?
+                    //Yasss: Healtpoints be gone 
+                    
+
+                    //nope
+                    otherPlayer.setHealthpoints(otherPlayer.getHealthPoints() - 10);
+                    console.log(otherPlayer.getHealthPoints());
+                    clientList[main].player.setIsTakingActionVariable(false);
+                    clientList[main].player.setAction(undefined);
             }
         }
     }

@@ -27,7 +27,7 @@ export class Player {
 
     constructor(id :number){
         this.id = id;
-        this.healthPoints = Const.MAX_HP - 2; //TODO: set back to Const.MAX_HP
+        this.healthPoints = Const.MAX_HP; 
         this.isTakingAction = false;
         if(this.id === 1){
             this.x = Const.PLAYER_1_START_X_COORDS;
@@ -48,8 +48,9 @@ export class Player {
 
         //Update Shoot Object Position
         if(this.isTakingAction){
-            if(this.action.getIsActionComplete()){
+            if(this.action.getIsActionComplete() && this.action !== undefined){
                 this.isTakingAction = false;
+
             }
             this.action.updateShootObjectPosition();
         }
@@ -260,6 +261,10 @@ export class Player {
         this.cursorY = cursorY;
     }
 
+    setIsTakingActionVariable(isTakingAction : boolean){
+        this.isTakingAction = isTakingAction;
+    }
+
     setIsTakingAction(isTakingAction : boolean){
         this.isTakingAction = isTakingAction;
         this.action = new ShootAction(
@@ -308,6 +313,10 @@ export class Player {
 
     setVelocityX(velocityX : number){
         this.velocityX = velocityX;
+    }
+
+    setAction(action : ShootAction){
+        this.action = action;
     }
 
 }

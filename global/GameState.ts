@@ -61,19 +61,32 @@ export class GameState {
   }
 
   getWinner(){
-    if(this.playerStates.length === 2){
-      return this.playerStates[0].getHealthPoints() > this.playerStates[1].getHealthPoints() ? this.playerStates[0].getId() : this.playerStates[1].getId();
+    return this.winner;
+    /*if(this.playerStates.length === 2){
+      return (this.playerStates[0].getHealthPoints() > this.playerStates[1].getHealthPoints() ? this.playerStates[0].getId() : this.playerStates[1].getId());
     }
+    */
+  }
+
+  setWinner(winner : number){
+    this.winner = winner;
   }
 
   noHealthPointsLeft(){
-    if(this.playerStates.length === 2){
-    return this.playerStates[0].getHealthPoints() === 0 || this.playerStates[1].getHealthPoints() === 0 ;
+    for (var i in this.playerStates){
+      if (this.playerStates[i].getHealthPoints() <= 0){
+        return true;
+      }
+      
     }
+    return false;
+    /*
+    if(this.playerStates.length === 2){
+    return (this.playerStates[0].getHealthPoints() === 0 || this.playerStates[1].getHealthPoints() === 0) ;
   }
-
+  */
 }
-
+}
 export class PlayerState extends Player {
   private isInTheAir: boolean;
   private clippingPosition: {x:number, y:number};
