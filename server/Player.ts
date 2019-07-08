@@ -1,7 +1,6 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
 import { SpriteSheet } from "../global/SpriteSheet"
 import { CollisionDetection } from './CollisionDetection'
-
 import { ShootAction } from "./ShootAction";
 
 export class Player {
@@ -13,6 +12,7 @@ export class Player {
     private id :number = 0;
     private cursorX: number;
     private cursorY: number;
+    private healthPoints: number;
 
     //Actions the player can make
     private isUpKeyPressed : boolean = false;
@@ -27,6 +27,7 @@ export class Player {
 
     constructor(id :number){
         this.id = id;
+        this.healthPoints = Const.MAX_HP - 2; //TODO: set back to Const.MAX_HP
         this.isTakingAction = false;
         if(this.id === 1){
             this.x = Const.PLAYER_1_START_X_COORDS;
@@ -241,7 +242,15 @@ export class Player {
         return this.velocityY;
     }
 
+    getHealthPoints(){
+        return this.healthPoints;
+    }
+
     //Setter Methods
+    setHealthpoints(healthPoints: number){
+        this.healthPoints = healthPoints;
+    }
+
     setCursorPosition(cursorX: number, cursorY: number){
         this.cursorX = cursorX;
         this.cursorY = cursorY;

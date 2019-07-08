@@ -49,15 +49,29 @@ export class GlobalConstants{
   static readonly CALCULATIONS_PER_SECOND = 60;
   static readonly COUNTDOWN = 10;
 
+  //Life Bar Constants
+  static readonly MAX_HP: number = 20;
+  static readonly LIFE_BAR_FRAME_WIDTH = 360;
+  static readonly LIFE_BAR_FRAME_HEIGHT = 120;
+  static readonly LIFE_BAR_FRAME_1_COORDS: {x: number, y: number} = {x: 10, y: 0};
+  static readonly LIFE_BAR_FRAME_2_COORDS: {x: number, y: number} = {x: 710, y: 0};
+  static readonly LIFE_BAR_WIDTH = 240;
+  static readonly LIFE_BAR_HEIGHT = 80;
+  static readonly LIFE_BAR_POINT = GlobalConstants.LIFE_BAR_WIDTH / GlobalConstants.MAX_HP;
+  static readonly LIFE_BAR_1_COORDS: {x: number, y: number} = {x: 115, y: 20};
+  static readonly LIFE_BAR_2_COORDS: {x: number, y: number} = {x: 725, y: 20};
+
+
+
+
   //Game Over Constants
   static readonly GAMEOVER_WINNER_X = 450;
   static readonly GAMEOVER_WINNER_Y = 330;
   static readonly GAMEOVER_WINNER_SIZE = 180;
-  static readonly GAMEOVER_LOSER_X = 450;
-  static readonly GAMEOVER_LOSER_Y = 360;
+  static readonly GAMEOVER_LOSER_X = 445;
+  static readonly GAMEOVER_LOSER_Y = 355;
   static readonly GAMEOVER_LOSER_SIZE = 190;
  
-
   //Acceleration Constants
   static readonly ACCELERATION_X = 1.5;
   static readonly ACCELERATION_Y = 1.5;
@@ -79,29 +93,29 @@ export class GlobalConstants{
 
 
   //grid and block rules
-  static readonly MIN_BLOCK_POSITION_Y : number = GlobalConstants.GROUND_HEIGHT_FROM_TOP/GlobalConstants.BLOCK_HEIGHT; //MinPosition: 10
-  static readonly MAX_BLOCK_POSITION_Y : number = GlobalConstants.PLAYER_HEIGHT/GlobalConstants.BLOCK_HEIGHT;
+  static readonly MIN_BLOCK_POSITION_Y : number = (GlobalConstants.GROUND_HEIGHT_FROM_TOP + GlobalConstants.BLOCK_HEIGHT) / GlobalConstants.BLOCK_HEIGHT;
+  static readonly MAX_BLOCK_POSITION_Y : number = (GlobalConstants.PLAYER_HEIGHT + GlobalConstants.BLOCK_HEIGHT) / GlobalConstants.BLOCK_HEIGHT;
 
   //Grid for 1080x640 px canvas
   //1: Blocks; 0: No Blocks
   static readonly GRID_1 = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //1
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4 highest possible block element for clouds
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //5
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //6
-    [0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7
-    [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //8
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3 
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4 
+    [1,1,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //5 MAX Block Position: player with defense wont be cut off
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0], //6
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7
+    [0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0], //8
+    [0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //10
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0], //11
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //12
-    [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0], //13 lowest possible block element for clouds
+    [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0], //11
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1], //12
+    [0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0], //13 MIN Block Position: player can run on the ground freely without bumping into any clouds
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //14
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //15
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //16
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //17 highest possible block elemets for ground
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //17 Ground
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //18
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  //19
   ];

@@ -119,10 +119,10 @@ export class Server{
 
       setInterval(()=>{   
         //Stop calculating if the game has been won already or time is up.
-        if (this.gameState.winner >= 1 || this.gameState.timeLeft === 0){
+        if ((this.gameState.noHealthPointsLeft() || this.gameState.timeLeft === 0) && this.clientList.length >= 0){
           for(var i in this.clientList){
             var socket = this.clientList[i].socket;
-            socket.emit('end', 1);//this.gameState.winner
+            socket.emit('end', this.gameState.getWinner());
           }
         } else {
           //GameStatePacker
@@ -156,6 +156,7 @@ export class Server{
                   cursorY: player.getCursorY(),
                   clippingPosition: player.checkLookingDirection(),
                   id: player.getId(),
+                  healthPoints: player.getHealthPoints(),
                   isTakingAction: player.getIsTakingAction(),
                   isDefending: player.getIsDefending(),
                   isInTheAir: player.getIsInTheAir(),

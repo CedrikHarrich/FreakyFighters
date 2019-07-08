@@ -8,7 +8,6 @@ export class Client {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
     private gameState: GameState = new GameState();
-    private grid: Array<Array<number>> = [];
     private renderingHandler : Renderer;
 
     constructor(){
@@ -27,6 +26,7 @@ export class Client {
     }
 
     registerEvents(){
+      //set new renderingHandler 
       this.renderingHandler = new Renderer(this.gameState, this.context);
 
       this.socket.on('end', (winner : number) => {
@@ -53,12 +53,11 @@ export class Client {
 
           this.gameState.addPlayerState(playerState);
         }
-        this.gameState.winner = gameState.winner;
+        
         this.gameState.timeLeft = gameState.timeLeft;
         
         //Draw the current Gamestate
         this.renderingHandler.draw(this.gameState);
-        //this.draw();
       });
 
        //Change your ID to the assigned new ID.
@@ -114,7 +113,9 @@ export class Client {
     }
 
     mouseClickedHandler(button: number, state: boolean){
-     this.socket.emit('buttonClicked', {button: button, state: state});
+      if (Object.values(Keys).includes(button)){
+        this.socket.emit('buttonClicked', {button: button, state: state});
+      }
     }
 
     sleep(milliseconds : number) {

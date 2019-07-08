@@ -1,6 +1,6 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
 import { SpriteSheet } from "../global/SpriteSheet"
-import { GameState} from "../global/GameState"
+import { GameState } from "../global/GameState"
 
 export class Renderer {
     private context: CanvasRenderingContext2D;
@@ -32,9 +32,10 @@ export class Renderer {
         this.drawSunTimer();
         this.drawPlayer();
         this.drawDefendObject();
+        this.drawClouds();
         this.drawTarget();
         this.drawShootObject();
-        this.drawClouds();
+        this.drawLifeBar();
         this.drawForeground();
     }
 
@@ -47,6 +48,61 @@ export class Renderer {
         this.context.fillStyle = "#F5A9AF";
         this.context.fill();
       }
+    
+    drawLifeBar(){
+      let lifeBar: HTMLImageElement = new Image();
+      let lifeBarFrameCoords: {x: number, y: number};
+      let lifeBarCoordX: number;
+      let clippingPositionX: number;
+      let healthPoints: number;
+      let lifeBarWidth: number = this.player_1_sprites.width;
+      let lifeBarPoints: number = lifeBarWidth / Const.MAX_HP;
+      let playerStates = this.gameState.getPlayerStates();
+  
+        for(var i = 0; i < playerStates.length; i++) {
+          let playerState = this.gameState.getPlayerState(i);
+          healthPoints = playerState.getHealthPoints();
+
+          if(playerState.getId() === 1){
+            lifeBar = this.player_1_sprites;
+            lifeBarFrameCoords = Const.LIFE_BAR_FRAME_1_COORDS;
+            clippingPositionX = SpriteSheet.LIFE_BAR.x;
+            lifeBarCoordX = Const.LIFE_BAR_1_COORDS.x;
+          }else{
+            lifeBar = this.player_2_sprites;
+            lifeBarFrameCoords = Const.LIFE_BAR_FRAME_2_COORDS;
+            clippingPositionX = SpriteSheet.LIFE_BAR.x + ((Const.MAX_HP - healthPoints) * lifeBarPoints);
+            lifeBarCoordX = Const.LIFE_BAR_2_COORDS.x + ((Const.MAX_HP - healthPoints) * Const.LIFE_BAR_POINT);
+          }
+
+          //draws life bar frame
+          this.context.drawImage(
+            lifeBar,
+            SpriteSheet.LIFE_BAR_FRAME.x,
+            SpriteSheet.LIFE_BAR_FRAME.y,
+            lifeBar.width,
+            SpriteSheet.SPRITE_SIZE,
+            lifeBarFrameCoords.x,
+            lifeBarFrameCoords.y,
+            Const.LIFE_BAR_FRAME_WIDTH,
+            Const.LIFE_BAR_FRAME_HEIGHT
+          );
+
+          //draws life bar with current health points
+          this.context.drawImage(
+            lifeBar,
+            clippingPositionX,
+            SpriteSheet.LIFE_BAR.y,
+            healthPoints * lifeBarPoints,
+            SpriteSheet.SPRITE_SIZE,
+            lifeBarCoordX,
+            Const.LIFE_BAR_1_COORDS.y,
+            healthPoints * Const.LIFE_BAR_POINT,
+            Const.LIFE_BAR_HEIGHT
+          );
+            
+        }
+    }
     
     drawDefendObject(){
         let defendObject_X: number;
@@ -63,10 +119,10 @@ export class Renderer {
             
             this.context.drawImage(
               this.sharedSpriteSheet,
-              this.sharedSpriteSheet.width * clippingPosition.x / SpriteSheet.SPRITES_IN_ROW,
-              this.sharedSpriteSheet.height * clippingPosition.y /SpriteSheet.SPRITES_IN_COLUMN_SHARED,
-              this.sharedSpriteSheet.width / SpriteSheet.SPRITES_IN_ROW,
-              this.sharedSpriteSheet.height / SpriteSheet.SPRITES_IN_COLUMN_SHARED,
+              clippingPosition.x,
+              clippingPosition.y,
+              SpriteSheet.SPRITE_SIZE,
+              SpriteSheet.SPRITE_SIZE,
               defendObject_X,
               defendObject_Y,
               Const.DEFENSE_SIZE,
@@ -76,9 +132,8 @@ export class Renderer {
         }
     }
 
-
     drawShootObject(){
-        let shootObject: HTMLImageElement,
+        let shootObject: HTMLImageElement = new Image(),
             playerStates = this.gameState.getPlayerStates();
   
         for(var i = 0; i < playerStates.length; i++) {
@@ -90,10 +145,10 @@ export class Renderer {
   
             this.context.drawImage(
               shootObject,
-              shootObject.width * SpriteSheet.SHOOT.x/ SpriteSheet.SPRITES_IN_ROW ,
-              shootObject.height * SpriteSheet.SHOOT.y / SpriteSheet.SPRITES_IN_COLUMN,
-              shootObject.width / SpriteSheet.SPRITES_IN_ROW,
-              shootObject.height / SpriteSheet.SPRITES_IN_COLUMN,
+              SpriteSheet.SHOOT.x,
+              SpriteSheet.SHOOT.y,
+              SpriteSheet.SPRITE_SIZE,
+              SpriteSheet.SPRITE_SIZE,
               playerState.getActionX(),
               playerState.getActionY(),
               Const.SHOOT_OBJECT_SIZE,
@@ -115,10 +170,10 @@ export class Renderer {
   
           this.context.drawImage(
             target,
-            target.width * SpriteSheet.TARGET.x / SpriteSheet.SPRITES_IN_ROW,
-            target.height * SpriteSheet.TARGET.y / SpriteSheet.SPRITES_IN_COLUMN,
-            target.width / SpriteSheet.SPRITES_IN_ROW,
-            target.height / SpriteSheet.SPRITES_IN_COLUMN,
+            SpriteSheet.TARGET.x,
+            SpriteSheet.TARGET.y,
+            SpriteSheet.SPRITE_SIZE,
+            SpriteSheet.SPRITE_SIZE,
             playerState.getCursorX(),
             playerState.getCursorY(),
             Const.SHOOT_OBJECT_SIZE,
@@ -140,10 +195,10 @@ export class Renderer {
             //draws player image on right position
             this.context.drawImage(
               character,
-              character.width * playerState.getClippingPosition().x / SpriteSheet.SPRITES_IN_ROW, 
-              character.height * playerState.getClippingPosition().y / SpriteSheet.SPRITES_IN_COLUMN,
-              character.width / SpriteSheet.SPRITES_IN_ROW,
-              character.height / SpriteSheet.SPRITES_IN_COLUMN,
+              playerState.getClippingPosition().x, 
+              playerState.getClippingPosition().y,
+              SpriteSheet.SPRITE_SIZE,
+              SpriteSheet.SPRITE_SIZE,
               playerState.getX(),
               playerState.getY(),
               Const.PLAYER_WIDTH,
@@ -152,17 +207,16 @@ export class Renderer {
         }
     }
 
-
     drawClouds(){
         if (Const.WITH_GRID){
           let preBlock: number;
-          let clippingPosition: {x:number, y:number};
+          let clippingPosition: {x: number, y: number};
   
           //scan only in possible block positions
           for (let i : number = Const.MAX_BLOCK_POSITION_Y; i < Const.MIN_BLOCK_POSITION_Y; i++){
             preBlock = 0;
             for (let j : number = 0; j < Const.GRID_WIDTH; j++){
-              //Front: preblock = 0 and now = 1
+              //Front/Left: preblock = 0 and now = 1
               if (preBlock === 0 && this.grid[i][j] === 1){
                 clippingPosition = SpriteSheet.CLOUD_LEFT;
               }
@@ -170,7 +224,7 @@ export class Renderer {
               if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] === 1){
                 clippingPosition = SpriteSheet.CLOUD_MIDDLE;
               }
-              //Back: preblock = 1, now = 0 and next != 1
+              //Back/Right: preblock = 1, now = 0 and next != 1
               if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] !==1){
                 clippingPosition = SpriteSheet.CLOUD_RIGHT;
               }
@@ -178,10 +232,10 @@ export class Renderer {
               if(this.grid[i][j] === 1){
                 this.context.drawImage(
                   this.sharedSpriteSheet,
-                  this.sharedSpriteSheet.width * clippingPosition.x / SpriteSheet.SPRITES_IN_ROW,
-                  this.sharedSpriteSheet.height * clippingPosition.y / SpriteSheet.SPRITES_IN_COLUMN_SHARED,
-                  this.sharedSpriteSheet.width / SpriteSheet.SPRITES_IN_ROW,
-                  this.sharedSpriteSheet.height / SpriteSheet.SPRITES_IN_COLUMN_SHARED,
+                  clippingPosition.x,
+                  clippingPosition.y,
+                  SpriteSheet.SPRITE_SIZE,
+                  SpriteSheet.SPRITE_SIZE,
                   Const.BLOCK_WIDTH * j,
                   Const.BLOCK_HEIGHT * i,
                   Const.BLOCK_WIDTH,
@@ -198,8 +252,8 @@ export class Renderer {
     drawBackground(){
         this.context.drawImage(
             this.screens, 
-            0, 
-            0, 
+            SpriteSheet.BACKGROUND.x, 
+            SpriteSheet.BACKGROUND.y, 
             Const.CANVAS_WIDTH, 
             Const.CANVAS_HEIGHT,
             0,
@@ -210,7 +264,11 @@ export class Renderer {
   
       drawForeground(){
         this.context.drawImage(
-          this.foreground,
+          this.screens,
+          SpriteSheet.FOREGROUND.x,
+          SpriteSheet.FOREGROUND.y,
+          Const.CANVAS_WIDTH,
+          Const.FOREGROUND_HEIGHT,
           0,
           Const.CANVAS_HEIGHT - Const.FOREGROUND_HEIGHT,
           Const.CANVAS_WIDTH,
@@ -225,8 +283,8 @@ export class Renderer {
         //draws background screen for winner
         this.context.drawImage(
           this.screens,
-          0,
-          Const.CANVAS_HEIGHT,
+          SpriteSheet.WINNER_SCREEN.x,
+          SpriteSheet.WINNER_SCREEN.y,
           Const.CANVAS_WIDTH,
           Const.CANVAS_HEIGHT,
           0,
@@ -238,10 +296,10 @@ export class Renderer {
         //draws winner profilpicture on winner screen
         this.context.drawImage(
           winner,
-          winner.width * SpriteSheet.WINNER.x / SpriteSheet.SPRITES_IN_ROW,
-          winner.height * SpriteSheet.WINNER.y / SpriteSheet.SPRITES_IN_COLUMN,
-          winner.width / SpriteSheet.SPRITES_IN_ROW,
-          winner.height / SpriteSheet.SPRITES_IN_COLUMN,
+          SpriteSheet.WINNER.x,
+          SpriteSheet.WINNER.y,
+          SpriteSheet.SPRITE_SIZE,
+          SpriteSheet.SPRITE_SIZE,
           Const.GAMEOVER_WINNER_X,
           Const.GAMEOVER_WINNER_Y,
           Const.GAMEOVER_WINNER_SIZE,
@@ -256,8 +314,8 @@ export class Renderer {
         //draws background screen for loser
         this.context.drawImage(
           this.screens,
-          0,
-          Const.CANVAS_HEIGHT*SpriteSheet.SPRITES_IN_COLUMN_SHARED,
+          SpriteSheet.LOSER_SCREEN.x,
+          SpriteSheet.LOSER_SCREEN.y,
           Const.CANVAS_WIDTH,
           Const.CANVAS_HEIGHT,
           0,
@@ -269,10 +327,10 @@ export class Renderer {
         //draws loser profilpicture on loser screen
         this.context.drawImage(
           loser,
-          loser.width * SpriteSheet.LOSER.x / SpriteSheet.SPRITES_IN_ROW,
-          loser.height * SpriteSheet.LOSER.y / SpriteSheet.SPRITES_IN_COLUMN,
-          loser.width / SpriteSheet.SPRITES_IN_ROW,
-          loser.height / SpriteSheet.SPRITES_IN_COLUMN,
+          SpriteSheet.LOSER.x,
+          SpriteSheet.LOSER.y,
+          SpriteSheet.SPRITE_SIZE,
+          SpriteSheet.SPRITE_SIZE,
           Const.GAMEOVER_LOSER_X,
           Const.GAMEOVER_LOSER_Y,
           Const.GAMEOVER_LOSER_SIZE,
