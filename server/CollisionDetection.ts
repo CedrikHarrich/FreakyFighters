@@ -40,7 +40,7 @@ export class CollisionDetection {
       }
   }
 
-  static handlePlayerColission(main : any, clientList : any[]){
+  static handlePlayerCollision(main : any, clientList : any[]){
     var currentPlayer = clientList[main].player;
     for(var i in clientList){
         var otherPlayer = clientList[i].player;

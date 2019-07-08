@@ -141,7 +141,7 @@ export class Server{
 
               var player = this.clientList[i].player;
               player.updatePosition();
-              CollisionDetection.handlePlayerColission(i, this.clientList);
+              CollisionDetection.handlePlayerCollision(i, this.clientList);
 
               if(player.getIsTakingAction()){
                 var actionState: ActionState = new ActionState({x: player.getActionX(), y: player.getActionY()});
