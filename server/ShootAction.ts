@@ -44,6 +44,10 @@ export class ShootAction {
         return this.actionComplete;
     }
 
+    setShootActionComplete(isActionComplete : boolean){
+        this.actionComplete = isActionComplete;
+    }
+
     //checks if shootObject is outside of canvas
     checkIsOutBoundaries(){
         let allConditionsComplied = false;

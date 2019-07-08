@@ -149,6 +149,8 @@ export class Server{
                 var actionState: ActionState = new ActionState({x: 0, y: 0});
               }
 
+              CollisionDetection.handleShootObjectCollision(i, this.clientList);
+
              let playerState = new PlayerState({
                   x: player.getX(),
                   y: player.getY(),

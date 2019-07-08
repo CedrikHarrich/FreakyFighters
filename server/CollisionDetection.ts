@@ -1,5 +1,6 @@
 import { GlobalConstants as Const } from '../global/GlobalConstants';
 import { Player } from './Player';
+import { ShootAction } from './ShootAction';
 
 export class CollisionDetection {
   static handleCollision(player: Player, grid: any){
@@ -79,4 +80,36 @@ export class CollisionDetection {
         }
 
   }
+
+  private static haveShootObjectCollision(player : Player, shootObject : ShootAction){
+    //Collision ohne Block
+    if(player.getX() + Const.PLAYER_WIDTH > shootObject.getX() + Const.PERMEABLE_EDGES &&
+    player.getX() + Const.PERMEABLE_EDGES < Const.BLOCK_WIDTH + shootObject.getX() &&
+    player.getY() + Const.PLAYER_HEIGHT > shootObject.getY() &&
+    player.getY() < Const.BLOCK_HEIGHT + shootObject.getY()) {
+        return true;
+    } else {
+        return false;
+    }
+  }
+
+  static handleShootObjectCollision(main : any, clientList : any[]){
+    var shootObject = clientList[main].player.getAction();
+    if (shootObject !== undefined){
+
+    
+    for(var i in clientList){
+        var otherPlayer = clientList[i].player;
+        if (i !== main){
+            if (this.haveShootObjectCollision(otherPlayer, shootObject)){
+                //Schuss be gone
+                console.log("Project hits");
+                clientList[main].player.getAction().setShootActionComplete(true);
+
+                //Healtpoints be gone
+            }
+        }
+    }
+}
+}
 }

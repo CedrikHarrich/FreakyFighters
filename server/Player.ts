@@ -226,6 +226,10 @@ export class Player {
         return this.velocityY === 0 ? false : true ;
     }
 
+    getAction(){
+        return this.action;
+    }
+
     getActionX(){
         return this.action.getX();
     }
