@@ -13,6 +13,7 @@ export class Player {
     private cursorX: number;
     private cursorY: number;
     private healthPoints: number;
+    private wasProtected: boolean = false;
 
     //Actions the player can make
     private isUpKeyPressed : boolean = false;
@@ -27,7 +28,7 @@ export class Player {
 
     constructor(id :number){
         this.id = id;
-        this.healthPoints = Const.MAX_HP; 
+        this.healthPoints = Const.MAX_HP;
         this.isTakingAction = false;
         if(this.id === 1){
             this.x = Const.PLAYER_1_START_X_COORDS;
@@ -50,7 +51,7 @@ export class Player {
         if(this.isTakingAction){
             if(this.action.getIsActionComplete() && this.action !== undefined){
                 this.isTakingAction = false;
-
+                
             }
             this.action.updateShootObjectPosition();
         }
@@ -230,7 +231,7 @@ export class Player {
     getAction(){
         return this.action;
     }
-
+    
     getActionX(){
         return this.action.getX();
     }
@@ -252,7 +253,7 @@ export class Player {
     }
 
     //Setter Methods
-    setHealthpoints(healthPoints: number){
+    setHealthPoints(healthPoints: number){
         this.healthPoints = healthPoints;
     }
 
@@ -277,6 +278,10 @@ export class Player {
 
     setIsDefending(isDefending: boolean){
         this.isDefending = isDefending;
+    }
+
+    setWasProtected(wasProtected: boolean){
+        this.wasProtected = wasProtected;
     }
 
     setIsUpKeyPressed(isUpKeyPressed : boolean){

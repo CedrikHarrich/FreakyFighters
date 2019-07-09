@@ -41,7 +41,13 @@ export class Renderer {
 
     drawSunTimer(){
         this.context.beginPath();
-        this.context.arc(Const.TIMER_X, Const.TIMER_Y, Const.TIMER_RADIUS, -0.5 * Math.PI , (2* (this.gameState.timeLeft / Const.COUNTDOWN) - 0.5) * Math.PI);
+        this.context.arc(
+          Const.TIMER_X, 
+          Const.TIMER_Y, 
+          Const.TIMER_RADIUS, 
+          Const.START_ANGLE , 
+          (2*(this.gameState.timeLeft / Const.COUNTDOWN) - 0.5)*Math.PI //END_ANGLE
+        );
         this.context.lineTo(Const.TIMER_X, Const.TIMER_Y);
         this.context.lineTo(Const.TIMER_X, Const.TIMER_Y - Const.BLOCK_HEIGHT);
         
@@ -49,6 +55,7 @@ export class Renderer {
         this.context.fill();
       }
     
+    //TODO: geht bestimmt kürzer! Sonst eine Hilfsmethode auslagern
     drawLifeBar(){
       let lifeBar: HTMLImageElement = new Image();
       let lifeBarFrameCoords: {x: number, y: number};

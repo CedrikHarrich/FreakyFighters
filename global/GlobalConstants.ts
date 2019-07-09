@@ -42,7 +42,8 @@ export class GlobalConstants{
   static readonly FRICTION = 0.9;
   static readonly GRAVITATION = 1.2;
 
-  //Timer and Frames Constants
+  //Timer and Frames Constants 
+  static readonly START_ANGLE = -0.5 * Math.PI;
   static readonly TIMER_X = GlobalConstants.CANVAS_WIDTH / 2; //in the middle of the canvas
   static readonly TIMER_Y = 70;
   static readonly TIMER_RADIUS = GlobalConstants.BLOCK_WIDTH;
@@ -51,6 +52,8 @@ export class GlobalConstants{
 
   //Life Bar Constants
   static readonly MAX_HP: number = 200;
+  static readonly DAMAGE: number = 20;
+  static readonly HALF_DAMAGE: number = 0.25 * GlobalConstants.DAMAGE;
   static readonly LIFE_BAR_FRAME_WIDTH = 360;
   static readonly LIFE_BAR_FRAME_HEIGHT = 120;
   static readonly LIFE_BAR_FRAME_1_COORDS: {x: number, y: number} = {x: 10, y: 0};

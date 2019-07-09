@@ -99,7 +99,7 @@ export class PlayerState extends Player {
     this.setCursorPosition(cursorX, cursorY);
     this.setIsTakingAction(isTakingAction);
     this.setIsDefending(isDefending);
-    this.setHealthpoints(healthPoints);
+    this.setHealthPoints(healthPoints);
     this.isInTheAir = isInTheAir;
     this.actionState = actionState
     this.clippingPosition = clippingPosition;

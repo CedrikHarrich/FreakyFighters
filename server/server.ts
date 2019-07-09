@@ -138,7 +138,7 @@ export class Server{
             if(this.clientList.length === 2){
               
               if(this.gameState.getTimerStarted() === false){
-                this.clientList[i].player.setHealthpoints(Const.MAX_HP);
+                this.clientList[i].player.setHealthPoints(Const.MAX_HP);
                 this.gameState.startTimer();
               }
               console.log(this.gameState.getTimeLeft());
@@ -149,14 +149,14 @@ export class Server{
 
               var player = this.clientList[i].player;
               player.updatePosition();
-              CollisionDetection.handlePlayerCollision(i, this.clientList);
-
+             
               if(player.getIsTakingAction()){
                 var actionState: ActionState = new ActionState({x: player.getActionX(), y: player.getActionY()});
               } else {
                 var actionState: ActionState = new ActionState({x: 0, y: 0});
               }
 
+              CollisionDetection.handlePlayerCollision(i, this.clientList);
               CollisionDetection.handleShootObjectCollision(i, this.clientList);
 
               
