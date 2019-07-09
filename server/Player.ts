@@ -14,6 +14,7 @@ export class Player {
     private cursorY: number;
     private healthPoints: number;
     private wasProtected: boolean = false;
+    private wasHit: boolean = false;
 
     //Actions the player can make
     private isUpKeyPressed : boolean = false;
@@ -224,6 +225,14 @@ export class Player {
         return this.isDefending;
     }
 
+    getWasProtected() {
+        return this.wasProtected;
+    }
+
+    getWasHit(){
+        return this.wasHit;
+    }
+
     getIsInTheAir(){
         return this.velocityY === 0 ? false : true ;
     }
@@ -284,6 +293,9 @@ export class Player {
         this.wasProtected = wasProtected;
     }
 
+    setWasHit(wasHit: boolean){
+        this.wasHit = wasHit;
+    }
     setIsUpKeyPressed(isUpKeyPressed : boolean){
         this.isUpKeyPressed = isUpKeyPressed;
     }

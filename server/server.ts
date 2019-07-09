@@ -169,6 +169,8 @@ export class Server{
                   clippingPosition: player.checkLookingDirection(),
                   id: player.getId(),
                   healthPoints: player.getHealthPoints(),
+                  wasProtected: player.getWasProtected(),
+                  wasHit: player.getWasHit(),
                   isTakingAction: player.getIsTakingAction(),
                   isDefending: player.getIsDefending(),
                   isInTheAir: player.getIsInTheAir(),
@@ -176,6 +178,8 @@ export class Server{
               })
 
               this.gameState.addPlayerState(playerState);
+              this.clientList[i].player.setWasProtected(false);
+              this.clientList[i].player.setWasHit(false);
             }
           
 

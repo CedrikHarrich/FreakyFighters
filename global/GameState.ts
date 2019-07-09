@@ -92,7 +92,7 @@ export class PlayerState extends Player {
   private clippingPosition: {x:number, y:number};
   private actionState: ActionState;
 
-  constructor({x, y, cursorX, cursorY, clippingPosition, id, healthPoints, isTakingAction, isDefending, isInTheAir, actionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, healthPoints: number, isTakingAction: boolean, isDefending:boolean, isInTheAir:boolean, actionState:ActionState}){
+  constructor({x, y, cursorX, cursorY, clippingPosition, id, healthPoints, wasProtected, wasHit, isTakingAction, isDefending, isInTheAir, actionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, healthPoints: number, wasProtected: boolean, wasHit: boolean, isTakingAction: boolean, isDefending:boolean, isInTheAir:boolean, actionState:ActionState}){
     super(id);
     this.setX(x);
     this.setY(y);
@@ -100,6 +100,8 @@ export class PlayerState extends Player {
     this.setIsTakingAction(isTakingAction);
     this.setIsDefending(isDefending);
     this.setHealthPoints(healthPoints);
+    this.setWasProtected(wasProtected);
+    this.setWasHit(wasHit);
     this.isInTheAir = isInTheAir;
     this.actionState = actionState
     this.clippingPosition = clippingPosition;

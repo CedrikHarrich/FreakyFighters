@@ -106,13 +106,13 @@ export class CollisionDetection {
                     clientList[main].player.getAction().setShootActionComplete(true);
                 
                     let damagePoints: number;
-                    damagePoints = otherPlayer.getIsDefending() ? Const.HALF_DAMAGE : Const.DAMAGE;
 
                     if(otherPlayer.getIsDefending()){
                         damagePoints = Const.HALF_DAMAGE;
-                        otherPlayer.setWasProtected(); //TODO: in Playerstate einfügen
+                        otherPlayer.setWasProtected(true);
                     } else {
                         damagePoints = Const.DAMAGE;
+                        otherPlayer.setWasHit(true);
                     }
 
                     otherPlayer.setHealthPoints(otherPlayer.getHealthPoints() - damagePoints);
