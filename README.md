@@ -51,18 +51,18 @@ UML-Tool: Draw.io
 - [x] 2 Spieler können sich einloggen und interagieren
 
 ### Milestone 2:
-- [ ] Interaktion von Spielern ist möglich
-- [ ] Logik von Spiel wurde implementiert
-- [x] Ladebildschirm
-- [ ] HUD
+- [x] Interaktion von Spielern ist möglich
+- [x] Logik von Spiel wurde implementiert
+- [ ] Ladebildschirm
+- [x] HUD
 - [x] Leveldesign
-- [ ] Characterdesgin
-- [ ] MVP
+- [x] Characterdesgin
+- [x] MVP
 
 ### Milestone 3:
 - [ ] Gute Interaktion der Spieler
 - [ ] Attackanimation verbessern
-- [ ] Punktesystem
+- [x] Punktesystem
 - [ ] Balancing
 - [ ] Website kaufen und hochladen
 - [ ] Bugfixing
