@@ -132,7 +132,7 @@ export class Renderer {
               this.wasProtectedTime = {time: Date.now(), player_id: playerState.getId()};
             }
 
-            if(Date.now() < this.wasProtectedTime.time + Const.HALF_SECOND && playerState.getId() === this.wasProtectedTime.player_id){
+            if(Date.now() < this.wasProtectedTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasProtectedTime.player_id){
               usedImage = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
               clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.HIT_DEFENSE_AIR : SpriteSheet.HIT_DEFENSE_GROUND;
             }
@@ -217,11 +217,12 @@ export class Renderer {
           //use shooting player if he's shooting
           clippingPosition = playerState.getIsTakingAction() ? SpriteSheet.PLAYER_SHOOTING : playerState.getClippingPosition();
 
+          //TODO: Was wenn beide fast zur gleichen Zeit getroffen wurden?  
           if(playerState.getWasHit()){
             this.wasHitTime = {time: Date.now(), player_id: playerState.getId()};
           }
 
-          if(Date.now() < this.wasHitTime.time + Const.HALF_SECOND && playerState.getId() === this.wasHitTime.player_id){
+          if(Date.now() < this.wasHitTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasHitTime.player_id){
             clippingPosition = SpriteSheet.PLAYER_HIT;
           }
 

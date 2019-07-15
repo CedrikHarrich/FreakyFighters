@@ -49,7 +49,7 @@ export class GlobalConstants{
   static readonly TIMER_RADIUS: number = GlobalConstants.BLOCK_WIDTH;
   static readonly CALCULATIONS_PER_SECOND: number = 60;
   static readonly COUNTDOWN: number = 120;
-  static readonly HALF_SECOND: number = 500;
+  static readonly ANIMATION_TIME: number = 300;
 
   //Life Bar Constants
   static readonly MAX_HP: number = 200;
