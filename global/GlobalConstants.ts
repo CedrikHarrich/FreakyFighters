@@ -5,6 +5,7 @@ export class GlobalConstants{
   static readonly SERVER_URL: string = `http://localhost:${GlobalConstants.PORT}`;
   static readonly ASSET_FOLDER: string = "assets/"
   static readonly WAITING_TIME: number = 3000;
+  static readonly INITIAL_STATE: number = -1;
 
   //Grid Constants
   static readonly GRID_HEIGHT: number = 19; //Blocks

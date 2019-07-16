@@ -3,10 +3,10 @@ import { GlobalConstants as Const } from "../global/GlobalConstants";
 
 export class GameState {
   playerStates: Array<PlayerState>;
-  winner : number = -1;
+  winner : number = Const.INITIAL_STATE;
   timerStarted : boolean = false;
   startingTime : number = Const.COUNTDOWN;
-  currentTime : number = -1;
+  currentTime : number = Const.INITIAL_STATE;
   timeLeft : number = Const.COUNTDOWN;
 
   constructor(){
@@ -62,10 +62,6 @@ export class GameState {
 
   getWinner(){
     return this.winner;
-    /*if(this.playerStates.length === 2){
-      return (this.playerStates[0].getHealthPoints() > this.playerStates[1].getHealthPoints() ? this.playerStates[0].getId() : this.playerStates[1].getId());
-    }
-    */
   }
 
   setWinner(winner : number){
@@ -80,13 +76,9 @@ export class GameState {
       
     }
     return false;
-    /*
-    if(this.playerStates.length === 2){
-    return (this.playerStates[0].getHealthPoints() === 0 || this.playerStates[1].getHealthPoints() === 0) ;
   }
-  */
 }
-}
+
 export class PlayerState extends Player {
   private isInTheAir: boolean;
   private clippingPosition: {x:number, y:number};
