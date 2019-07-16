@@ -7,7 +7,7 @@ export class GlobalConstants{
   static readonly WAITING_TIME: number = 3000;
 
   //Grid Constants
-  static readonly GRID_HEIGHT: number = 19; //Blocks davor:16
+  static readonly GRID_HEIGHT: number = 19; //Blocks
   static readonly GRID_WIDTH: number = 27; //Blocks
   static readonly BLOCK_HEIGHT: number = 40; //Pixels per Block
   static readonly BLOCK_WIDTH: number = 40; // Pixels per Block
