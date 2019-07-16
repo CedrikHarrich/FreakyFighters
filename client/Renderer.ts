@@ -8,10 +8,10 @@ export class Renderer {
     private player_1_sprites: HTMLImageElement = new Image();
     private player_2_sprites: HTMLImageElement = new Image();
     private screens: HTMLImageElement = new Image();
-    private grid: Array<Array<number>> = [];
+    private grid: Array<Array<number>> = Const.GRID_1;
     private gameState: GameState = new GameState();
-    private wasProtectedTime: {time: number, player_id: number};
-    private wasHitTime: {time: number, player_id: number};
+    private wasProtectedTime: {time: number, player_id: number} = {time: 0, player_id: -1};
+    private wasHitTime: {time: number, player_id: number} = {time: 0, player_id: -1};
 
     constructor(gameState: GameState, context: CanvasRenderingContext2D){
         //Load all images
@@ -19,9 +19,6 @@ export class Renderer {
         this.player_1_sprites.src = `./${Const.ASSET_FOLDER}SpriteSheet_Player_1.png`;
         this.player_2_sprites.src = `./${Const.ASSET_FOLDER}SpriteSheet_Player_2.png`;
         this.screens.src = `./${Const.ASSET_FOLDER}Screens.png`
-        this.wasHitTime = {time: 0, player_id: -1};
-        this.wasProtectedTime = {time: 0, player_id: -1};
-        this.grid = Const.GRID_1;
         this.context = context;
         this.gameState = gameState;
     }
