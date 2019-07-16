@@ -148,7 +148,7 @@ export class Server{
 
               var player = this.clientList[i].player;
               player.updatePlayerState();
-              
+
               if(player.getIsTakingAction()){
                 var actionState: ActionState = new ActionState({x: player.getActionX(), y: player.getActionY()});
               } else {
@@ -170,7 +170,6 @@ export class Server{
                   wasHit: player.getWasHit(),
                   isTakingAction: player.getIsTakingAction(),
                   isDefending: player.getIsDefending(),
-                  isInTheAir: player.getIsInTheAir(),
                   actionState: actionState
               })
 
