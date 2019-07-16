@@ -2,7 +2,6 @@ import * as express from 'express';
 import * as path from 'path';
 import { Player } from './Player';
 import { GlobalConstants as Const } from '../global/GlobalConstants';
-//import { SpriteSheet} from '../global/SpriteSheet';
 import { Keys } from '../global/Keys';
 import { GameState, PlayerState, ActionState } from '../global/GameState';
 import { CollisionDetection } from './CollisionDetection'
@@ -76,7 +75,7 @@ export class Server{
           console.log(`Putting Player on with socket ID: "${socket.id}" into the queue.`);
         }
     }
-    
+
     //start Listening to all the Events when connected.
     registerPlayerEvents({player, socket} : {player: Player, socket: any}){
       //EventHandler: When a key is pressed do ...
@@ -115,11 +114,11 @@ export class Server{
       //The gameState that collects all the information for the client
       this.gameState = new GameState();
 
-      //Start the Update Loop Calculations_PER_SECOND times per second.      
+      //Start the Update Loop Calculations_PER_SECOND times per second.
 
-      setInterval(()=>{   
+      setInterval(()=>{
         //Stop calculating if the game has been won already or time is up.
-        
+
         if ((this.gameState.getWinner() > 0) ){
           if( this.clientList.length >= 2){
             for(var i in this.clientList){
@@ -129,14 +128,14 @@ export class Server{
           } else {
             this.gameState.setWinner(-1);
           }
-          
+
         } else {
           //GameStatePacker
           for(var i in this.clientList){
-            
+
             //Timer: starts when 2 Players are in the lobby.
             if(this.clientList.length === 2){
-              
+
               if(this.gameState.getTimerStarted() === false){
                 this.clientList[i].player.setHealthPoints(Const.MAX_HP);
                 this.gameState.startTimer();
@@ -145,11 +144,11 @@ export class Server{
               this.gameState.calculateTimeLeft();
             }
 
-            
+
 
               var player = this.clientList[i].player;
               player.updatePosition();
-             
+
               if(player.getIsTakingAction()){
                 var actionState: ActionState = new ActionState({x: player.getActionX(), y: player.getActionY()});
               } else {
@@ -159,7 +158,7 @@ export class Server{
               CollisionDetection.handlePlayerCollision(i, this.clientList);
               CollisionDetection.handleShootObjectCollision(i, this.clientList);
 
-              
+
 
              let playerState = new PlayerState({
                   x: player.getX(),
@@ -181,7 +180,7 @@ export class Server{
               this.clientList[i].player.setWasProtected(false);
               this.clientList[i].player.setWasHit(false);
             }
-          
+
 
 
           //Event: Send Gamestate to the clients.
@@ -209,8 +208,8 @@ export class Server{
               }
             }
           }
-      
-          
+
+
           /*for(var i in this.gameState.playerStates){
             if(this.gameState.playerStates[i].getHealthPoints() <= 0){
               this.gameState.setWinner(this.gameState.playerStates[])
@@ -268,7 +267,7 @@ export class Server{
     mouseButtonPressedHandler({button: button, state: state}:{button: number, state: boolean}, socketId:number){
       let clientId = this.getClientId(socketId),
           player = this.clientList[clientId].player;
-      
+
       switch(button){
         case Keys.attack:
             if(player.getIsTakingAction() === false){
