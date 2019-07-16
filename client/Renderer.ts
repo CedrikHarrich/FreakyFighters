@@ -11,15 +11,17 @@ export class Renderer {
     private foreground: HTMLImageElement = new Image();
     private grid: Array<Array<number>> = [];
     private gameState: GameState = new GameState();
+    private wasProtectedTime: {time: number, player_id: number};
+    private wasHitTime: {time: number, player_id: number};
 
     constructor(gameState: GameState, context: CanvasRenderingContext2D){
         //Load all images
         this.sharedSpriteSheet.src = `./${Const.ASSET_FOLDER}SpriteSheet_Shared.png`;
         this.player_1_sprites.src = `./${Const.ASSET_FOLDER}SpriteSheet_Player_1.png`;
         this.player_2_sprites.src = `./${Const.ASSET_FOLDER}SpriteSheet_Player_2.png`;
-        this.screens.src = `./${Const.ASSET_FOLDER}Screens.png`;
-        this.foreground.src = `./${Const.ASSET_FOLDER}foreground.png`;
-
+        this.screens.src = `./${Const.ASSET_FOLDER}Screens.png`
+        this.wasHitTime = {time: 0, player_id: -1};
+        this.wasProtectedTime = {time: 0, player_id: -1};
         this.grid = Const.GRID_1;
         this.context = context;
         this.gameState = gameState;
@@ -41,7 +43,13 @@ export class Renderer {
 
     drawSunTimer(){
         this.context.beginPath();
-        this.context.arc(Const.TIMER_X, Const.TIMER_Y, Const.TIMER_RADIUS, -0.5 * Math.PI , (2* (this.gameState.timeLeft / Const.COUNTDOWN) - 0.5) * Math.PI);
+        this.context.arc(
+          Const.TIMER_X, 
+          Const.TIMER_Y, 
+          Const.TIMER_RADIUS, 
+          Const.START_ANGLE , 
+          (2*(this.gameState.timeLeft / Const.COUNTDOWN) - 0.5)*Math.PI //END_ANGLE
+        );
         this.context.lineTo(Const.TIMER_X, Const.TIMER_Y);
         this.context.lineTo(Const.TIMER_X, Const.TIMER_Y - Const.BLOCK_HEIGHT);
         
@@ -49,6 +57,7 @@ export class Renderer {
         this.context.fill();
       }
     
+    //TODO: geht bestimmt kürzer! Sonst eine Hilfsmethode auslagern
     drawLifeBar(){
       let lifeBar: HTMLImageElement = new Image();
       let lifeBarFrameCoords: {x: number, y: number};
@@ -105,20 +114,31 @@ export class Renderer {
     }
     
     drawDefendObject(){
+        let usedImage: HTMLImageElement = new Image();
         let defendObject_X: number;
         let defendObject_Y: number;
         let clippingPosition: {x: number, y: number};
         let playerStates = this.gameState.getPlayerStates();
-  
+
         for(var i = 0; i < playerStates.length; i++) {
           let playerState = this.gameState.getPlayerState(i);
           if(playerState.getIsDefending()){
             defendObject_X = playerState.getX() - Const.DEFENSE_X_DIFF;
             defendObject_Y = playerState.getY() - Const.DEFENSE_Y_DIFF;
             clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.DEFENSE_AIR : SpriteSheet.DEFENSE_GROUND;
-            
+            usedImage = this.sharedSpriteSheet;
+
+            if(playerState.getWasProtected()){
+              this.wasProtectedTime = {time: Date.now(), player_id: playerState.getId()};
+            }
+
+            if(Date.now() < this.wasProtectedTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasProtectedTime.player_id){
+              usedImage = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
+              clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.HIT_DEFENSE_AIR : SpriteSheet.HIT_DEFENSE_GROUND;
+            }
+
             this.context.drawImage(
-              this.sharedSpriteSheet,
+              usedImage,
               clippingPosition.x,
               clippingPosition.y,
               SpriteSheet.SPRITE_SIZE,
@@ -128,6 +148,7 @@ export class Renderer {
               Const.DEFENSE_SIZE,
               Const.DEFENSE_SIZE
             );
+
           }
         }
     }
@@ -184,26 +205,39 @@ export class Renderer {
 
     drawPlayer(){
         let character: HTMLImageElement = new Image(),
+            clippingPosition: {x: number, y: number},
             playerStates = this.gameState.getPlayerStates();
   
         for (var i = 0; i < playerStates.length; i++){
           let playerState = this.gameState.getPlayerState(i);
   
-            //use different image for each player
-            character = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
-  
-            //draws player image on right position
-            this.context.drawImage(
-              character,
-              playerState.getClippingPosition().x, 
-              playerState.getClippingPosition().y,
-              SpriteSheet.SPRITE_SIZE,
-              SpriteSheet.SPRITE_SIZE,
-              playerState.getX(),
-              playerState.getY(),
-              Const.PLAYER_WIDTH,
-              Const.PLAYER_HEIGHT,
-              );
+          //use different image for each player
+          character = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
+
+          //use shooting player if he's shooting
+          clippingPosition = playerState.getIsTakingAction() ? SpriteSheet.PLAYER_SHOOTING : playerState.getClippingPosition();
+
+          //TODO: Was wenn beide fast zur gleichen Zeit getroffen wurden?  
+          if(playerState.getWasHit()){
+            this.wasHitTime = {time: Date.now(), player_id: playerState.getId()};
+          }
+
+          if(Date.now() < this.wasHitTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasHitTime.player_id){
+            clippingPosition = SpriteSheet.PLAYER_HIT;
+          }
+
+          //draws player image in the right state
+          this.context.drawImage(
+            character,
+            clippingPosition.x, 
+            clippingPosition.y,
+            SpriteSheet.SPRITE_SIZE,
+            SpriteSheet.SPRITE_SIZE,
+            playerState.getX(),
+            playerState.getY(),
+            Const.PLAYER_WIDTH,
+            Const.PLAYER_HEIGHT,
+          );
         }
     }
 

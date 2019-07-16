@@ -53,7 +53,7 @@ export class Client {
 
           this.gameState.addPlayerState(playerState);
         }
-        
+
         this.gameState.timeLeft = gameState.timeLeft;
         
         //Draw the current Gamestate

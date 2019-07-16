@@ -119,18 +119,26 @@ export class Server{
 
       setInterval(()=>{   
         //Stop calculating if the game has been won already or time is up.
-        if ((this.gameState.noHealthPointsLeft() || this.gameState.timeLeft === 0) && this.clientList.length >= 0){
-          for(var i in this.clientList){
-            var socket = this.clientList[i].socket;
-            socket.emit('end', this.gameState.getWinner());
+        
+        if ((this.gameState.getWinner() > 0) ){
+          if( this.clientList.length >= 2){
+            for(var i in this.clientList){
+              var socket = this.clientList[i].socket;
+              socket.emit('end', this.gameState.getWinner());
+            }
+          } else {
+            this.gameState.setWinner(-1);
           }
+          
         } else {
           //GameStatePacker
           for(var i in this.clientList){
             
             //Timer: starts when 2 Players are in the lobby.
             if(this.clientList.length === 2){
+              
               if(this.gameState.getTimerStarted() === false){
+                this.clientList[i].player.setHealthPoints(Const.MAX_HP);
                 this.gameState.startTimer();
               }
               console.log(this.gameState.getTimeLeft());
@@ -141,13 +149,17 @@ export class Server{
 
               var player = this.clientList[i].player;
               player.updatePosition();
-              CollisionDetection.handlePlayerColission(i, this.clientList);
-
+             
               if(player.getIsTakingAction()){
                 var actionState: ActionState = new ActionState({x: player.getActionX(), y: player.getActionY()});
               } else {
                 var actionState: ActionState = new ActionState({x: 0, y: 0});
               }
+
+              CollisionDetection.handlePlayerCollision(i, this.clientList);
+              CollisionDetection.handleShootObjectCollision(i, this.clientList);
+
+              
 
              let playerState = new PlayerState({
                   x: player.getX(),
@@ -157,6 +169,8 @@ export class Server{
                   clippingPosition: player.checkLookingDirection(),
                   id: player.getId(),
                   healthPoints: player.getHealthPoints(),
+                  wasProtected: player.getWasProtected(),
+                  wasHit: player.getWasHit(),
                   isTakingAction: player.getIsTakingAction(),
                   isDefending: player.getIsDefending(),
                   isInTheAir: player.getIsInTheAir(),
@@ -164,6 +178,8 @@ export class Server{
               })
 
               this.gameState.addPlayerState(playerState);
+              this.clientList[i].player.setWasProtected(false);
+              this.clientList[i].player.setWasHit(false);
             }
           
 
@@ -173,6 +189,33 @@ export class Server{
               var socket = this.clientList[i].socket;
               socket.emit('update', this.gameState);
           }
+
+          //Winner
+          if(this.gameState.timeLeft === 0 && this.clientList.length === 2){
+            if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
+              this.gameState.setWinner(this.gameState.playerStates[0].getId());
+            } else {
+              this.gameState.setWinner(this.gameState.playerStates[1].getId());
+            }
+          }
+
+          if(this.clientList.length === 2){
+            if(this.gameState.playerStates[0].getHealthPoints() <= 0 || (this.gameState.playerStates[1].getHealthPoints() <= 0)){
+              if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
+                this.gameState.setWinner(this.gameState.playerStates[0].getId());
+
+              } else {
+                this.gameState.setWinner(this.gameState.playerStates[1].getId());
+              }
+            }
+          }
+      
+          
+          /*for(var i in this.gameState.playerStates){
+            if(this.gameState.playerStates[i].getHealthPoints() <= 0){
+              this.gameState.setWinner(this.gameState.playerStates[])
+            }
+          }*/
 
           //The Array with the player Information will be deleted after it was sent.
           this.gameState.resetPlayerStates();

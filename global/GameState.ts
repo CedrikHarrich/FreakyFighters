@@ -61,32 +61,47 @@ export class GameState {
   }
 
   getWinner(){
-    if(this.playerStates.length === 2){
-      return this.playerStates[0].getHealthPoints() > this.playerStates[1].getHealthPoints() ? this.playerStates[0].getId() : this.playerStates[1].getId();
+    return this.winner;
+    /*if(this.playerStates.length === 2){
+      return (this.playerStates[0].getHealthPoints() > this.playerStates[1].getHealthPoints() ? this.playerStates[0].getId() : this.playerStates[1].getId());
     }
+    */
+  }
+
+  setWinner(winner : number){
+    this.winner = winner;
   }
 
   noHealthPointsLeft(){
-    if(this.playerStates.length === 2){
-    return this.playerStates[0].getHealthPoints() === 0 || this.playerStates[1].getHealthPoints() === 0 ;
+    for (var i in this.playerStates){
+      if (this.playerStates[i].getHealthPoints() <= 0){
+        return true;
+      }
+      
     }
+    return false;
+    /*
+    if(this.playerStates.length === 2){
+    return (this.playerStates[0].getHealthPoints() === 0 || this.playerStates[1].getHealthPoints() === 0) ;
   }
-
+  */
 }
-
+}
 export class PlayerState extends Player {
   private isInTheAir: boolean;
   private clippingPosition: {x:number, y:number};
   private actionState: ActionState;
 
-  constructor({x, y, cursorX, cursorY, clippingPosition, id, healthPoints, isTakingAction, isDefending, isInTheAir, actionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, healthPoints: number, isTakingAction: boolean, isDefending:boolean, isInTheAir:boolean, actionState:ActionState}){
+  constructor({x, y, cursorX, cursorY, clippingPosition, id, healthPoints, wasProtected, wasHit, isTakingAction, isDefending, isInTheAir, actionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, healthPoints: number, wasProtected: boolean, wasHit: boolean, isTakingAction: boolean, isDefending:boolean, isInTheAir:boolean, actionState:ActionState}){
     super(id);
     this.setX(x);
     this.setY(y);
     this.setCursorPosition(cursorX, cursorY);
     this.setIsTakingAction(isTakingAction);
     this.setIsDefending(isDefending);
-    this.setHealthpoints(healthPoints);
+    this.setHealthPoints(healthPoints);
+    this.setWasProtected(wasProtected);
+    this.setWasHit(wasHit);
     this.isInTheAir = isInTheAir;
     this.actionState = actionState
     this.clippingPosition = clippingPosition;
