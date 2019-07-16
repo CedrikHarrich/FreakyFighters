@@ -44,28 +44,27 @@ export class CollisionDetection {
   static handlePlayerCollision(main: any, clientList: any[]){
     var currentPlayer = clientList[main].player;
     for(var i in clientList){
-        var otherPlayer = clientList[i].player;
+      var otherPlayer = clientList[i].player;
         if (i !== main){
-            if (this.havePlayerCollision(currentPlayer, otherPlayer) ){
-                //Don't push on the left
-                if(currentPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH && otherPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH){
+          if (this.havePlayerCollision(currentPlayer, otherPlayer) ){
 
-                }
-                else if(currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH && otherPlayer.getX()+ Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH){}
-
-
-                //Push player to the right
-                else if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() > otherPlayer.getVelocityX() * (-1)){
-                    otherPlayer.setX(currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH);
-                }
-                //Push player to the left
-                else if (currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() < otherPlayer.getVelocityX() * (-1)){
-                    currentPlayer.setX(otherPlayer.getX() - Const.PLAYER_WIDTH + Const.BLOCK_WIDTH);
-                    }
-                }
-            }
+          //Don't push on the left
+          if((currentPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH && otherPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH)
+          || (currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH && otherPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH)){
+            return;
+          }
+          //Push player to the right
+          else if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() > otherPlayer.getVelocityX() * (-1)){
+            otherPlayer.setX(currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH);
+          }
+          //Push player to the left
+          else if (currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() < otherPlayer.getVelocityX() * (-1)){
+            currentPlayer.setX(otherPlayer.getX() - Const.PLAYER_WIDTH + Const.BLOCK_WIDTH);
+          }
         }
+      }
     }
+  }
 
   private static havePlayerCollision(playerOne: Player, playerTwo: Player) : boolean {
     if (    playerOne.getX() + Const.PLAYER_WIDTH > playerTwo.getX() + Const.PERMEABLE_EDGES &&
@@ -98,6 +97,7 @@ export class CollisionDetection {
     if (shootObject !== undefined){
       for(var i in clientList){
         var otherPlayer = clientList[i].player;
+
         if (i !== main){
           if (this.haveShootObjectCollision(otherPlayer, shootObject)){
             let damagePoints: number;
