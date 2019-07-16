@@ -269,13 +269,13 @@ export class Server{
           player = this.clientList[clientId].player;
 
       switch(button){
-        case Keys.attack:
+        case Keys.AttackMouse:
             if(player.getIsTakingAction() === false){
               console.log(`Player ${socketId} is shooting`);
               player.setIsTakingAction(state);
           };
           break;
-        case Keys.defense:
+        case Keys.DefenseMouse:
             player.setIsDefending(state);
             break;
         default:

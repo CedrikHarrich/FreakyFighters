@@ -5,6 +5,6 @@ export enum Keys {
     Right = "d",
     Attack = " ",
     Defense = "v",
-    attack = 0,
-    defense = 2
+    AttackMouse = 0,
+    DefenseMouse = 2
 }
