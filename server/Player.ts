@@ -4,6 +4,7 @@ import { CollisionDetection } from './CollisionDetection'
 import { ShootAction } from "./ShootAction";
 
 export class Player {
+
     //Attributes of the player.
     private x : number = 0;
     private y : number = 0;
@@ -38,7 +39,7 @@ export class Player {
         }
     }
 
-    updatePosition(){
+    updatePlayerState(){
         //Check if you can jump
         this.checkJump();
 
