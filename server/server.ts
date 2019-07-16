@@ -126,15 +126,15 @@ export class Server{
               socket.emit('end', this.gameState.getWinner());
             }
           } else {
-            this.gameState.setWinner(-1);
+            this.gameState.setWinner(Const.INITIAL_STATE);
           }
 
         } else {
           //GameStatePacker
           for(var i in this.clientList){
 
-            //Timer: starts when 2 players are in the lobby
-            if(this.clientList.length === 2){
+            //Timer: starts when 2 Players are in the lobby.
+            if(this.twoClientsAreConnected()){
 
               if(this.gameState.getTimerStarted() === false){
                 this.clientList[i].player.setHealthPoints(Const.MAX_HP);
@@ -187,7 +187,7 @@ export class Server{
           }
 
           //Winner
-          if(this.gameState.timeLeft === 0 && this.clientList.length === 2){
+          if(this.gameState.timeLeft === 0 && this.twoClientsAreConnected()){
             if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
               this.gameState.setWinner(this.gameState.playerStates[0].getId());
             } else {
@@ -195,7 +195,7 @@ export class Server{
             }
           }
 
-          if(this.clientList.length === 2){
+          if(this.twoClientsAreConnected()){
             if(this.gameState.playerStates[0].getHealthPoints() <= 0 || (this.gameState.playerStates[1].getHealthPoints() <= 0)){
               if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
                 this.gameState.setWinner(this.gameState.playerStates[0].getId());
@@ -304,4 +304,7 @@ export class Server{
       }
     }
 
+    twoClientsAreConnected(){
+      return (this.clientList.length === 2);
+    }
 }
