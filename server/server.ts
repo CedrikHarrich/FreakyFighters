@@ -17,7 +17,7 @@ export class Server{
     //Variables for the actual game.
     private idCounter: number = 1;
     private idNumberStack: Array<number> = [];
-    private gameState : GameState;
+    private gameState: GameState;
 
     constructor(){
         //Initialize variables used for the connection
@@ -157,8 +157,6 @@ export class Server{
 
               CollisionDetection.handlePlayerCollision(i, this.clientList);
               CollisionDetection.handleShootObjectCollision(i, this.clientList);
-
-
 
              let playerState = new PlayerState({
                   x: player.getX(),

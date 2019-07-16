@@ -15,15 +15,15 @@ export class CollisionDetection {
                   //Check if Players have collsions with blocks.
                   if (this.haveCollision(player, blockPositionX, blockPositionY)) {
 
-                          //Handle Collisions accordingly
-                          if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-Const.SETBACK < blockPositionY){
-                              if (player.getIsDownKeyPressed() == false && Const.FALL_THROUGH_BLOCKS){
-                                  player.setVelocityY(0);
-                                  player.setY(blockPositionY - Const.PLAYER_HEIGHT);
-                                  player.setIsJumping(false);
-                              }
+                      //Handle Collisions accordingly
+                      if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-Const.SETBACK < blockPositionY){
+                          if (player.getIsDownKeyPressed() == false && Const.FALL_THROUGH_BLOCKS){
+                              player.setVelocityY(0);
+                              player.setY(blockPositionY - Const.PLAYER_HEIGHT);
+                              player.setIsJumping(false);
                           }
                       }
+                  }
               }
           }
       }
@@ -41,7 +41,7 @@ export class CollisionDetection {
       }
   }
 
-  static handlePlayerCollision(main : any, clientList : any[]){
+  static handlePlayerCollision(main: any, clientList: any[]){
     var currentPlayer = clientList[main].player;
     for(var i in clientList){
         var otherPlayer = clientList[i].player;
@@ -52,7 +52,7 @@ export class CollisionDetection {
 
                 }
                 else if(currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH && otherPlayer.getX()+ Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH){}
-                
+
 
                 //Push player to the right
                 else if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() > otherPlayer.getVelocityX() * (-1)){
@@ -73,7 +73,6 @@ export class CollisionDetection {
             playerOne.getY() + Const.PLAYER_HEIGHT > playerTwo.getY() &&
             playerOne.getY() < Const.BLOCK_HEIGHT + playerTwo.getY())
         {
-            console.log("Players are colliding");
             return true;
         } else {
             return false;
@@ -93,35 +92,32 @@ export class CollisionDetection {
     }
   }
 
-  static handleShootObjectCollision(main : any, clientList : any[]){
+  static handleShootObjectCollision(main: any, clientList: any[]){
     var shootObject = clientList[main].player.getAction();
+
     if (shootObject !== undefined){
+      for(var i in clientList){
+        var otherPlayer = clientList[i].player;
+        if (i !== main){
+          if (this.haveShootObjectCollision(otherPlayer, shootObject)){
+            let damagePoints: number;
 
-        for(var i in clientList){
-            var otherPlayer = clientList[i].player;
-            if (i !== main){
-                if (this.haveShootObjectCollision(otherPlayer, shootObject)){
-                    //Schuss be gone
-                    console.log("Project hits");
-                    clientList[main].player.getAction().setShootActionComplete(true);
-                
-                    let damagePoints: number;
+            clientList[main].player.getAction().setShootActionComplete(true);
 
-                    if(otherPlayer.getIsDefending()){
-                        damagePoints = Const.HALF_DAMAGE;
-                        otherPlayer.setWasProtected(true);
-                    } else {
-                        damagePoints = Const.DAMAGE;
-                        otherPlayer.setWasHit(true);
-                    }
-
-                    otherPlayer.setHealthPoints(otherPlayer.getHealthPoints() - damagePoints);
-                    console.log(otherPlayer.getHealthPoints());
-                    clientList[main].player.setIsTakingActionVariable(false);
-                    clientList[main].player.setAction(undefined);
+            if(otherPlayer.getIsDefending()){
+              damagePoints = Const.HALF_DAMAGE;
+              otherPlayer.setWasProtected(true);
+            } else {
+              damagePoints = Const.DAMAGE;
+              otherPlayer.setWasHit(true);
             }
+
+            otherPlayer.setHealthPoints(otherPlayer.getHealthPoints() - damagePoints);
+            clientList[main].player.setIsTakingActionVariable(false);
+            clientList[main].player.setAction(undefined);
+            }
+          }
         }
+      }
     }
-}
-}
 }

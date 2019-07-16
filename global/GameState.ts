@@ -3,11 +3,11 @@ import { GlobalConstants as Const } from "../global/GlobalConstants";
 
 export class GameState {
   playerStates: Array<PlayerState>;
-  winner : number = -1;
-  timerStarted : boolean = false;
-  startingTime : number = Const.COUNTDOWN;
-  currentTime : number = -1;
-  timeLeft : number = Const.COUNTDOWN;
+  winner: number = -1;
+  timerStarted: boolean = false;
+  startingTime: number = Const.COUNTDOWN;
+  currentTime: number = -1;
+  timeLeft: number = Const.COUNTDOWN;
 
   constructor(){
     this.playerStates = [];
@@ -57,7 +57,7 @@ export class GameState {
   }
 
   getTimerStarted(){
-    return this.timerStarted; 
+    return this.timerStarted;
   }
 
   getWinner(){
@@ -77,7 +77,7 @@ export class GameState {
       if (this.playerStates[i].getHealthPoints() <= 0){
         return true;
       }
-      
+
     }
     return false;
     /*
