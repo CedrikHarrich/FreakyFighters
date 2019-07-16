@@ -6,7 +6,7 @@ export class ShootAction {
     private distance: number;
     private velocityX: number;
     private velocityY: number;
-    private actionComplete: boolean = false;
+    private shootActionComplete: boolean = false;
 
     constructor(startX: number, startY: number, targetX:number, targetY:number){
         this.x = startX + Const.SHOOT_OBJECT_SIZE;
@@ -27,7 +27,7 @@ export class ShootAction {
           a new kind of action can be started in Player
         */ 
         if(this.checkIsOutBoundaries()){
-            this.actionComplete = true;
+            this.shootActionComplete = true;
         }
     }
 
@@ -40,12 +40,12 @@ export class ShootAction {
     }
 
     //player use this method to determine if a new action can be started
-    getIsActionComplete(){
-        return this.actionComplete;
+    getIsShootActionComplete(){
+        return this.shootActionComplete;
     }
 
-    setShootActionComplete(isActionComplete : boolean){
-        this.actionComplete = isActionComplete;
+    setShootActionComplete(isShootActionComplete : boolean){
+        this.shootActionComplete = isShootActionComplete;
     }
 
     //checks if shootObject is outside of canvas
