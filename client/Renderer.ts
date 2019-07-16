@@ -8,7 +8,6 @@ export class Renderer {
     private player_1_sprites: HTMLImageElement = new Image();
     private player_2_sprites: HTMLImageElement = new Image();
     private screens: HTMLImageElement = new Image();
-    private foreground: HTMLImageElement = new Image();
     private grid: Array<Array<number>> = [];
     private gameState: GameState = new GameState();
     private wasProtectedTime: {time: number, player_id: number};
