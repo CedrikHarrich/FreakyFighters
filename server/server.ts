@@ -14,7 +14,7 @@ export class Server{
     private io: any;
     private clientList: Array<{'player': Player, 'socket': any}> = [];
 
-    //Variables for the actual game.
+    //Variables for the actual game
     private idCounter: number = 1;
     private idNumberStack: Array<number> = [];
     private gameState: GameState;
@@ -25,7 +25,7 @@ export class Server{
         this.app = express();
         this.http = require('http').Server(this.app);
 
-        //Send files to the client.
+        //Send files to the client
         this.app.get('/', function(req: any, res: any){
             res.sendFile(path.join(__dirname, '../dist/index.html'));
         });
@@ -34,24 +34,24 @@ export class Server{
           express.static(path.join(__dirname, '../dist/'))
         );
 
-        //Server starts listening.
+        //Server starts listening
         this.http.listen(Const.PORT);
 
-        //Enable server to listen to specific events.
+        //Enable server to listen to specific events
         this.io = require('socket.io')(this.http);
 
         console.log(`The server has started and is now listening to the port: ${Const.PORT}`)
 
-        //The server starts listening to events and sends packages as soon as someone connects.
+        //The server starts listening to events and sends packages as soon as someone connects
         this.registerConnection();
         this.init();
     }
 
     registerConnection() {
-      //EventHandler: Connection of Client
+      //EventHandler: Connection of client
       this.io.sockets.on('connection', (socket: any)=>{
 
-        //Start with listening to reconnections.
+        //Start with listening to reconnections
         socket.on('reconnection', () => {
             console.log(`A Player from ${socket.id} is trying to reconnect...`);
             this.connectionHandler(socket);
@@ -63,20 +63,20 @@ export class Server{
 
     }
 
-    //Handle everything needed when a Client connects.
+    //Handle everything needed when a client connects
     connectionHandler(socket: any){
-      //Check if the game needs another player.
+      //Check if the game needs another player
       if (this.clientList.length < Const.MAX_PLAYERS || Const.UNLIMITED_PLAYERS){
           var client = this.addClient(socket);
           this.registerPlayerEvents(client);
       } else {
-          //Otherwise send the Client the event that he has to wait.
+          //Otherwise notify client that he has to wait.
           socket.emit('wait', Const.WAITING_TIME);
           console.log(`Putting Player on with socket ID: "${socket.id}" into the queue.`);
         }
     }
 
-    //start Listening to all the Events when connected.
+    //start listening to all the events when connected
     registerPlayerEvents({player, socket} : {player: Player, socket: any}){
       //EventHandler: When a key is pressed do ...
       socket.on('keyPressed', (data: any) => {
@@ -94,12 +94,12 @@ export class Server{
         console.log(`${data.button} has been pressed by player ${socket.id}.`);
       });
 
-      //EventHandler: Disconnection of Client
+      //EventHandler: Disconnection of client
       socket.on('disconnect', ()=>{
         //Client is removed
         this.removeClient(socket.id);
 
-        //The game is getting resetted.
+        //The game is getting resetted
         this.gameState.timeLeft = Const.COUNTDOWN;
         this.gameState.timerStarted = false;
 
@@ -108,16 +108,16 @@ export class Server{
       });
     }
 
-    //Starts the LOOP on the server that is calculating the Logic.
+    //Starts the LOOP on the server that is calculating the logic
     init(){
 
       //The gameState that collects all the information for the client
       this.gameState = new GameState();
 
-      //Start the Update Loop Calculations_PER_SECOND times per second.
+      //Start the Update Loop CALCULATIONS_PER_SECOND times per second
 
       setInterval(()=>{
-        //Stop calculating if the game has been won already or time is up.
+        //Stop calculating if the game has already been won or time is up
 
         if ((this.gameState.getWinner() > 0) ){
           if( this.clientList.length >= 2){
@@ -133,7 +133,7 @@ export class Server{
           //GameStatePacker
           for(var i in this.clientList){
 
-            //Timer: starts when 2 Players are in the lobby.
+            //Timer: starts when 2 players are in the lobby
             if(this.clientList.length === 2){
 
               if(this.gameState.getTimerStarted() === false){
@@ -181,7 +181,7 @@ export class Server{
 
 
 
-          //Event: Send Gamestate to the clients.
+          //Event: Send gameState to the clients.
           for(var i in this.clientList){
               var socket = this.clientList[i].socket;
               socket.emit('update', this.gameState);
@@ -207,7 +207,7 @@ export class Server{
             }
           }
 
-          //The Array with the player Information will be deleted after it was sent.
+          //The array with the player information will be deleted after it was sent
           this.gameState.resetPlayerStates();
         }
       }, 1000/Const.CALCULATIONS_PER_SECOND);
@@ -216,18 +216,18 @@ export class Server{
     addClient(socket: any){
       let clientIndex = this.clientList.length;
 
-        //Ticketsystem: If someone connects make a new Ticket.
+        //Ticketsystem: If someone connects make a new ticket.
         if (this.idNumberStack.length == 0){
             this.idNumberStack.push(this.idCounter);
             this.idCounter ++;
         }
 
-        //If a client connects. The socket will be registered and
-        //the client gets a counting ID. ID = Position in Array.
+        //If a client connects, the socket will be registered and
+        //the client gets a counting ID. ID = Position in Array
         socket.id = this.idNumberStack.pop();
         socket.emit('ID', socket.id);
 
-        //A new player is created with the same ID as the socket.
+        //A new player is created with the same ID as the socket
         var player = new Player(socket.id);
 
         this.clientList.push({'player': player, 'socket': socket})
@@ -238,8 +238,8 @@ export class Server{
     }
 
     removeClient(socketId: number){
-      //Ticketsystem: When a player disconnects we need to delete him from clients and players.
-      //And we need to push his Id to the ID-Stack that the next player can take it.
+      //Ticketsystem: When a player disconnects, he needs to be deleted from clients and players.
+      //His ID needs to be pushed the ID-Stack so that the next player can take it
       let clientId = this.getClientId(socketId);
 
       this.clientList.splice(clientId, 1);
@@ -247,7 +247,7 @@ export class Server{
     }
 
     getClientId(socketId: number){
-      // returns the index a player or client have, given their socketId
+      // Returns the index of a player or client, given their socketID
       for (let i = 0; i < this.clientList.length; i++){
           if(this.clientList[i].socket.id == socketId){
               return i;
