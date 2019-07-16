@@ -48,17 +48,15 @@ export class CollisionDetection {
         if (i !== main){
           if (this.havePlayerCollision(currentPlayer, otherPlayer) ){
 
-          //Don't push on the left
-          if((currentPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH && otherPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH)
-          || (currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH && otherPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH)){
+          if(CollisionDetection.hasEdgeCollision(currentPlayer, otherPlayer)){
             return;
           }
           //Push player to the right
-          else if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() > otherPlayer.getVelocityX() * (-1)){
+          else if(CollisionDetection.isPushingRight(currentPlayer, otherPlayer)){
             otherPlayer.setX(currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH);
           }
           //Push player to the left
-          else if (currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() < otherPlayer.getVelocityX() * (-1)){
+          else if (CollisionDetection.isPushingLeft(currentPlayer, otherPlayer)){
             currentPlayer.setX(otherPlayer.getX() - Const.PLAYER_WIDTH + Const.BLOCK_WIDTH);
           }
         }
@@ -118,6 +116,34 @@ export class CollisionDetection {
             }
           }
         }
+      }
+    }
+
+    private static hasEdgeCollision(currentPlayer : Player, otherPlayer: Player) : boolean{
+      if ((currentPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH 
+          && otherPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH)
+          || (currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH 
+          && otherPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH)){
+            return true;
+      } else {
+            return false;
+      }
+      
+    }
+
+    private static isPushingRight(currentPlayer : Player, otherPlayer : Player){
+      if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() > otherPlayer.getVelocityX() * (-1)){
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    private static isPushingLeft(currentPlayer : Player, otherPlayer : Player){
+      if(currentPlayer.getX() + Const.PLAYER_WIDTH > otherPlayer.getX() && currentPlayer.getVelocityX() < otherPlayer.getVelocityX() * (-1)){
+        return true;
+      } else {
+        return false;
       }
     }
 }
