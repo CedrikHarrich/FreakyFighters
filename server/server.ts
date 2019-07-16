@@ -17,15 +17,15 @@ export class Server{
     //Variables for the actual game.
     private idCounter: number = 1;
     private idNumberStack: Array<number> = [];
-    private gameState : GameState;
+    private gameState: GameState;
 
     constructor(){
-        //Initialize Variables used for the connection
+        //Initialize variables used for the connection
         this.express = require('express');
         this.app = express();
         this.http = require('http').Server(this.app);
 
-        //Send Files to the client.
+        //Send files to the client.
         this.app.get('/', function(req: any, res: any){
             res.sendFile(path.join(__dirname, '../dist/index.html'));
         });
@@ -158,8 +158,6 @@ export class Server{
               CollisionDetection.handlePlayerCollision(i, this.clientList);
               CollisionDetection.handleShootObjectCollision(i, this.clientList);
 
-
-
              let playerState = new PlayerState({
                   x: player.getX(),
                   y: player.getY(),
@@ -262,13 +260,13 @@ export class Server{
           player = this.clientList[clientId].player;
 
       switch(button){
-        case Keys.attack:
+        case Keys.AttackMouse:
             if(player.getIsTakingAction() === false){
               console.log(`Player ${socketId} is shooting`);
               player.setIsTakingAction(state);
           };
           break;
-        case Keys.defense:
+        case Keys.DefenseMouse:
             player.setIsDefending(state);
             break;
         default:

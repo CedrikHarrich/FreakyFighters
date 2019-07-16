@@ -57,7 +57,7 @@ export class GameState {
   }
 
   getTimerStarted(){
-    return this.timerStarted; 
+    return this.timerStarted;
   }
 
   getWinner(){
@@ -73,7 +73,7 @@ export class GameState {
       if (this.playerStates[i].getHealthPoints() <= 0){
         return true;
       }
-      
+
     }
     return false;
   }

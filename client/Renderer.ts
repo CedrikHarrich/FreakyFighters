@@ -43,19 +43,19 @@ export class Renderer {
     drawSunTimer(){
         this.context.beginPath();
         this.context.arc(
-          Const.TIMER_X, 
-          Const.TIMER_Y, 
-          Const.TIMER_RADIUS, 
-          Const.START_ANGLE , 
+          Const.TIMER_X,
+          Const.TIMER_Y,
+          Const.TIMER_RADIUS,
+          Const.START_ANGLE ,
           (2*(this.gameState.timeLeft / Const.COUNTDOWN) - 0.5)*Math.PI //END_ANGLE
         );
         this.context.lineTo(Const.TIMER_X, Const.TIMER_Y);
         this.context.lineTo(Const.TIMER_X, Const.TIMER_Y - Const.BLOCK_HEIGHT);
-        
+
         this.context.fillStyle = "#F5A9AF";
         this.context.fill();
       }
-    
+
     //TODO: geht bestimmt kürzer! Sonst eine Hilfsmethode auslagern
     drawLifeBar(){
       let lifeBar: HTMLImageElement = new Image();
@@ -66,7 +66,7 @@ export class Renderer {
       let lifeBarWidth: number = this.player_1_sprites.width;
       let lifeBarPoints: number = lifeBarWidth / Const.MAX_HP;
       let playerStates = this.gameState.getPlayerStates();
-  
+
         for(var i = 0; i < playerStates.length; i++) {
           let playerState = this.gameState.getPlayerState(i);
           healthPoints = playerState.getHealthPoints();
@@ -108,10 +108,10 @@ export class Renderer {
             healthPoints * Const.LIFE_BAR_POINT,
             Const.LIFE_BAR_HEIGHT
           );
-            
+
         }
     }
-    
+
     drawDefendObject(){
         let usedImage: HTMLImageElement = new Image();
         let defendObject_X: number;
@@ -155,14 +155,14 @@ export class Renderer {
     drawShootObject(){
         let shootObject: HTMLImageElement = new Image(),
             playerStates = this.gameState.getPlayerStates();
-  
+
         for(var i = 0; i < playerStates.length; i++) {
           let playerState = this.gameState.getPlayerState(i);
-  
+
           if(playerState.getIsTakingAction()){
-            
+
             shootObject = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
-  
+
             this.context.drawImage(
               shootObject,
               SpriteSheet.SHOOT.x,
@@ -175,19 +175,19 @@ export class Renderer {
               Const.SHOOT_OBJECT_SIZE
             )
           }
-  
+
         }
       }
 
-    drawTarget(){ 
+    drawTarget(){
         let playerStates = this.gameState.getPlayerStates(),
           target: HTMLImageElement = new Image();
-  
+
         for (var i = 0; i < playerStates.length; i++){
           let playerState = this.gameState.getPlayerState(i);
-  
+
           target = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
-  
+
           this.context.drawImage(
             target,
             SpriteSheet.TARGET.x,
@@ -206,17 +206,17 @@ export class Renderer {
         let character: HTMLImageElement = new Image(),
             clippingPosition: {x: number, y: number},
             playerStates = this.gameState.getPlayerStates();
-  
+
         for (var i = 0; i < playerStates.length; i++){
           let playerState = this.gameState.getPlayerState(i);
-  
+
           //use different image for each player
           character = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
 
           //use shooting player if he's shooting
           clippingPosition = playerState.getIsTakingAction() ? SpriteSheet.PLAYER_SHOOTING : playerState.getClippingPosition();
 
-          //TODO: Was wenn beide fast zur gleichen Zeit getroffen wurden?  
+          //TODO: Was wenn beide fast zur gleichen Zeit getroffen wurden?
           if(playerState.getWasHit()){
             this.wasHitTime = {time: Date.now(), player_id: playerState.getId()};
           }
@@ -228,7 +228,7 @@ export class Renderer {
           //draws player image in the right state
           this.context.drawImage(
             character,
-            clippingPosition.x, 
+            clippingPosition.x,
             clippingPosition.y,
             SpriteSheet.SPRITE_SIZE,
             SpriteSheet.SPRITE_SIZE,
@@ -244,7 +244,7 @@ export class Renderer {
         if (Const.WITH_GRID){
           let preBlock: number;
           let clippingPosition: {x: number, y: number};
-  
+
           //scan only in possible block positions
           for (let i : number = Const.MAX_BLOCK_POSITION_Y; i < Const.MIN_BLOCK_POSITION_Y; i++){
             preBlock = 0;
@@ -261,7 +261,7 @@ export class Renderer {
               if(preBlock === 1 && this.grid[i][j] === 1 && this.grid[i][j+1] !==1){
                 clippingPosition = SpriteSheet.CLOUD_RIGHT;
               }
-  
+
               if(this.grid[i][j] === 1){
                 this.context.drawImage(
                   this.sharedSpriteSheet,
@@ -276,7 +276,7 @@ export class Renderer {
               }
               //previous Block is now current Block
               preBlock = this.grid[i][j];
-  
+
             }
           }
         }
@@ -284,17 +284,17 @@ export class Renderer {
 
     drawBackground(){
         this.context.drawImage(
-            this.screens, 
-            SpriteSheet.BACKGROUND.x, 
-            SpriteSheet.BACKGROUND.y, 
-            Const.CANVAS_WIDTH, 
+            this.screens,
+            SpriteSheet.BACKGROUND.x,
+            SpriteSheet.BACKGROUND.y,
+            Const.CANVAS_WIDTH,
             Const.CANVAS_HEIGHT,
             0,
-            0, 
-            Const.CANVAS_WIDTH, 
+            0,
+            Const.CANVAS_WIDTH,
             Const.CANVAS_HEIGHT);
       }
-  
+
       drawForeground(){
         this.context.drawImage(
           this.screens,
@@ -308,7 +308,7 @@ export class Renderer {
           Const.FOREGROUND_HEIGHT
           );
       }
-  
+
       drawWinnerScreen(playerId:number){
         let winner : HTMLImageElement = new Image();
         winner = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
@@ -325,7 +325,7 @@ export class Renderer {
           Const.CANVAS_WIDTH,
           Const.CANVAS_HEIGHT
         )
-            
+
         //draws winner profilpicture on winner screen
         this.context.drawImage(
           winner,
@@ -339,7 +339,7 @@ export class Renderer {
           Const.GAMEOVER_WINNER_SIZE
         )
       }
-  
+
       drawLoserScreen(playerId:number){
         let loser: HTMLImageElement = new Image();
         loser = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
@@ -356,7 +356,7 @@ export class Renderer {
           Const.CANVAS_WIDTH,
           Const.CANVAS_HEIGHT
         )
-        
+
         //draws loser profilpicture on loser screen
         this.context.drawImage(
           loser,

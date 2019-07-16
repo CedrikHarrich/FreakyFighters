@@ -8,7 +8,7 @@ export class Client {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
     private gameState: GameState = new GameState();
-    private renderingHandler : Renderer;
+    private renderingHandler: Renderer;
 
     constructor(){
         console.log("A Client has started.");
@@ -26,7 +26,7 @@ export class Client {
     }
 
     registerEvents(){
-      //set new renderingHandler 
+      //set new renderingHandler
       this.renderingHandler = new Renderer(this.gameState, this.context);
 
       this.socket.on('end', (winner : number) => {
@@ -41,7 +41,7 @@ export class Client {
       this.socket.on('update', (gameState:any) => {
         //Delete old GameState
         this.gameState.resetPlayerStates();
-        
+
         //Make the GameState
         for(var i in gameState.playerStates){
           if(gameState.playerStates[i].actionState != undefined){
@@ -55,7 +55,7 @@ export class Client {
         }
 
         this.gameState.timeLeft = gameState.timeLeft;
-        
+
         //Draw the current Gamestate
         this.renderingHandler.draw(this.gameState);
       });
