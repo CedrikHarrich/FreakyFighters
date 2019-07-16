@@ -49,7 +49,7 @@ export class Renderer {
         this.context.lineTo(Const.TIMER_X, Const.TIMER_Y);
         this.context.lineTo(Const.TIMER_X, Const.TIMER_Y - Const.BLOCK_HEIGHT);
 
-        this.context.fillStyle = "#F5A9AF";
+        this.context.fillStyle = Const.TIMER_COLOR;
         this.context.fill();
       }
 
