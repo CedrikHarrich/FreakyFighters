@@ -142,7 +142,7 @@ export class Server{
               }
               console.log(this.gameState.getTimeLeft());
               this.gameState.calculateTimeLeft();
-            }
+            } 
 
 
 
@@ -186,31 +186,19 @@ export class Server{
               socket.emit('update', this.gameState);
           }
 
-          //Winner
-          if(this.gameState.timeLeft === 0 && this.twoClientsAreConnected()){
-            if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
-              this.gameState.setWinner(this.gameState.playerStates[0].getId());
-            } else {
-              this.gameState.setWinner(this.gameState.playerStates[1].getId());
-            }
-          }
+          //Winner calculated after time run out
+          this.setWinnerAfterNoHealthPoints();
 
-          if(this.twoClientsAreConnected()){
-            if(this.gameState.playerStates[0].getHealthPoints() <= 0 || (this.gameState.playerStates[1].getHealthPoints() <= 0)){
-              if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
-                this.gameState.setWinner(this.gameState.playerStates[0].getId());
-
-              } else {
-                this.gameState.setWinner(this.gameState.playerStates[1].getId());
-              }
-            }
-          }
+          //Winner calculated after one player has no healthPoints
+          this.setWinnerAfterNoHealthPoints();
 
           //The Array with the player Information will be deleted after it was sent.
           this.gameState.resetPlayerStates();
         }
       }, 1000/Const.CALCULATIONS_PER_SECOND);
     }
+
+    
 
     addClient(socket: any){
       let clientIndex = this.clientList.length;
@@ -306,5 +294,28 @@ export class Server{
 
     twoClientsAreConnected(){
       return (this.clientList.length === 2);
+    }
+
+    setWinnerAfterNoHealthPoints(){
+      if(this.twoClientsAreConnected()){
+        if(this.gameState.playerStates[0].getHealthPoints() <= 0 || (this.gameState.playerStates[1].getHealthPoints() <= 0)){
+          if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
+            this.gameState.setWinner(this.gameState.playerStates[0].getId());
+
+          } else {
+            this.gameState.setWinner(this.gameState.playerStates[1].getId());
+          }
+        }
+      }
+    }
+
+    setWinnerAfterTimeUp(){
+      if(this.gameState.timeLeft === 0 && this.twoClientsAreConnected()){
+        if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
+          this.gameState.setWinner(this.gameState.playerStates[0].getId());
+        } else {
+          this.gameState.setWinner(this.gameState.playerStates[1].getId());
+        }
+      }
     }
 }
