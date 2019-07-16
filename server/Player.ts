@@ -51,7 +51,7 @@ export class Player {
 
         //Update Shoot Object Position
         if(this.isTakingAction){
-            if(this.action.getIsActionComplete() && this.action !== undefined){
+            if(this.action.getIsShootActionComplete() && this.action !== undefined){
                 this.isTakingAction = false;
                 
             }

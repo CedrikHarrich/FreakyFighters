@@ -3,11 +3,11 @@ import { GlobalConstants as Const } from "../global/GlobalConstants";
 
 export class GameState {
   playerStates: Array<PlayerState>;
-  winner : number = Const.INITIAL_STATE;
-  timerStarted : boolean = false;
-  startingTime : number = Const.COUNTDOWN;
-  currentTime : number = Const.INITIAL_STATE;
-  timeLeft : number = Const.COUNTDOWN;
+  winner: number = Const.INITIAL_STATE;
+  timerStarted: boolean = false;
+  startingTime: number = Const.COUNTDOWN;
+  currentTime: number = Const.INITIAL_STATE;
+  timeLeft: number = Const.COUNTDOWN;
 
   constructor(){
     this.playerStates = [];
@@ -73,18 +73,16 @@ export class GameState {
       if (this.playerStates[i].getHealthPoints() <= 0){
         return true;
       }
-
     }
     return false;
   }
 }
 
 export class PlayerState extends Player {
-  private isInTheAir: boolean;
   private clippingPosition: {x:number, y:number};
   private actionState: ActionState;
 
-  constructor({x, y, cursorX, cursorY, clippingPosition, id, healthPoints, wasProtected, wasHit, isTakingAction, isDefending, isInTheAir, actionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, healthPoints: number, wasProtected: boolean, wasHit: boolean, isTakingAction: boolean, isDefending:boolean, isInTheAir:boolean, actionState:ActionState}){
+  constructor({x, y, cursorX, cursorY, clippingPosition, id, healthPoints, wasProtected, wasHit, isTakingAction, isDefending, actionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, healthPoints: number, wasProtected: boolean, wasHit: boolean, isTakingAction: boolean, isDefending:boolean, actionState:ActionState}){
     super(id);
     this.setX(x);
     this.setY(y);
@@ -94,13 +92,8 @@ export class PlayerState extends Player {
     this.setHealthPoints(healthPoints);
     this.setWasProtected(wasProtected);
     this.setWasHit(wasHit);
-    this.isInTheAir = isInTheAir;
     this.actionState = actionState
     this.clippingPosition = clippingPosition;
-  }
-
-  getIsInTheAir(){
-    return this.isInTheAir;
   }
 
   getClippingPosition(){
