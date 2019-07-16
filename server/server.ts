@@ -209,13 +209,6 @@ export class Server{
             }
           }
 
-
-          /*for(var i in this.gameState.playerStates){
-            if(this.gameState.playerStates[i].getHealthPoints() <= 0){
-              this.gameState.setWinner(this.gameState.playerStates[])
-            }
-          }*/
-
           //The Array with the player Information will be deleted after it was sent.
           this.gameState.resetPlayerStates();
         }
