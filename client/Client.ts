@@ -21,12 +21,12 @@ export class Client {
         this.canvas.height = Const.CANVAS_HEIGHT;
         this.canvas.width = Const.CANVAS_WIDTH;
 
-        //Start to register Events.
+        //Start resgistering events
         this.registerEvents();
     }
 
     registerEvents(){
-      //set new renderingHandler
+      //Set new renderingHandler
       this.renderingHandler = new Renderer(this.gameState, this.context);
 
       this.socket.on('end', (winner : number) => {
@@ -60,29 +60,29 @@ export class Client {
         this.renderingHandler.draw(this.gameState);
       });
 
-       //Change your ID to the assigned new ID.
+       //Change your ID to the newly assigned ID.
        this.socket.on('ID', (id : number)=>{
         this.socket.id = id;
       })
 
-      //Event: Wait until the server has an open spot again.
+      //Event: Wait until the server has an open spot again
       this.socket.on('wait', (time: number) =>{
         console.log("The server is full at the moment. Please wait for a bit.")
         this.delayedReconnection(time);
       });
 
-      //Event: Signal the server that a key has been pressed.
+      //Event: Signal the server that a key has been pressed
       window.addEventListener('keydown', (event: KeyboardEvent) =>{
         console.log(event.key)
         this.keyPressedHandler(event.key, true)
       }, true);
 
-      //Event: Stop moving when key is not pressed.
+      //Event: Stop moving when key is not pressed
       window.addEventListener('keyup', (event: KeyboardEvent) =>{
         this.keyPressedHandler(event.key, false)
       }, true);
 
-      //Event: Mouse Movement, Coordinates of Mouse
+      //Event: Mouse movement, coordinates of mouse
       window.addEventListener('mousemove', (event: MouseEvent) =>{
         let canvasRestrict = this.canvas.getBoundingClientRect();
         let scaleX = this.canvas.width / canvasRestrict.width;

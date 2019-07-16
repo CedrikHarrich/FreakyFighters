@@ -271,7 +271,7 @@ export class Renderer {
                   Const.BLOCK_WIDTH,
                   Const.BLOCK_HEIGHT);
               }
-              //previous Block is now current Block
+              //previous block is now current block
               preBlock = this.grid[i][j];
 
             }
@@ -323,7 +323,7 @@ export class Renderer {
           Const.CANVAS_HEIGHT
         )
 
-        //draws winner profilpicture on winner screen
+        //draws winner profile picture on winner screen
         this.context.drawImage(
           winner,
           SpriteSheet.WINNER.x,
@@ -354,7 +354,7 @@ export class Renderer {
           Const.CANVAS_HEIGHT
         )
 
-        //draws loser profilpicture on loser screen
+        //draws loser profile picture on loser screen
         this.context.drawImage(
           loser,
           SpriteSheet.LOSER.x,

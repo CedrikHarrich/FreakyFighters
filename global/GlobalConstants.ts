@@ -87,15 +87,15 @@ export class GlobalConstants{
   static readonly FALL_THROUGH_BLOCKS: boolean = true;
 
   //The character is falling off the edge oddly if the edge is
-  //solid on its whole width.
+  //solid on its whole width
   static readonly PERMEABLE_EDGES: number = 35; // >= 0 but < than BLOCK_WIDTH
 
-  //When a character has to be set back on the top of a block, one
-  //needs to calibrate how deep they colide until this happens.
+  //When a character has to be set back on the top of a block,
+  //it is first calibrated how deep they collide until this happens
   static readonly SETBACK: number = 30; // < BLOCK_HEIGHT
 
 
-  //grid and block rules
+  //Grid and block rules/constraints
   static readonly MIN_BLOCK_POSITION_Y : number = (GlobalConstants.GROUND_HEIGHT_FROM_TOP + GlobalConstants.BLOCK_HEIGHT) / GlobalConstants.BLOCK_HEIGHT;
   static readonly MAX_BLOCK_POSITION_Y : number = (GlobalConstants.PLAYER_HEIGHT + GlobalConstants.BLOCK_HEIGHT) / GlobalConstants.BLOCK_HEIGHT;
 

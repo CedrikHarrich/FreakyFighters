@@ -2,7 +2,7 @@ import { GlobalConstants as Const } from "../global/GlobalConstants"
 
 export class SpriteSheet{
 
-    //Sprite Consts
+    //Sprite Constants
     static readonly SPRITES_IN_ROW: number = 3;
     static readonly SPRITES_IN_COLUMN_SHARED: number = 2; //for clouds and defense without being hitted
     static readonly SPRITES_IN_COLUMN: number = 6; //player spritesheet

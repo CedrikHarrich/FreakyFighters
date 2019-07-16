@@ -4,18 +4,18 @@ import { ShootAction } from './ShootAction';
 
 export class CollisionDetection {
   static handleCollision(player: Player, grid: any){
-      //Check the grid for blocks.
+      //Check the grid for blocks
       for (let i = 0; i < grid.length; i++){
           for (let j = 0; j < grid[i].length; j++){
               if(grid[i][j] === 1){
-                  //Calculate the Coordinates of each Block (Left Upper Corner)
+                  //Calculate the coordinates of each block (upper left corner)
                   var blockPositionX = Const.BLOCK_WIDTH * j;
                   var blockPositionY = Const.BLOCK_HEIGHT * i;
 
-                  //Check if Players have collsions with blocks.
+                  //Check if players have collsions with blocks
                   if (this.haveCollision(player, blockPositionX, blockPositionY)) {
 
-                      //Handle Collisions accordingly
+                      //Handle collisions accordingly
                       if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-Const.SETBACK < blockPositionY){
                           if (player.getIsDownKeyPressed() == false && Const.FALL_THROUGH_BLOCKS){
                               player.setVelocityY(0);
@@ -78,7 +78,7 @@ export class CollisionDetection {
   }
 
   private static haveShootObjectCollision(player : Player, shootObject : ShootAction){
-    //Collision ohne Block
+    //Collision without block
     if(player.getX() + Const.PLAYER_WIDTH > shootObject.getX() + Const.PERMEABLE_EDGES &&
     player.getX() + Const.PERMEABLE_EDGES < Const.BLOCK_WIDTH + shootObject.getX() &&
     player.getY() + Const.PLAYER_HEIGHT > shootObject.getY() &&

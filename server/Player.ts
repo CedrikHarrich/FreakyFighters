@@ -5,7 +5,7 @@ import { ShootAction } from "./ShootAction";
 
 export class Player {
 
-    //Attributes of the player.
+    //Attributes of the player
     private x : number = 0;
     private y : number = 0;
     private velocityX : number = 0;
@@ -40,16 +40,16 @@ export class Player {
     }
 
     updatePlayerState(){
-        //Check if you can jump
+        //Check if jumping allowed
         this.checkJump();
 
         this.updateVelocity();
 
-        //Update the actual positon
+        //Update the current positon
         this.x += this.velocityX;
         this.y += this.velocityY;
 
-        //Update Shoot Object Position
+        //Update shoot object position
         if(this.isTakingAction){
             if(this.action.getIsShootActionComplete() && this.action !== undefined){
                 this.isTakingAction = false;
@@ -58,10 +58,10 @@ export class Player {
             this.action.updateShootObjectPosition();
         }
 
-        // Set Cursor Positions within walls
+        //Set cursor positions within walls
         this.checkCursorPosition();
 
-        //Don't fall through the platform.
+        //Player cannot fall through the platform
         if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
             this.isJumping = false;
             this.y = Const.GROUND_HEIGHT_FROM_TOP;
@@ -74,7 +74,7 @@ export class Player {
             this.solidWalls();
 
         } else {
-            //Player can run to the right and pops out on the left an vice versa.
+            //When player runs to one end of the canvas, he pops out on the other side
             this.permeableWalls();
         }
 
@@ -95,7 +95,7 @@ export class Player {
     }
 
     updateVelocity(){
-      //Change the speed depending on the Input
+      //Change the speed depending on the input
       if (this.isRightKeyPressed){
           this.velocityX += Const.ACCELERATION_X;
       }
@@ -106,14 +106,14 @@ export class Player {
           this.velocityY += 2*Const.ACCELERATION_Y;
       }
 
-      //Add physics.
+      //Add physics
       this.velocityY += Const.GRAVITATION;
       this.velocityX *= Const.FRICTION;
       this.velocityY *= Const.FRICTION;
     }
 
     solidRoof(){
-        //Don't jump over the canvas.
+        //Player cannot jump higher than the canvas height
         let setValueTo: number;
         this.isDefending ? setValueTo = Const.DEFENSE_Y_DIFF : setValueTo = 0;
         if(this.y < setValueTo){
@@ -124,7 +124,7 @@ export class Player {
     }
 
     permeableWalls(){
-        //Player can run to the right and pops out on the left an vice versa.
+        //When the player runs to one end of the canvas, he pops out on the other side
         if (this.x < (-1 * Const.PLAYER_WIDTH)){
             this.x = Const.CANVAS_WIDTH;
         }
@@ -134,7 +134,7 @@ export class Player {
     }
 
     solidWalls(){
-        //Player can not pass the walls on each side.
+        //Player cannot pass the walls on either side
         if(this.isDefending){
             if(this.x < Const.DEFENSE_X_DIFF) {
                 this.x = Const.DEFENSE_X_DIFF
@@ -169,7 +169,7 @@ export class Player {
         }
     }
 
-    // determines which image sprite will be rendered
+    //Determine which image sprite will be rendered
     checkLookingDirection(){
         if(this.isLeftKeyPressed){
             return SpriteSheet.PLAYER_LEFT;
