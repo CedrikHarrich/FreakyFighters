@@ -48,15 +48,15 @@ export class CollisionDetection {
         if (i !== main){
           if (this.havePlayerCollision(currentPlayer, otherPlayer) ){
 
-          if(CollisionDetection.hasEdgeCollision(currentPlayer, otherPlayer)){
+          if(this.hasEdgeCollision(currentPlayer, otherPlayer)){
             return;
           }
           //Push player to the right
-          else if(CollisionDetection.isPushingRight(currentPlayer, otherPlayer)){
+          else if(this.isPushingRight(currentPlayer, otherPlayer)){
             otherPlayer.setX(currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH);
           }
           //Push player to the left
-          else if (CollisionDetection.isPushingLeft(currentPlayer, otherPlayer)){
+          else if (this.isPushingLeft(currentPlayer, otherPlayer)){
             currentPlayer.setX(otherPlayer.getX() - Const.PLAYER_WIDTH + Const.BLOCK_WIDTH);
           }
         }
