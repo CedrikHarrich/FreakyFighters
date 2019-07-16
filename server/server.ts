@@ -20,12 +20,12 @@ export class Server{
     private gameState : GameState;
 
     constructor(){
-        //Initialize Variables used for the connection
+        //Initialize variables used for the connection
         this.express = require('express');
         this.app = express();
         this.http = require('http').Server(this.app);
 
-        //Send Files to the client.
+        //Send files to the client.
         this.app.get('/', function(req: any, res: any){
             res.sendFile(path.join(__dirname, '../dist/index.html'));
         });
@@ -208,13 +208,6 @@ export class Server{
               }
             }
           }
-
-
-          /*for(var i in this.gameState.playerStates){
-            if(this.gameState.playerStates[i].getHealthPoints() <= 0){
-              this.gameState.setWinner(this.gameState.playerStates[])
-            }
-          }*/
 
           //The Array with the player Information will be deleted after it was sent.
           this.gameState.resetPlayerStates();
