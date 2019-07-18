@@ -20,31 +20,37 @@ export class Server{
     private gameState: GameState;
 
     constructor(){
-        //Initialize variables used for the connection
-        this.express = require('express');
-        this.app = express();
-        this.http = require('http').Server(this.app);
-
-        //Send files to the client
-        this.app.get('/', function(req: any, res: any){
-            res.sendFile(path.join(__dirname, '../dist/index.html'));
-        });
-
-        this.app.use(
-          express.static(path.join(__dirname, '../dist/'))
-        );
-
-        //Server starts listening
-        this.http.listen(Const.PORT);
-
-        //Enable server to listen to specific events
-        this.io = require('socket.io')(this.http);
-
-        console.log(`The server has started and is now listening to the port: ${Const.PORT}`)
+        this.setupServer();
+        this.serveFiles();
 
         //The server starts listening to events and sends packages as soon as someone connects
         this.registerConnection();
         this.init();
+    }
+
+    setupServer(){
+      //Initialize variables used for the connection
+      this.express = require('express');
+      this.app = express();
+      this.http = require('http').Server(this.app);
+
+      //Server starts listening
+      this.http.listen(Const.PORT);
+      console.log(`The server has started and is now listening to the port: ${Const.PORT}`)
+
+      //Enable server to listen to specific events
+      this.io = require('socket.io')(this.http);
+    }
+
+    serveFiles(){
+      //Send files to the client
+      this.app.get('/', function(req: any, res: any){
+          res.sendFile(path.join(__dirname, '../dist/index.html'));
+      });
+
+      this.app.use(
+        express.static(path.join(__dirname, '../dist/'))
+      );
     }
 
     registerConnection() {
@@ -142,7 +148,7 @@ export class Server{
               }
               console.log(this.gameState.getTimeLeft());
               this.gameState.calculateTimeLeft();
-            } 
+            }
 
 
 
@@ -197,8 +203,6 @@ export class Server{
         }
       }, 1000/Const.CALCULATIONS_PER_SECOND);
     }
-
-    
 
     addClient(socket: any){
       let clientIndex = this.clientList.length;
