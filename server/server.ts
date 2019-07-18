@@ -132,7 +132,7 @@ export class Server{
               socket.emit('end', this.gameState.getWinner());
             }
           } else {
-            this.gameState.setWinner(Const.INITIAL_STATE);
+            this.gameState.setWinner(Const.WINNER_INITIAL_STATE);
           }
 
         } else {

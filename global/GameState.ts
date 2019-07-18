@@ -3,10 +3,10 @@ import { GlobalConstants as Const } from "../global/GlobalConstants";
 
 export class GameState {
   playerStates: Array<PlayerState>;
-  winner: number = Const.INITIAL_STATE;
+  winner: number = Const.WINNER_INITIAL_STATE;
   timerStarted: boolean = false;
   startingTime: number = Const.COUNTDOWN;
-  currentTime: number = Const.INITIAL_STATE;
+  currentTime: number = Const.TIME_INITIAL_STATE;
   timeLeft: number = Const.COUNTDOWN;
 
   constructor(){
