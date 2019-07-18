@@ -19,13 +19,13 @@ export class ShootAction {
         this.velocityY = (dy / this.distance) * Const.SHOOT_OBJECT_SPEED;
     }
 
-    updateShootObjectPosition(){
+    updateShootActionStatePosition(){
         this.x += this.velocityX;
         this.y += this.velocityY;
 
-        /*if shootObject is outside of Canvas, the shootAction is complete
+        /*if shootActionState is outside of Canvas, the shootAction is complete
           a new kind of action can be started in Player
-        */ 
+        */
         if(this.checkIsOutBoundaries()){
             this.shootActionComplete = true;
         }
@@ -48,7 +48,7 @@ export class ShootAction {
         this.shootActionComplete = isShootActionComplete;
     }
 
-    //checks if shootObject is outside of canvas
+    //checks if shootActionState is outside of canvas
     checkIsOutBoundaries(){
         let allConditionsComplied = false;
 

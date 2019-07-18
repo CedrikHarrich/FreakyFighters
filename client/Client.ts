@@ -1,6 +1,6 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
 import { Keys as Keys } from "../global/Keys"
-import { GameState, PlayerState, ActionState } from "../global/GameState"
+import { GameState, PlayerState, ShootActionState } from "../global/GameState"
 import { Renderer } from "./Renderer";
 
 export class Client {
@@ -44,9 +44,9 @@ export class Client {
 
         //Make the GameState
         for(var i in gameState.playerStates){
-          if(gameState.playerStates[i].actionState != undefined){
-            let actionState = new ActionState({x: gameState.playerStates[i].actionState.x, y: gameState.playerStates[i].actionState.y});
-            Object.assign(gameState.playerStates[i], {'actionState': actionState});
+          if(gameState.playerStates[i].shootActionState != undefined){
+            let shootActionState = new ShootActionState({x: gameState.playerStates[i].shootActionState.x, y: gameState.playerStates[i].shootActionState.y});
+            Object.assign(gameState.playerStates[i], {'shootActionState': shootActionState});
           }
 
           let playerState = new PlayerState(gameState.playerStates[i]);

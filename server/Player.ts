@@ -24,14 +24,14 @@ export class Player {
     private isRightKeyPressed : boolean = false;
     private isJumping : boolean = false;
 
-    private isTakingAction : boolean = false;
-    private action: ShootAction;
+    private isShooting : boolean = false;
+    private shootAction: ShootAction;
     private isDefending: boolean = false;
 
     constructor(id :number){
         this.id = id;
         this.healthPoints = Const.MAX_HP;
-        this.isTakingAction = false;
+        this.isShooting = false;
         if(this.id === 1){
             this.x = Const.PLAYER_1_START_X_COORDS;
         }else{
@@ -50,12 +50,12 @@ export class Player {
         this.y += this.velocityY;
 
         //Update shoot object position
-        if(this.isTakingAction){
-            if(this.action.getIsShootActionComplete() && this.action !== undefined){
-                this.isTakingAction = false;
-                
+        if(this.isShooting){
+            if(this.shootAction.getIsShootActionComplete() && this.shootAction !== undefined){
+                this.isShooting = false;
+
             }
-            this.action.updateShootObjectPosition();
+            this.shootAction.updateShootActionStatePosition();
         }
 
         //Set cursor positions within walls
@@ -218,8 +218,8 @@ export class Player {
         return this.isRightKeyPressed;
     }
 
-    getIsTakingAction(){
-        return this.isTakingAction;
+    getIsShooting(){
+        return this.isShooting;
     }
 
     getIsDefending(){
@@ -238,16 +238,16 @@ export class Player {
         return this.velocityY === 0 ? false : true ;
     }
 
-    getAction(){
-        return this.action;
-    }
-    
-    getActionX(){
-        return this.action.getX();
+    getShootAction(){
+        return this.shootAction;
     }
 
-    getActionY(){
-        return this.action.getY();
+    getShootActionX(){
+        return this.shootAction.getX();
+    }
+
+    getShootActionY(){
+        return this.shootAction.getY();
     }
 
     getVelocityX(){
@@ -272,18 +272,19 @@ export class Player {
         this.cursorY = cursorY;
     }
 
-    setIsTakingActionVariable(isTakingAction : boolean){
-        this.isTakingAction = isTakingAction;
-    }
+    setShootAction(isShooting : boolean){
+        this.isShooting = isShooting;
 
-    setIsTakingAction(isTakingAction : boolean){
-        this.isTakingAction = isTakingAction;
-        this.action = new ShootAction(
-            this.x,
-            this.y,
-            this.cursorX,
-            this.cursorY
-            );
+        if ( isShooting ) {
+          this.shootAction = new ShootAction(
+              this.x,
+              this.y,
+              this.cursorX,
+              this.cursorY
+              );
+      } else {
+        this.shootAction = undefined;
+      }
     }
 
     setIsDefending(isDefending: boolean){
@@ -332,9 +333,4 @@ export class Player {
     setVelocityX(velocityX : number){
         this.velocityX = velocityX;
     }
-
-    setAction(action : ShootAction){
-        this.action = action;
-    }
-
 }

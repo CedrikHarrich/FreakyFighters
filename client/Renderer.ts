@@ -156,7 +156,7 @@ export class Renderer {
         for(var i = 0; i < playerStates.length; i++) {
           let playerState = this.gameState.getPlayerState(i);
 
-          if(playerState.getIsTakingAction()){
+          if(playerState.getIsShooting()){
 
             shootObject = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
 
@@ -166,8 +166,8 @@ export class Renderer {
               SpriteSheet.SHOOT.y,
               SpriteSheet.SPRITE_SIZE,
               SpriteSheet.SPRITE_SIZE,
-              playerState.getActionX(),
-              playerState.getActionY(),
+              playerState.getShootActionStateX(),
+              playerState.getShootActionStateY(),
               Const.SHOOT_OBJECT_SIZE,
               Const.SHOOT_OBJECT_SIZE
             )
@@ -211,7 +211,7 @@ export class Renderer {
           character = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
 
           //use shooting player if he's shooting
-          clippingPosition = playerState.getIsTakingAction() ? SpriteSheet.PLAYER_SHOOTING : playerState.getClippingPosition();
+          clippingPosition = playerState.getIsShooting() ? SpriteSheet.PLAYER_SHOOTING : playerState.getClippingPosition();
 
           //TODO: Was wenn beide fast zur gleichen Zeit getroffen wurden?
           if(playerState.getWasHit()){

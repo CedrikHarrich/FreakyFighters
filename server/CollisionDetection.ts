@@ -77,12 +77,12 @@ export class CollisionDetection {
 
   }
 
-  private static haveShootObjectCollision(player : Player, shootObject : ShootAction){
+  private static haveShootObjectCollision(player : Player, shootAction : ShootAction){
     //Collision without block
-    if(player.getX() + Const.PLAYER_WIDTH > shootObject.getX() + Const.PERMEABLE_EDGES &&
-    player.getX() + Const.PERMEABLE_EDGES < Const.BLOCK_WIDTH + shootObject.getX() &&
-    player.getY() + Const.PLAYER_HEIGHT > shootObject.getY() &&
-    player.getY() < Const.BLOCK_HEIGHT + shootObject.getY()) {
+    if(player.getX() + Const.PLAYER_WIDTH > shootAction.getX() + Const.PERMEABLE_EDGES &&
+    player.getX() + Const.PERMEABLE_EDGES < Const.BLOCK_WIDTH + shootAction.getX() &&
+    player.getY() + Const.PLAYER_HEIGHT > shootAction.getY() &&
+    player.getY() < Const.BLOCK_HEIGHT + shootAction.getY()) {
         return true;
     } else {
         return false;
@@ -90,17 +90,17 @@ export class CollisionDetection {
   }
 
   static handleShootObjectCollision(main: any, clientList: any[]){
-    var shootObject = clientList[main].player.getAction();
+    var shootAction = clientList[main].player.getShootAction();
 
-    if (shootObject !== undefined){
+    if (shootAction !== undefined){
       for(var i in clientList){
         var otherPlayer = clientList[i].player;
 
         if (i !== main){
-          if (this.haveShootObjectCollision(otherPlayer, shootObject)){
+          if (this.haveShootObjectCollision(otherPlayer, shootAction)){
             let damagePoints: number;
 
-            clientList[main].player.getAction().setShootActionComplete(true);
+            clientList[main].player.getShootAction().setShootActionComplete(true);
 
             if(otherPlayer.getIsDefending()){
               damagePoints = Const.HALF_DAMAGE;
@@ -111,8 +111,7 @@ export class CollisionDetection {
             }
 
             otherPlayer.setHealthPoints(otherPlayer.getHealthPoints() - damagePoints);
-            clientList[main].player.setIsTakingActionVariable(false);
-            clientList[main].player.setAction(undefined);
+            clientList[main].player.setShootAction(false);
             }
           }
         }
@@ -120,15 +119,15 @@ export class CollisionDetection {
     }
 
     private static hasEdgeCollision(currentPlayer : Player, otherPlayer: Player) : boolean{
-      if ((currentPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH 
+      if ((currentPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH
           && otherPlayer.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH)
-          || (currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH 
+          || (currentPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH
           && otherPlayer.getX() + Const.PLAYER_WIDTH - Const.BLOCK_WIDTH > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH)){
             return true;
       } else {
             return false;
       }
-      
+
     }
 
     private static isPushingRight(currentPlayer : Player, otherPlayer : Player){

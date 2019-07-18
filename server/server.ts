@@ -3,7 +3,7 @@ import * as path from 'path';
 import { Player } from './Player';
 import { GlobalConstants as Const } from '../global/GlobalConstants';
 import { Keys } from '../global/Keys';
-import { GameState, PlayerState, ActionState } from '../global/GameState';
+import { GameState, PlayerState, ShootActionState } from '../global/GameState';
 import { CollisionDetection } from './CollisionDetection'
 
 export class Server{
@@ -139,7 +139,7 @@ export class Server{
           //GameStatePacker
           for(var i in this.clientList){
 
-            //Timer: starts when 2 Players are in the lobby.
+            //Timer: starts when 2 players are in the lobby.
             if(this.twoClientsAreConnected()){
 
               if(this.gameState.getTimerStarted() === false){
@@ -149,19 +149,17 @@ export class Server{
               this.gameState.calculateTimeLeft();
             }
 
+            var player = this.clientList[i].player;
+            player.updatePlayerState();
 
+            if(player.getIsShooting()){
+              var shootActionState: ShootActionState = new ShootActionState({x: player.getShootActionX(), y: player.getShootActionY()});
+            } else {
+              var shootActionState: ShootActionState = new ShootActionState({x: 0, y: 0});
+            }
 
-              var player = this.clientList[i].player;
-              player.updatePlayerState();
-
-              if(player.getIsTakingAction()){
-                var actionState: ActionState = new ActionState({x: player.getActionX(), y: player.getActionY()});
-              } else {
-                var actionState: ActionState = new ActionState({x: 0, y: 0});
-              }
-
-              CollisionDetection.handlePlayerCollision(i, this.clientList);
-              CollisionDetection.handleShootObjectCollision(i, this.clientList);
+            CollisionDetection.handlePlayerCollision(i, this.clientList);
+            CollisionDetection.handleShootObjectCollision(i, this.clientList);
 
              let playerState = new PlayerState({
                   x: player.getX(),
@@ -173,9 +171,9 @@ export class Server{
                   healthPoints: player.getHealthPoints(),
                   wasProtected: player.getWasProtected(),
                   wasHit: player.getWasHit(),
-                  isTakingAction: player.getIsTakingAction(),
+                  isShooting: player.getIsShooting(),
                   isDefending: player.getIsDefending(),
-                  actionState: actionState
+                  shootActionState: shootActionState
               })
 
               this.gameState.addPlayerState(playerState);
@@ -251,9 +249,9 @@ export class Server{
 
       switch(button){
         case Keys.AttackMouse:
-            if(player.getIsTakingAction() === false){
+            if(player.getIsShooting() === false){
               console.log(`Player ${socketId} is shooting`);
-              player.setIsTakingAction(state);
+              player.setShootAction(state);
           };
           break;
         case Keys.DefenseMouse:
@@ -282,9 +280,9 @@ export class Server{
             player.setIsRightKeyPressed(state);
             break;
         case Keys.Attack:
-            if(player.getIsTakingAction() === false){
+            if(player.getIsShooting() === false){
                 console.log(`Player ${socketId} is shooting`);
-                player.setIsTakingAction(state);
+                player.setShootAction(state);
             };
             break;
         case Keys.Defense:

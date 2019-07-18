@@ -80,19 +80,19 @@ export class GameState {
 
 export class PlayerState extends Player {
   private clippingPosition: {x:number, y:number};
-  private actionState: ActionState;
+  private shootActionState: ShootActionState;
 
-  constructor({x, y, cursorX, cursorY, clippingPosition, id, healthPoints, wasProtected, wasHit, isTakingAction, isDefending, actionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, healthPoints: number, wasProtected: boolean, wasHit: boolean, isTakingAction: boolean, isDefending:boolean, actionState:ActionState}){
+  constructor({x, y, cursorX, cursorY, clippingPosition, id, healthPoints, wasProtected, wasHit, isShooting, isDefending, shootActionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, healthPoints: number, wasProtected: boolean, wasHit: boolean, isShooting: boolean, isDefending:boolean, shootActionState:ShootActionState}){
     super(id);
     this.setX(x);
     this.setY(y);
     this.setCursorPosition(cursorX, cursorY);
-    this.setIsTakingAction(isTakingAction);
+    this.setShootAction(isShooting);
     this.setIsDefending(isDefending);
     this.setHealthPoints(healthPoints);
     this.setWasProtected(wasProtected);
     this.setWasHit(wasHit);
-    this.actionState = actionState
+    this.shootActionState = shootActionState
     this.clippingPosition = clippingPosition;
   }
 
@@ -100,20 +100,20 @@ export class PlayerState extends Player {
     return this.clippingPosition;
   }
 
-  getActionState(){
-    return this.actionState;
+  getShootActionState(){
+    return this.shootActionState;
   }
 
-  getActionX(){
-    return this.actionState.getX();
+  getShootActionStateX(){
+    return this.shootActionState.getX();
   }
 
-  getActionY(){
-    return this.actionState.getY();
+  getShootActionStateY(){
+    return this.shootActionState.getY();
   }
 }
 
-export class ActionState{
+export class ShootActionState{
   private x : number;
   private y : number;
 
