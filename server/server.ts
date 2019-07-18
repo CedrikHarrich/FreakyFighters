@@ -95,7 +95,7 @@ export class Server{
         player.setCursorPosition(data.cursorX, data.cursorY);
       });
 
-      socket.on('buttonClicked', (data: any) => {
+      socket.on('mouseClicked', (data: any) => {
         this.mouseButtonPressedHandler(data, socket.id);
         console.log(`${data.button} has been pressed by player ${socket.id}.`);
       });
@@ -146,7 +146,6 @@ export class Server{
                 this.clientList[i].player.setHealthPoints(Const.MAX_HP);
                 this.gameState.startTimer();
               }
-              console.log(this.gameState.getTimeLeft());
               this.gameState.calculateTimeLeft();
             }
 

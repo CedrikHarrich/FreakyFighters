@@ -87,6 +87,7 @@ export class Client {
         let canvasRestrict = this.canvas.getBoundingClientRect();
         let scaleX = this.canvas.width / canvasRestrict.width;
         let scaleY = this.canvas.height / canvasRestrict.height;
+
         this.socket.emit('movingMouse', {
           cursorX: (event.clientX - canvasRestrict.left)*scaleX,
           cursorY: (event.clientY - canvasRestrict.top)*scaleY
@@ -114,7 +115,7 @@ export class Client {
 
     mouseClickedHandler(button: number, state: boolean){
       if (Object.values(Keys).includes(button)){
-        this.socket.emit('buttonClicked', {button: button, state: state});
+        this.socket.emit('mouseClicked', {button: button, state: state});
       }
     }
 
