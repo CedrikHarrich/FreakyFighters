@@ -5,9 +5,11 @@ export class GlobalConstants{
   static readonly SERVER_URL: string = `http://localhost:${GlobalConstants.PORT}`;
   static readonly ASSET_FOLDER: string = "assets/"
   static readonly WAITING_TIME: number = 3000;
+  static readonly WINNER_INITIAL_STATE: number = -1;
+  static readonly TIME_INITIAL_STATE: number = -1;
 
   //Grid Constants
-  static readonly GRID_HEIGHT: number = 19; //Blocks davor:16
+  static readonly GRID_HEIGHT: number = 19; //Blocks
   static readonly GRID_WIDTH: number = 27; //Blocks
   static readonly BLOCK_HEIGHT: number = 40; //Pixels per Block
   static readonly BLOCK_WIDTH: number = 40; // Pixels per Block
@@ -24,7 +26,7 @@ export class GlobalConstants{
 
   static readonly PLAYER_1_START_X_COORDS: number = GlobalConstants.PLAYER_WIDTH;
   static readonly PLAYER_2_START_X_COORDS: number = GlobalConstants.CANVAS_WIDTH - GlobalConstants.PLAYER_WIDTH - GlobalConstants.PLAYER_WIDTH;
-  
+
   //Action Constants
   static readonly SHOOT_OBJECT_SIZE: number = 40;
   static readonly SHOOT_OBJECT_SPEED: number = 22;
@@ -42,7 +44,7 @@ export class GlobalConstants{
   static readonly FRICTION: number = 0.9;
   static readonly GRAVITATION: number = 1.2;
 
-  //Timer and Frames Constants 
+  //Timer and Frames Constants
   static readonly START_ANGLE: number = -0.5 * Math.PI;
   static readonly TIMER_X: number = GlobalConstants.CANVAS_WIDTH / 2; //in the middle of the canvas
   static readonly TIMER_Y: number = 70;
@@ -50,6 +52,7 @@ export class GlobalConstants{
   static readonly CALCULATIONS_PER_SECOND: number = 60;
   static readonly COUNTDOWN: number = 120;
   static readonly ANIMATION_TIME: number = 300;
+  static readonly TIMER_COLOR: string = "#F5A9AF";
 
   //Life Bar Constants
   static readonly MAX_HP: number = 200;
@@ -72,7 +75,7 @@ export class GlobalConstants{
   static readonly GAMEOVER_LOSER_X: number = 445;
   static readonly GAMEOVER_LOSER_Y: number = 355;
   static readonly GAMEOVER_LOSER_SIZE: number = 190;
- 
+
   //Acceleration Constants
   static readonly ACCELERATION_X: number = 1.5;
   static readonly ACCELERATION_Y: number = 1.5;
@@ -85,15 +88,15 @@ export class GlobalConstants{
   static readonly FALL_THROUGH_BLOCKS: boolean = true;
 
   //The character is falling off the edge oddly if the edge is
-  //solid on its whole width.
+  //solid on its whole width
   static readonly PERMEABLE_EDGES: number = 35; // >= 0 but < than BLOCK_WIDTH
 
-  //When a character has to be set back on the top of a block, one
-  //needs to calibrate how deep they colide until this happens.
+  //When a character has to be set back on the top of a block,
+  //it is first calibrated how deep they collide until this happens
   static readonly SETBACK: number = 30; // < BLOCK_HEIGHT
 
 
-  //grid and block rules
+  //Grid and block rules/constraints
   static readonly MIN_BLOCK_POSITION_Y : number = (GlobalConstants.GROUND_HEIGHT_FROM_TOP + GlobalConstants.BLOCK_HEIGHT) / GlobalConstants.BLOCK_HEIGHT;
   static readonly MAX_BLOCK_POSITION_Y : number = (GlobalConstants.PLAYER_HEIGHT + GlobalConstants.BLOCK_HEIGHT) / GlobalConstants.BLOCK_HEIGHT;
 
@@ -102,8 +105,8 @@ export class GlobalConstants{
   static readonly GRID_1 = [
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //1
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3 
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4 
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4
     [1,1,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //5 MAX Block Position: player with defense wont be cut off
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0], //6
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7

@@ -3,11 +3,11 @@ import { GlobalConstants as Const } from "../global/GlobalConstants";
 
 export class GameState {
   playerStates: Array<PlayerState>;
-  winner : number = -1;
-  timerStarted : boolean = false;
-  startingTime : number = Const.COUNTDOWN;
-  currentTime : number = -1;
-  timeLeft : number = Const.COUNTDOWN;
+  winner: number = Const.WINNER_INITIAL_STATE;
+  timerStarted: boolean = false;
+  startingTime: number = Const.COUNTDOWN;
+  currentTime: number = Const.TIME_INITIAL_STATE;
+  timeLeft: number = Const.COUNTDOWN;
 
   constructor(){
     this.playerStates = [];
@@ -57,15 +57,11 @@ export class GameState {
   }
 
   getTimerStarted(){
-    return this.timerStarted; 
+    return this.timerStarted;
   }
 
   getWinner(){
     return this.winner;
-    /*if(this.playerStates.length === 2){
-      return (this.playerStates[0].getHealthPoints() > this.playerStates[1].getHealthPoints() ? this.playerStates[0].getId() : this.playerStates[1].getId());
-    }
-    */
   }
 
   setWinner(winner : number){
@@ -77,58 +73,47 @@ export class GameState {
       if (this.playerStates[i].getHealthPoints() <= 0){
         return true;
       }
-      
     }
     return false;
-    /*
-    if(this.playerStates.length === 2){
-    return (this.playerStates[0].getHealthPoints() === 0 || this.playerStates[1].getHealthPoints() === 0) ;
   }
-  */
 }
-}
-export class PlayerState extends Player {
-  private isInTheAir: boolean;
-  private clippingPosition: {x:number, y:number};
-  private actionState: ActionState;
 
-  constructor({x, y, cursorX, cursorY, clippingPosition, id, healthPoints, wasProtected, wasHit, isTakingAction, isDefending, isInTheAir, actionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, healthPoints: number, wasProtected: boolean, wasHit: boolean, isTakingAction: boolean, isDefending:boolean, isInTheAir:boolean, actionState:ActionState}){
+export class PlayerState extends Player {
+  private clippingPosition: {x:number, y:number};
+  private shootActionState: ShootActionState;
+
+  constructor({x, y, cursorX, cursorY, clippingPosition, id, healthPoints, wasProtected, wasHit, isShooting, isDefending, shootActionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, healthPoints: number, wasProtected: boolean, wasHit: boolean, isShooting: boolean, isDefending:boolean, shootActionState:ShootActionState}){
     super(id);
     this.setX(x);
     this.setY(y);
     this.setCursorPosition(cursorX, cursorY);
-    this.setIsTakingAction(isTakingAction);
+    this.setShootAction(isShooting);
     this.setIsDefending(isDefending);
     this.setHealthPoints(healthPoints);
     this.setWasProtected(wasProtected);
     this.setWasHit(wasHit);
-    this.isInTheAir = isInTheAir;
-    this.actionState = actionState
+    this.shootActionState = shootActionState
     this.clippingPosition = clippingPosition;
-  }
-
-  getIsInTheAir(){
-    return this.isInTheAir;
   }
 
   getClippingPosition(){
     return this.clippingPosition;
   }
 
-  getActionState(){
-    return this.actionState;
+  getShootActionState(){
+    return this.shootActionState;
   }
 
-  getActionX(){
-    return this.actionState.getX();
+  getShootActionStateX(){
+    return this.shootActionState.getX();
   }
 
-  getActionY(){
-    return this.actionState.getY();
+  getShootActionStateY(){
+    return this.shootActionState.getY();
   }
 }
 
-export class ActionState{
+export class ShootActionState{
   private x : number;
   private y : number;
 

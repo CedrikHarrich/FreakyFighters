@@ -1,6 +1,6 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
 import { Keys as Keys } from "../global/Keys"
-import { GameState, PlayerState, ActionState } from "../global/GameState"
+import { GameState, PlayerState, ShootActionState } from "../global/GameState"
 import { Renderer } from "./Renderer";
 
 export class Client {
@@ -8,7 +8,7 @@ export class Client {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
     private gameState: GameState = new GameState();
-    private renderingHandler : Renderer;
+    private renderingHandler: Renderer;
 
     constructor(){
         console.log("A Client has started.");
@@ -21,12 +21,12 @@ export class Client {
         this.canvas.height = Const.CANVAS_HEIGHT;
         this.canvas.width = Const.CANVAS_WIDTH;
 
-        //Start to register Events.
+        //Start resgistering events
         this.registerEvents();
     }
 
     registerEvents(){
-      //set new renderingHandler 
+      //Set new renderingHandler
       this.renderingHandler = new Renderer(this.gameState, this.context);
 
       this.socket.on('end', (winner : number) => {
@@ -41,12 +41,12 @@ export class Client {
       this.socket.on('update', (gameState:any) => {
         //Delete old GameState
         this.gameState.resetPlayerStates();
-        
+
         //Make the GameState
         for(var i in gameState.playerStates){
-          if(gameState.playerStates[i].actionState != undefined){
-            let actionState = new ActionState({x: gameState.playerStates[i].actionState.x, y: gameState.playerStates[i].actionState.y});
-            Object.assign(gameState.playerStates[i], {'actionState': actionState});
+          if(gameState.playerStates[i].shootActionState != undefined){
+            let shootActionState = new ShootActionState({x: gameState.playerStates[i].shootActionState.x, y: gameState.playerStates[i].shootActionState.y});
+            Object.assign(gameState.playerStates[i], {'shootActionState': shootActionState});
           }
 
           let playerState = new PlayerState(gameState.playerStates[i]);
@@ -55,38 +55,39 @@ export class Client {
         }
 
         this.gameState.timeLeft = gameState.timeLeft;
-        
+
         //Draw the current Gamestate
         this.renderingHandler.draw(this.gameState);
       });
 
-       //Change your ID to the assigned new ID.
+       //Change your ID to the newly assigned ID.
        this.socket.on('ID', (id : number)=>{
         this.socket.id = id;
       })
 
-      //Event: Wait until the server has an open spot again.
+      //Event: Wait until the server has an open spot again
       this.socket.on('wait', (time: number) =>{
         console.log("The server is full at the moment. Please wait for a bit.")
         this.delayedReconnection(time);
       });
 
-      //Event: Signal the server that a key has been pressed.
+      //Event: Signal the server that a key has been pressed
       window.addEventListener('keydown', (event: KeyboardEvent) =>{
         console.log(event.key)
         this.keyPressedHandler(event.key, true)
       }, true);
 
-      //Event: Stop moving when key is not pressed.
+      //Event: Stop moving when key is not pressed
       window.addEventListener('keyup', (event: KeyboardEvent) =>{
         this.keyPressedHandler(event.key, false)
       }, true);
 
-      //Event: Mouse Movement, Coordinates of Mouse
+      //Event: Mouse movement, coordinates of mouse
       window.addEventListener('mousemove', (event: MouseEvent) =>{
         let canvasRestrict = this.canvas.getBoundingClientRect();
         let scaleX = this.canvas.width / canvasRestrict.width;
         let scaleY = this.canvas.height / canvasRestrict.height;
+
         this.socket.emit('movingMouse', {
           cursorX: (event.clientX - canvasRestrict.left)*scaleX,
           cursorY: (event.clientY - canvasRestrict.top)*scaleY
@@ -114,7 +115,7 @@ export class Client {
 
     mouseClickedHandler(button: number, state: boolean){
       if (Object.values(Keys).includes(button)){
-        this.socket.emit('buttonClicked', {button: button, state: state});
+        this.socket.emit('mouseClicked', {button: button, state: state});
       }
     }
 
