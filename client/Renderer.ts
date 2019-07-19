@@ -8,6 +8,7 @@ export class Renderer {
     private player_1_sprites: HTMLImageElement = new Image();
     private player_2_sprites: HTMLImageElement = new Image();
     private screens: HTMLImageElement = new Image();
+    private startScreen: HTMLImageElement = new Image();
     private grid: Array<Array<number>> = Const.GRID_1;
     private gameState: GameState = new GameState();
     private wasProtectedTime: {time: number, player_id: number} = {time: 0, player_id: -1};
@@ -18,7 +19,8 @@ export class Renderer {
         this.sharedSpriteSheet.src = `./${Const.ASSET_FOLDER}SpriteSheet_Shared.png`;
         this.player_1_sprites.src = `./${Const.ASSET_FOLDER}SpriteSheet_Player_1.png`;
         this.player_2_sprites.src = `./${Const.ASSET_FOLDER}SpriteSheet_Player_2.png`;
-        this.screens.src = `./${Const.ASSET_FOLDER}Screens.png`
+        this.screens.src = `./${Const.ASSET_FOLDER}Screens.png`;
+        this.startScreen.src = `./${Const.ASSET_FOLDER}StartScreen.png`;
         this.context = context;
         this.gameState = gameState;
     }
@@ -306,7 +308,35 @@ export class Renderer {
           );
       }
 
-      drawWinnerScreen(playerId:number){
+      drawStartScreen(playerId: number){
+        let player : HTMLImageElement = new Image();
+        player = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
+        let clippingPosition: {x: number, y: number};
+
+        this.context.drawImage(
+          this.startScreen,
+          0,
+          0,
+          Const.CANVAS_WIDTH,
+          Const.CANVAS_HEIGHT
+        );
+        
+        clippingPosition = this.gameState.playersInGame[playerId-1] ? SpriteSheet.WINNER : SpriteSheet.PROFILPICTURE;
+     
+        this.context.drawImage(
+          player,
+          clippingPosition.x,
+          clippingPosition.y,
+          SpriteSheet.SPRITE_SIZE,
+          SpriteSheet.SPRITE_SIZE,
+          390,
+          210,
+          300,
+          300
+        )
+      }
+
+      drawWinnerScreen(playerId: number){
         let winner : HTMLImageElement = new Image();
         winner = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
 

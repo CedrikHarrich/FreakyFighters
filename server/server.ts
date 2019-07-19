@@ -69,6 +69,7 @@ export class Server{
       if (this.clientList.length < Const.MAX_PLAYERS || Const.UNLIMITED_PLAYERS){
           var client = this.addClient(socket);
           this.registerPlayerEvents(client);
+
       } else {
           //Otherwise notify client that he has to wait.
           socket.emit('wait', Const.WAITING_TIME);
@@ -127,6 +128,7 @@ export class Server{
             }
           } else {
             this.gameState.setWinner(Const.INITIAL_STATE);
+            this.gameState.setGameOver(true);
           }
 
         } else {
@@ -136,18 +138,18 @@ export class Server{
             //Timer: starts when 2 Players are in the lobby.
             if(this.twoClientsAreConnected()){
 
-              if(this.gameState.getTimerStarted() === false){
-                this.clientList[i].player.setHealthPoints(Const.MAX_HP);
-                this.gameState.startTimer();
+              if(this.gameState.getGameOver() === false){
+                if(this.gameState.getTimerStarted() === false){
+                  this.clientList[i].player.setHealthPoints(Const.MAX_HP);
+                  this.gameState.startTimer();
+                }
+                console.log(this.gameState.getTimeLeft());
+                this.gameState.calculateTimeLeft();
               }
-              console.log(this.gameState.getTimeLeft());
-              this.gameState.calculateTimeLeft();
             } 
 
-
-
-              var player = this.clientList[i].player;
-              player.updatePlayerState();
+            var player = this.clientList[i].player;
+            player.updatePlayerState();
 
               if(player.getIsTakingAction()){
                 var actionState: ActionState = new ActionState({x: player.getActionX(), y: player.getActionY()});
@@ -155,29 +157,36 @@ export class Server{
                 var actionState: ActionState = new ActionState({x: 0, y: 0});
               }
 
-              CollisionDetection.handlePlayerCollision(i, this.clientList);
-              CollisionDetection.handleShootObjectCollision(i, this.clientList);
+            CollisionDetection.handlePlayerCollision(i, this.clientList);
+            CollisionDetection.handleShootObjectCollision(i, this.clientList);
 
-             let playerState = new PlayerState({
-                  x: player.getX(),
-                  y: player.getY(),
-                  cursorX: player.getCursorX(),
-                  cursorY: player.getCursorY(),
-                  clippingPosition: player.checkLookingDirection(),
-                  id: player.getId(),
-                  healthPoints: player.getHealthPoints(),
-                  wasProtected: player.getWasProtected(),
-                  wasHit: player.getWasHit(),
-                  isTakingAction: player.getIsTakingAction(),
-                  isDefending: player.getIsDefending(),
-                  actionState: actionState
-              })
+            let playerState = new PlayerState({
+                x: player.getX(),
+                y: player.getY(),
+                cursorX: player.getCursorX(),
+                cursorY: player.getCursorY(),
+                clippingPosition: player.checkLookingDirection(),
+                id: player.getId(),
+                healthPoints: player.getHealthPoints(),
+                wasProtected: player.getWasProtected(),
+                wasHit: player.getWasHit(),
+                isTakingAction: player.getIsTakingAction(),
+                isDefending: player.getIsDefending(),
+                actionState: actionState
+            })
 
-              this.gameState.addPlayerState(playerState);
-              this.clientList[i].player.setWasProtected(false);
-              this.clientList[i].player.setWasHit(false);
+            this.gameState.addPlayerState(playerState);
+            this.clientList[i].player.setWasProtected(false);
+            this.clientList[i].player.setWasHit(false);
+            this.gameState.playersInGame[i] = this.clientList[i].player.getIsReadyToStartGame();
+          }
+
+
+          if(this.twoClientsAreConnected()){
+            if(this.clientList[0].player.getIsReadyToStartGame() && this.clientList[1].player.getIsReadyToStartGame()){
+              this.gameState.setGameOver(false);
             }
-
+          }
 
 
           //Event: Send gameState to the clients.
@@ -187,7 +196,7 @@ export class Server{
           }
 
           //Winner calculated after time run out
-          this.setWinnerAfterNoHealthPoints();
+          this.setWinnerAfterTimeUp();
 
           //Winner calculated after one player has no healthPoints
           this.setWinnerAfterNoHealthPoints();
@@ -264,38 +273,50 @@ export class Server{
     keyPressedHandler({inputId: inputId, state: state}:{inputId: string, state: boolean}, socketId:number){
       let clientId = this.getClientId(socketId),
           player = this.clientList[clientId].player;
-
-      switch (inputId){
-        case Keys.Up:
-            player.setIsUpKeyPressed(state);
-            break;
-        case Keys.Left:
-            player.setIsLeftKeyPressed(state);
-            break;
-        case Keys.Down:
-            player.setIsDownKeyPressed(state);
-            break;
-        case Keys.Right:
-            player.setIsRightKeyPressed(state);
-            break;
-        case Keys.Attack:
-            if(player.getIsTakingAction() === false){
-                console.log(`Player ${socketId} is shooting`);
-                player.setIsTakingAction(state);
-            };
-            break;
-        case Keys.Defense:
-            player.setIsDefending(state);
-            break;
-          default:
-              return;
+      if(inputId === Keys.Start){
+        if(this.gameState.getGameOver()){
+          player.setIsReadyToStartGame(true);
+          this.gameState.playersInGame[socketId-1] = true;
+          console.log(`Players in game: ${this.gameState.playersInGame} SocketID: ${socketId}`)
+          console.log(`The game should be starting now! GameOver: ${this.gameState.getGameOver()}`);
+        }
       }
+
+      if(!this.gameState.getGameOver()){
+        switch (inputId){
+          case Keys.Up:
+              player.setIsUpKeyPressed(state);
+              break;
+          case Keys.Left:
+              player.setIsLeftKeyPressed(state);
+              break;
+          case Keys.Down:
+              player.setIsDownKeyPressed(state);
+              break;
+          case Keys.Right:
+              player.setIsRightKeyPressed(state);
+              break;
+          case Keys.Attack:
+              if(player.getIsTakingAction() === false){
+                  console.log(`Player ${socketId} is shooting`);
+                  player.setIsTakingAction(state);
+              };
+              break;
+          case Keys.Defense:
+              player.setIsDefending(state);
+              break;
+            default:
+                return;
+        }
+      }
+      
     }
 
     twoClientsAreConnected(){
       return (this.clientList.length === 2);
     }
 
+    //if one of the players has no healthpoints left the winner is calculated and setted
     setWinnerAfterNoHealthPoints(){
       if(this.twoClientsAreConnected()){
         if(this.gameState.playerStates[0].getHealthPoints() <= 0 || (this.gameState.playerStates[1].getHealthPoints() <= 0)){
@@ -309,8 +330,9 @@ export class Server{
       }
     }
 
+    //after given time is up the winner is calculated and setted
     setWinnerAfterTimeUp(){
-      if(this.gameState.timeLeft === 0 && this.twoClientsAreConnected()){
+      if(this.gameState.timeLeft === 0 && this.twoClientsAreConnected() && !this.gameState.getGameOver()){
         if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
           this.gameState.setWinner(this.gameState.playerStates[0].getId());
         } else {

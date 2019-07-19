@@ -8,9 +8,12 @@ export class GameState {
   startingTime: number = Const.COUNTDOWN;
   currentTime: number = Const.INITIAL_STATE;
   timeLeft: number = Const.COUNTDOWN;
+  gameOver: boolean = true;
+  playersInGame: Array<boolean>;
 
   constructor(){
     this.playerStates = [];
+    this.playersInGame = [false,false];
   }
 
   calculateTimeLeft(){
@@ -42,6 +45,10 @@ export class GameState {
     }
   }
 
+  getPlayersInGame(){
+    return this.playersInGame;
+  }
+
   getPlayerStates(){
     return this.playerStates;
   }
@@ -64,8 +71,16 @@ export class GameState {
     return this.winner;
   }
 
+  getGameOver(){
+    return this.gameOver;
+  }
+
   setWinner(winner : number){
     this.winner = winner;
+  }
+
+  setGameOver(gameOver: boolean){
+    this.gameOver = gameOver;
   }
 
   noHealthPointsLeft(){
