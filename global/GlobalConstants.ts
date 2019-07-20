@@ -10,7 +10,6 @@ export class GlobalConstants{
   static readonly WINNER_INITIAL_STATE: number = -1;
   static readonly TIME_INITIAL_STATE: number = -1;
   static readonly ID_INITIAL_STATE: number = -1;
-  static readonly READY_PLAYERS_INITIAL_STATE: Array<boolean> = [undefined,false,false];
   static readonly PROFILE_PICTURE_POSITION: {x: number, y: number} = {x: 390, y: 230};
   static readonly PROFILE_PICTURE_SIZE: number = 300;
   static readonly READY_STATE_POSITION: {x: number, y: number} = {x: 340, y: 180};
@@ -53,14 +52,14 @@ export class GlobalConstants{
   static readonly GRAVITATION: number = 1.2;
 
   //Timer and Frames Constants
+  static readonly COUNTDOWN: number = 10;
+  static readonly ANIMATION_TIME: number = 300;
+  static readonly TIMER_COLOR: string = "#F5A9AF";
   static readonly START_ANGLE: number = -0.5 * Math.PI;
   static readonly TIMER_X: number = GlobalConstants.CANVAS_WIDTH / 2; //in the middle of the canvas
   static readonly TIMER_Y: number = 70;
   static readonly TIMER_RADIUS: number = GlobalConstants.BLOCK_WIDTH;
   static readonly CALCULATIONS_PER_SECOND: number = 60;
-  static readonly COUNTDOWN: number = 120;
-  static readonly ANIMATION_TIME: number = 300;
-  static readonly TIMER_COLOR: string = "#F5A9AF";
 
   //Life Bar Constants
   static readonly MAX_HP: number = 200;
@@ -79,7 +78,7 @@ export class GlobalConstants{
   //Game Over Constants
   static readonly GAMEOVER_WINNER: {x: number, y: number} = {x: 450, y: 330};
   static readonly GAMEOVER_WINNER_SIZE: number = 180;
-  static readonly GAMEOVER_LOSER: {x: number, y: number} = {x: 445, y: 355};
+  static readonly GAMEOVER_LOSER: {x: number, y: number} = {x: 445, y: 335};
   static readonly GAMEOVER_LOSER_SIZE: number = 190;
 
   //Acceleration Constants

@@ -9,7 +9,7 @@ export class GameState {
   currentTime: number = Const.TIME_INITIAL_STATE;
   timeLeft: number = Const.COUNTDOWN;
   gameOver: boolean = true;
-  playersInGame: Array<boolean> = Const.READY_PLAYERS_INITIAL_STATE;
+  playersInGame: Array<boolean> = [undefined, false, false];
 
 
   constructor(){
@@ -73,6 +73,10 @@ export class GameState {
 
   getWinner(){
     return this.winner;
+  }
+
+  resetPlayersInTheGame(){
+    this.playersInGame = [undefined, false, false];
   }
 
   setGameOver(gameOver: boolean){

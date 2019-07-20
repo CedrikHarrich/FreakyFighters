@@ -142,14 +142,20 @@ export class Renderer {
       let clippingPosition: {x: number, y: number};
       let playerStates = this.gameState.getPlayerStates();
 
-      for(var i = 0; i < playerStates.length; i++) {
+      for (var i = 0; i < playerStates.length; i++) {
         let playerState = this.gameState.getPlayerState(i);
-        if(playerState.getIsDefending()){
+        if (playerState.getIsDefending()) {
           defendObjectPosition = {x: playerState.getX() - Const.DEFENSE_X_DIFF, y: playerState.getY() - Const.DEFENSE_Y_DIFF}
           clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.DEFENSE_AIR : SpriteSheet.DEFENSE_GROUND;
           image = this.sharedSpriteSheet;
 
-          ({ image, clippingPosition } = this.animateHitDefense(playerState));
+          if (playerState.getWasProtected()) {
+            this.wasProtectedTime = { time: Date.now(), player_id: playerState.getId() };
+          }
+          if (Date.now() < this.wasProtectedTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasProtectedTime.player_id) {
+            image = this.getPlayerSpriteById(playerState.getId());
+            clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.HIT_DEFENSE_AIR : SpriteSheet.HIT_DEFENSE_GROUND;
+          }
 
           this.drawSquareImage(
             image,
@@ -315,18 +321,6 @@ export class Renderer {
         Const.GAMEOVER_LOSER,
         Const.GAMEOVER_LOSER_SIZE
       );
-    }
-
-    //set start time of animation and image to use for animation
-    private animateHitDefense(playerState: PlayerState) {
-      if (playerState.getWasProtected()) {
-        this.wasProtectedTime = { time: Date.now(), player_id: playerState.getId() };
-      }
-      if (Date.now() < this.wasProtectedTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasProtectedTime.player_id) {
-        let image = this.getPlayerSpriteById(playerState.getId());
-        let clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.HIT_DEFENSE_AIR : SpriteSheet.HIT_DEFENSE_GROUND;
-        return { image, clippingPosition };
-      }
     }
 
     private getPlayerSpriteById(playerID: number){

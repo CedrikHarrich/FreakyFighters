@@ -107,11 +107,8 @@ export class Server{
         this.removeClient(socket.id);
 
         //The game is getting resetted
-        this.gameState.timeLeft = Const.COUNTDOWN;
-        this.gameState.timerStarted = false;
-        this.gameState.setGameOver(true);
-        this.gameState.playersInGame = Const.READY_PLAYERS_INITIAL_STATE;
-
+        this.resetGame();
+        
         console.log(`The player with the ID ${socket.id} has disconnected.`);
         console.log(`There are ${this.clientList.length} Players left.`);
       });
@@ -137,7 +134,6 @@ export class Server{
           } else {
             this.gameState.setWinner(Const.WINNER_INITIAL_STATE);
             this.gameState.setGameOver(true);
-            this.gameState.playersInGame = Const.READY_PLAYERS_INITIAL_STATE;
           }
 
         } else {
@@ -208,16 +204,28 @@ export class Server{
       }, 1000/Const.CALCULATIONS_PER_SECOND);
     }
 
-  startGame(i: any) {
-    if (this.gameState.getGameOver() === false) {
-      if (this.gameState.getTimerStarted() === false) {
-        this.clientList[i].player.setHealthPoints(Const.MAX_HP);
-        this.gameState.startTimer();
+    startGame(i: any) {
+      if (this.gameState.getGameOver() === false) {
+        if (this.gameState.getTimerStarted() === false) {
+          this.clientList[i].player.setHealthPoints(Const.MAX_HP);
+          this.gameState.startTimer();
+        }
+        console.log(this.gameState.getTimeLeft());
+        this.gameState.calculateTimeLeft();
       }
-      console.log(this.gameState.getTimeLeft());
-      this.gameState.calculateTimeLeft();
     }
-  }
+
+    resetGame(){
+      this.gameState.timeLeft = Const.COUNTDOWN;
+      this.gameState.timerStarted = false;
+      this.gameState.setGameOver(true);
+      this.gameState.resetPlayersInTheGame();
+      this.gameState.setWinner(Const.WINNER_INITIAL_STATE);
+      for(var i in this.clientList){
+        this.clientList[i].player.setHealthPoints(Const.MAX_HP);
+        this.clientList[i].player.setIsReadyToStartGame(false);
+      }
+    }
 
     addClient(socket: any){
       let clientIndex = this.clientList.length;
@@ -235,7 +243,7 @@ export class Server{
 
         //A new player is created with the same ID as the socket
         var player = new Player(socket.id);
-
+        
         this.clientList.push({'player': player, 'socket': socket})
 
         console.log(`The player with ID ${socket.id} has connected.`);
@@ -316,9 +324,18 @@ export class Server{
           case Keys.Defense:
               player.setIsDefending(state);
               break;
+          case Keys.Start:
+              this.playAgain();
+              break;
             default:
                 return;
         }
+      }
+    }
+
+    playAgain(){
+      if(this.gameState.getWinner() > 0){
+        this.resetGame();
       }
     }
 
@@ -349,4 +366,4 @@ export class Server{
         }
       }
     }
-}
+  }

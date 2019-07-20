@@ -35,8 +35,6 @@ export class Client {
         } else {
           this.renderingHandler.drawLoserScreen(this.socket.id);
         }
-
-        this.gameState.setGameOver(true);
       });
 
 
