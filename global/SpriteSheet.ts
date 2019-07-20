@@ -1,9 +1,8 @@
-import { GlobalConstants as Const } from "../global/GlobalConstants"
-
 export class SpriteSheet{
 
     //Sprite Constants
     static readonly SPRITE_SIZE: number = 160;
+    static readonly SPRITES_IN_ROW: number = 3;
 
     //Game Start
     static readonly PLAYER_NOT_READY: {x: number, y: number} = {x: 0, y: 2};
@@ -11,11 +10,11 @@ export class SpriteSheet{
     static readonly PROFILPICTURE: { x: number, y: number} = {x: 0, y: 3};
 
     //Screens
-    static readonly START_SCREEN: {x: number, y: number} = {x: 0, y: 3 * Const.CANVAS_HEIGHT};
-    static readonly FOREGROUND: {x: number, y: number} = {x: 0, y: 4 * Const.CANVAS_HEIGHT};
-    static readonly BACKGROUND: {x: number, y: number} = {x: 0, y: 0 * Const.CANVAS_HEIGHT};
-    static readonly WINNER_SCREEN: {x: number, y: number} = {x: 0, y: 1 * Const.CANVAS_HEIGHT};
-    static readonly LOSER_SCREEN: {x: number, y: number} = {x: 0, y: 2 * Const.CANVAS_HEIGHT};
+    static readonly START_SCREEN: {x: number, y: number} = {x: 0, y: 3};
+    static readonly FOREGROUND: {x: number, y: number} = {x: 0, y: 4};
+    static readonly BACKGROUND: {x: number, y: number} = {x: 0, y: 0};
+    static readonly WINNER_SCREEN: {x: number, y: number} = {x: 0, y: 1};
+    static readonly LOSER_SCREEN: {x: number, y: number} = {x: 0, y: 2};
 
     //Clouds
     static readonly CLOUD_LEFT: {x: number, y: number} = {x: 0, y: 0};
@@ -30,8 +29,8 @@ export class SpriteSheet{
     static readonly PLAYER_HIT: {x: number, y: number} = {x: 2, y: 5};
 
     //Life Bar
-    static readonly LIFE_BAR_FRAME: {x: number, y: number} = {x: 0, y: 1};
-    static readonly LIFE_BAR: {x: number, y: number} = {x: 0, y: 0};
+    static readonly LIFE_BAR_FRAME: {x: number, y: number} = {x: 0, y: 1 * SpriteSheet.SPRITE_SIZE};
+    static readonly LIFE_BAR: {x: number, y: number} = {x: 0 * SpriteSheet.SPRITE_SIZE, y: 0};
     
     //Action
     static readonly SHOOT: {x: number, y: number} = {x: 1, y: 3};

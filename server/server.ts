@@ -197,7 +197,7 @@ export class Server{
 
             //Winner calculated after time run out
             this.setWinnerAfterTimeUp();
-            
+
             //Winner calculated after one player has no healthPoints
             this.setWinnerAfterNoHealthPoints();
           }

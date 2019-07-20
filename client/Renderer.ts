@@ -27,7 +27,7 @@ export class Renderer {
         this.gameState = gameState;
         this.context.clearRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
         this.drawBackground();
-        this.drawSunTimer();
+        this.drawTimer();
         this.drawPlayer();
         this.drawDefenseObject();
         this.drawClouds();
@@ -37,7 +37,7 @@ export class Renderer {
         this.drawForeground();
     }
 
-    drawSunTimer(){
+    drawTimer(){
         this.context.beginPath();
         this.context.arc(
           Const.TIMER_X,
@@ -79,58 +79,60 @@ export class Renderer {
       );
     }
 
-    //TODO: geht bestimmt kürzer! Sonst eine Hilfsmethode auslagern
+    drawLifeBarFrame(image: HTMLImageElement, playerState: PlayerState){
+      let positionCoords = playerState.getId() === 1 ? Const.LIFE_BAR_FRAME_1_COORDS : Const.LIFE_BAR_FRAME_2_COORDS;
+
+      //draws life bar frame
+      this.context.drawImage(
+        image,
+        SpriteSheet.LIFE_BAR_FRAME.x,
+        SpriteSheet.LIFE_BAR_FRAME.y,
+        image.width,
+        SpriteSheet.SPRITE_SIZE,
+        positionCoords.x,
+        positionCoords.y,
+        Const.LIFE_BAR_FRAME_WIDTH,
+        Const.LIFE_BAR_FRAME_HEIGHT
+      );
+    }
+
+    drawHealthPoints(image: HTMLImageElement, playerState: PlayerState){
+      let lifeBarCoordX: number,
+        clippingPositionX: number,
+        healthPoints = playerState.getHealthPoints(),
+        lostHealthPoints = Const.MAX_HP - healthPoints,
+        oneHealthPointWidth = (SpriteSheet.SPRITES_IN_ROW * SpriteSheet.SPRITE_SIZE) / Const.MAX_HP;
+
+      if(playerState.getId() === 1){
+        clippingPositionX = SpriteSheet.LIFE_BAR.x;
+        lifeBarCoordX = Const.LIFE_BAR_1_COORDS.x;
+      }else{
+        clippingPositionX = SpriteSheet.LIFE_BAR.x + (lostHealthPoints * oneHealthPointWidth);
+        lifeBarCoordX = Const.LIFE_BAR_2_COORDS.x + (lostHealthPoints * Const.LIFE_BAR_POINT);
+      }
+      //draws life bar with current health points
+      this.context.drawImage(
+        image,
+        clippingPositionX,
+        SpriteSheet.LIFE_BAR.y,
+        healthPoints * oneHealthPointWidth,
+        SpriteSheet.SPRITE_SIZE,
+        lifeBarCoordX,
+        Const.LIFE_BAR_1_COORDS.y,
+        healthPoints * Const.LIFE_BAR_POINT,
+        Const.LIFE_BAR_HEIGHT
+      );
+    }
+
     drawLifeBar(){
-      let lifeBar: HTMLImageElement = new Image();
-      let lifeBarFrameCoords: {x: number, y: number};
-      let lifeBarCoordX: number;
-      let clippingPositionX: number;
-      let lifeBarWidth: number = this.player_1_sprites.width;
-      let lifeBarPoints: number = lifeBarWidth / Const.MAX_HP;
       let playerStates = this.gameState.getPlayerStates();
 
       for(var i = 0; i < playerStates.length; i++) {
         let playerState = this.gameState.getPlayerState(i);
-        let healthPoints = playerState.getHealthPoints();
+        let image = this.getPlayerSpriteById(playerState.getId());
 
-        if(playerState.getId() === 1){
-          lifeBar = this.player_1_sprites;
-          lifeBarFrameCoords = Const.LIFE_BAR_FRAME_1_COORDS;
-          clippingPositionX = SpriteSheet.LIFE_BAR.x;
-          lifeBarCoordX = Const.LIFE_BAR_1_COORDS.x;
-        }else{
-          lifeBar = this.player_2_sprites;
-          lifeBarFrameCoords = Const.LIFE_BAR_FRAME_2_COORDS;
-          clippingPositionX = SpriteSheet.LIFE_BAR.x + ((Const.MAX_HP - healthPoints) * lifeBarPoints);
-          lifeBarCoordX = Const.LIFE_BAR_2_COORDS.x + ((Const.MAX_HP - healthPoints) * Const.LIFE_BAR_POINT);
-        }
-
-        //draws life bar frame
-        this.context.drawImage(
-          lifeBar,
-          SpriteSheet.LIFE_BAR_FRAME.x,
-          SpriteSheet.LIFE_BAR_FRAME.y,
-          lifeBar.width,
-          SpriteSheet.SPRITE_SIZE,
-          lifeBarFrameCoords.x,
-          lifeBarFrameCoords.y,
-          Const.LIFE_BAR_FRAME_WIDTH,
-          Const.LIFE_BAR_FRAME_HEIGHT
-        );
-
-        //draws life bar with current health points
-        this.context.drawImage(
-          lifeBar,
-          clippingPositionX,
-          SpriteSheet.LIFE_BAR.y,
-          healthPoints * lifeBarPoints,
-          SpriteSheet.SPRITE_SIZE,
-          lifeBarCoordX,
-          Const.LIFE_BAR_1_COORDS.y,
-          healthPoints * Const.LIFE_BAR_POINT,
-          Const.LIFE_BAR_HEIGHT
-        );
-
+        this.drawLifeBarFrame(image, playerState);
+        this.drawHealthPoints(image, playerState);
       }
     }
 
@@ -160,19 +162,18 @@ export class Renderer {
     }
 
     drawShootObject(){
-      let shootObject: HTMLImageElement = new Image(),
-          playerStates = this.gameState.getPlayerStates(),
+      let playerStates = this.gameState.getPlayerStates(),
           postion: {x: number, y: number};
 
       for(var i = 0; i < playerStates.length; i++) {
         let playerState = this.gameState.getPlayerState(i);
 
         if(playerState.getIsShooting()){
-
-          shootObject = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
+          let image = this.getPlayerSpriteById(playerState.getId());
           postion = {x: playerState.getShootActionStateX(), y: playerState.getShootActionStateY()};
+
           this.drawSquareImage(
-            shootObject,
+            image,
             SpriteSheet.SHOOT,
             postion,
             Const.SHOOT_OBJECT_SIZE
@@ -182,16 +183,14 @@ export class Renderer {
     }
 
     drawTarget(){
-        let playerStates = this.gameState.getPlayerStates(),
-          target: HTMLImageElement = new Image();
+        let playerStates = this.gameState.getPlayerStates();
 
         for (var i = 0; i < playerStates.length; i++){
           let playerState = this.gameState.getPlayerState(i);
-
-          target = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
+          let image = this.getPlayerSpriteById(playerState.getId());
 
           this.drawSquareImage(
-            target,
+            image,
             SpriteSheet.TARGET,
             {x: playerState.getCursorX(), y: playerState.getCursorY()},
             Const.SHOOT_OBJECT_SIZE
@@ -200,7 +199,7 @@ export class Renderer {
     }
 
     drawPlayer(){
-      let character: HTMLImageElement = new Image(),
+      let image: HTMLImageElement = new Image(),
           clippingPosition: {x: number, y: number},
           playerStates = this.gameState.getPlayerStates();
 
@@ -208,7 +207,7 @@ export class Renderer {
         let playerState = this.gameState.getPlayerState(i);
 
         //use different image for each player
-        character = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
+        image = this.getPlayerSpriteById(playerState.getId());
 
         //use shooting player if he's shooting
         clippingPosition = playerState.getIsShooting() ? SpriteSheet.PLAYER_SHOOTING : playerState.getClippingPosition();
@@ -223,7 +222,7 @@ export class Renderer {
 
         //draws player image in the right state
         this.drawSquareImage(
-          character,
+          image,
           clippingPosition,
           {x: playerState.getX(), y: playerState.getY()},
           Const.PLAYER_WIDTH
@@ -277,7 +276,7 @@ export class Renderer {
       this.context.drawImage(
         this.screens,
         SpriteSheet.FOREGROUND.x,
-        SpriteSheet.FOREGROUND.y,
+        SpriteSheet.FOREGROUND.y * Const.CANVAS_HEIGHT,
         Const.CANVAS_WIDTH,
         Const.FOREGROUND_HEIGHT,
         0,
@@ -288,15 +287,14 @@ export class Renderer {
     }
 
     drawWinnerScreen(playerId:number){
-      let winner : HTMLImageElement = new Image();
-      winner = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
+      let image = this.getPlayerSpriteById(playerId);
 
       //draws background screen for winner
       this.drawScreen(SpriteSheet.WINNER_SCREEN);
 
       //draws winner profile picture on winner screen
       this.drawSquareImage(
-        winner,
+        image,
         SpriteSheet.WINNER,
         Const.GAMEOVER_WINNER,
         Const.GAMEOVER_WINNER_SIZE
@@ -325,18 +323,21 @@ export class Renderer {
         this.wasProtectedTime = { time: Date.now(), player_id: playerState.getId() };
       }
       if (Date.now() < this.wasProtectedTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasProtectedTime.player_id) {
-        let image: HTMLImageElement = playerState.getId() === 1 ? this.player_1_sprites : this.player_2_sprites;
+        let image = this.getPlayerSpriteById(playerState.getId());
         let clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.HIT_DEFENSE_AIR : SpriteSheet.HIT_DEFENSE_GROUND;
         return { image, clippingPosition };
       }
     }
 
+    private getPlayerSpriteById(playerID: number){
+      return playerID === 1 ? this.player_1_sprites : this.player_2_sprites;
+    }
     //help function to reduce length of draw functions for screens/background with the same canvas width and heigth
     private drawScreen(clippingPosition: {x: number, y: number}){
       this.context.drawImage(
         this.screens,
         clippingPosition.x,
-        clippingPosition.y,
+        clippingPosition.y * Const.CANVAS_HEIGHT,
         Const.CANVAS_WIDTH,
         Const.CANVAS_HEIGHT,
         0,
