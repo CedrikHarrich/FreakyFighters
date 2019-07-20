@@ -1,4 +1,5 @@
 export enum Keys {
+    Start = "k",
     Up = "w",
     Down = "s",
     Left = "a",

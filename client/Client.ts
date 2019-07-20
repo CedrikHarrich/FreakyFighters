@@ -35,7 +35,9 @@ export class Client {
         } else {
           this.renderingHandler.drawLoserScreen(this.socket.id);
         }
-      })
+
+        this.gameState.setGameOver(true);
+      });
 
 
       this.socket.on('update', (gameState:any) => {
@@ -55,9 +57,19 @@ export class Client {
         }
 
         this.gameState.timeLeft = gameState.timeLeft;
+        this.gameState.gameOver = gameState.gameOver;
+        this.gameState.playersInGame = gameState.playersInGame;
+       
 
+        
         //Draw the current Gamestate
-        this.renderingHandler.draw(this.gameState);
+        this.renderingHandler.drawGame(this.gameState);
+        
+        if((this.gameState.getGameOver() === true) && this.gameState.getWinner() < 0){
+          this.renderingHandler.drawStartScreen(this.socket.id);
+          this.renderingHandler.drawTarget();
+        } 
+
       });
 
        //Change your ID to the newly assigned ID.
