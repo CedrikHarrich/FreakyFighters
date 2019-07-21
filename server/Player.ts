@@ -28,6 +28,7 @@ export class Player {
     private isShooting : boolean = false;
     private shootAction: ShootAction;
     private isDefending: boolean = false;
+    private isBusy: boolean = false;
 
     constructor(id :number){
         this.id = id;
@@ -54,8 +55,9 @@ export class Player {
         if(this.isShooting){
             if(this.shootAction.getIsShootActionComplete() && this.shootAction !== undefined){
                 this.isShooting = false;
-
+                this.isBusy = false;
             }
+            
             this.shootAction.updateShootActionStatePosition();
         }
 
@@ -227,6 +229,10 @@ export class Player {
         return this.isDefending;
     }
 
+    getIsBusy(){
+        return this.isBusy;
+    }
+
     getWasProtected() {
         return this.wasProtected;
     }
@@ -299,6 +305,10 @@ export class Player {
 
     setWasProtected(wasProtected: boolean){
         this.wasProtected = wasProtected;
+    }
+
+    setIsBusy(isBusy: boolean){
+        this.isBusy = isBusy;
     }
 
     setWasHit(wasHit: boolean){

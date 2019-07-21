@@ -5,6 +5,7 @@ import { GlobalConstants as Const } from '../global/GlobalConstants';
 import { Keys } from '../global/Keys';
 import { GameState, PlayerState, ShootActionState } from '../global/GameState';
 import { CollisionDetection } from './CollisionDetection'
+import { stat } from 'fs';
 
 export class Server{
     //Variables for the connection
@@ -275,13 +276,10 @@ export class Server{
 
       switch(button){
         case Keys.AttackMouse:
-            if(player.getIsShooting() === false){
-              console.log(`Player ${socketId} is shooting`);
-              player.setShootAction(state);
-          };
+            this.setPlayerAttack(player, state);
           break;
         case Keys.DefenseMouse:
-            player.setIsDefending(state);
+            this.setPlayerDefense(player, state);
             break;
         default:
           return;
@@ -292,12 +290,9 @@ export class Server{
       let clientId = this.getClientId(socketId),
           player = this.clientList[clientId].player;
 
-      if(inputId === Keys.Start){
-        if(this.gameState.getGameOver()){
-          player.setIsReadyToStartGame(true);
-          this.gameState.playersInGame[socketId] = true;
-          console.log(`Players in game: ${this.gameState.playersInGame} SocketID: ${socketId}`)
-          console.log(`The game should be starting now! GameOver: ${this.gameState.getGameOver()}`);
+      if(this.gameState.getGameOver()){
+        if(inputId === Keys.Start){
+          this.setPlayerGameStartReady(player, socketId, true);
         }
       }
 
@@ -316,13 +311,10 @@ export class Server{
               player.setIsRightKeyPressed(state);
               break;
           case Keys.Attack:
-              if(player.getIsShooting() === false){
-                  console.log(`Player ${socketId} is shooting`);
-                  player.setShootAction(state);
-              };
+              this.setPlayerAttack(player, state);
               break;
           case Keys.Defense:
-              player.setIsDefending(state);
+              this.setPlayerDefense(player, state);
               break;
           case Keys.Start:
               this.playAgain();
@@ -336,6 +328,31 @@ export class Server{
     playAgain(){
       if(this.gameState.getWinner() > 0){
         this.resetGame();
+      }
+    }
+
+    setPlayerGameStartReady(player: Player, socketId: number, isReady: boolean){
+      player.setIsReadyToStartGame(isReady);
+      this.gameState.playersInGame[socketId] = isReady;
+      console.log(`Players in game: ${this.gameState.playersInGame} SocketID: ${socketId}`)
+      console.log(`The game should be starting now! GameOver: ${this.gameState.getGameOver()}`);
+    }
+
+    setPlayerDefense(player: Player, state: boolean){
+      if(!player.getIsBusy() && state === true){
+        player.setIsDefending(true)
+        player.setIsBusy(true);
+      }
+
+      if(player.getIsBusy() && player.getIsDefending() && state === false){
+        player.setIsDefending(false);
+        player.setIsBusy(false);
+      }
+    }
+
+    setPlayerAttack(player: Player, state: boolean){
+      if(!player.getIsBusy() && player.getIsShooting() === false){
+        player.setShootAction(state);
       }
     }
 
