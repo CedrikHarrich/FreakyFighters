@@ -5,7 +5,6 @@ import { GlobalConstants as Const } from '../global/GlobalConstants';
 import { Keys } from '../global/Keys';
 import { GameState, PlayerState, ShootActionState } from '../global/GameState';
 import { CollisionDetection } from './CollisionDetection'
-import { stat } from 'fs';
 
 export class Server{
     //Variables for the connection
@@ -339,19 +338,17 @@ export class Server{
     }
 
     setPlayerDefense(player: Player, state: boolean){
-      if(!player.getIsBusy() && state === true){
+      if(!player.getIsShooting() && state === true){
         player.setIsDefending(true)
-        player.setIsBusy(true);
       }
 
-      if(player.getIsBusy() && player.getIsDefending() && state === false){
+      if(player.getIsDefending() && !state){
         player.setIsDefending(false);
-        player.setIsBusy(false);
       }
     }
 
     setPlayerAttack(player: Player, state: boolean){
-      if(!player.getIsBusy() && player.getIsShooting() === false){
+      if(!player.getIsDefending() && !player.getIsShooting()){
         player.setShootAction(state);
       }
     }
