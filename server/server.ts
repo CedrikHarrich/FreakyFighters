@@ -164,6 +164,7 @@ export class Server{
                   cursorY: player.getCursorY(),
                   clippingPosition: player.checkLookingDirection(),
                   id: player.getId(),
+                  isInTheAir: player.getIsInTheAir(),
                   healthPoints: player.getHealthPoints(),
                   wasProtected: player.getWasProtected(),
                   wasHit: player.getWasHit(),
