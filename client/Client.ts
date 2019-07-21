@@ -37,37 +37,15 @@ export class Client {
         }
       });
 
-
       this.socket.on('update', (gameState:any) => {
-        //Delete old GameState
-        this.gameState.resetPlayerStates();
-
-        //Make the GameState
-        for(var i in gameState.playerStates){
-          if(gameState.playerStates[i].shootActionState != undefined){
-            let shootActionState = new ShootActionState({x: gameState.playerStates[i].shootActionState.x, y: gameState.playerStates[i].shootActionState.y});
-            Object.assign(gameState.playerStates[i], {'shootActionState': shootActionState});
-          }
-
-          let playerState = new PlayerState(gameState.playerStates[i]);
-
-          this.gameState.addPlayerState(playerState);
-        }
-
-        this.gameState.timeLeft = gameState.timeLeft;
-        this.gameState.gameOver = gameState.gameOver;
-        this.gameState.playersInGame = gameState.playersInGame;
+        //set the new updated gameState
+        this.setGameState(gameState);
        
+        //hide cursor during game
+        this.displayCursor();
 
-        
         //Draw the current Gamestate
-        this.renderingHandler.drawGame(this.gameState);
-        
-        if((this.gameState.getGameOver() === true) && this.gameState.getWinner() < 0){
-          this.renderingHandler.drawStartScreen(this.socket.id);
-          this.renderingHandler.drawTarget();
-        } 
-
+        this.drawGameState();
       });
 
        //Change your ID to the newly assigned ID.
@@ -81,40 +59,8 @@ export class Client {
         this.delayedReconnection(time);
       });
 
-      //Event: Signal the server that a key has been pressed
-      window.addEventListener('keydown', (event: KeyboardEvent) =>{
-        console.log(event.key)
-        this.keyPressedHandler(event.key, true)
-      }, true);
-
-      //Event: Stop moving when key is not pressed
-      window.addEventListener('keyup', (event: KeyboardEvent) =>{
-        this.keyPressedHandler(event.key, false)
-      }, true);
-
-      //Event: Mouse movement, coordinates of mouse
-      window.addEventListener('mousemove', (event: MouseEvent) =>{
-        let canvasRestrict = this.canvas.getBoundingClientRect();
-        let scaleX = this.canvas.width / canvasRestrict.width;
-        let scaleY = this.canvas.height / canvasRestrict.height;
-
-        this.socket.emit('movingMouse', {
-          cursorX: (event.clientX - canvasRestrict.left)*scaleX,
-          cursorY: (event.clientY - canvasRestrict.top)*scaleY
-        });
-      });
-
-      window.addEventListener('mousedown', (event: MouseEvent) => {
-        this.mouseClickedHandler(event.button, true);
-      });
-
-      window.addEventListener('mouseup', (event: MouseEvent) => {
-        this.mouseClickedHandler(event.button, false);
-      });
-
-      window.addEventListener('contextmenu', function(e){
-        e.preventDefault();
-      })
+      this.registerKeyEvents();
+      this.registerMouseEvents();
     }
 
     keyPressedHandler(inputId: string, state: boolean) {
@@ -138,4 +84,78 @@ export class Client {
       this.socket.emit('reconnection');
     }
 
+    setGameState(gameState: any){
+      //Delete old GameState
+      this.gameState.resetPlayerStates();
+
+      //Make the GameState
+      for(var i in gameState.playerStates){
+        if(gameState.playerStates[i].shootActionState != undefined){
+          let shootActionState = new ShootActionState({x: gameState.playerStates[i].shootActionState.x, y: gameState.playerStates[i].shootActionState.y});
+          Object.assign(gameState.playerStates[i], {'shootActionState': shootActionState});
+        }
+
+        let playerState = new PlayerState(gameState.playerStates[i]);
+        this.gameState.addPlayerState(playerState);
+      }
+
+      this.gameState.timeLeft = gameState.timeLeft;
+      this.gameState.gameOver = gameState.gameOver;
+      this.gameState.playersInGame = gameState.playersInGame;
+    }
+
+    drawGameState(){
+      if((this.gameState.gameOver === true) && this.gameState.getWinner() < 0){
+        this.renderingHandler.drawStartScreen(this.socket.id);
+      } else {
+        this.renderingHandler.drawGame(this.gameState);
+      }
+    }
+
+    displayCursor(){
+      if(!this.gameState.getGameOver() && this.gameState.playerStates.length === 2){
+        this.canvas.style.cursor = "none";
+      } else {
+        this.canvas.style.cursor = "default";
+      }
+    }
+
+    registerMouseEvents(){
+      //Event: Mouse movement, coordinates of mouse
+      window.addEventListener('mousemove', (event: MouseEvent) =>{
+        let canvasRestrict = this.canvas.getBoundingClientRect();
+        let scaleX = this.canvas.width / canvasRestrict.width;
+        let scaleY = this.canvas.height / canvasRestrict.height;
+
+        this.socket.emit('movingMouse', {
+          cursorX: (event.clientX - canvasRestrict.left)*scaleX,
+          cursorY: (event.clientY - canvasRestrict.top)*scaleY
+        });
+      });
+
+      window.addEventListener('mousedown', (event: MouseEvent) => {
+        this.mouseClickedHandler(event.button, true);
+      });
+
+      window.addEventListener('mouseup', (event: MouseEvent) => {
+        this.mouseClickedHandler(event.button, false);
+      });
+
+      window.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+      });
+    }
+
+    registerKeyEvents(){
+      //Event: Signal the server that a key has been pressed
+      window.addEventListener('keydown', (event: KeyboardEvent) =>{
+        console.log(event.key)
+        this.keyPressedHandler(event.key, true)
+      }, true);
+
+      //Event: Stop moving when key is not pressed
+      window.addEventListener('keyup', (event: KeyboardEvent) =>{
+        this.keyPressedHandler(event.key, false)
+      }, true);
+    }
 }

@@ -1,21 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>GruppeFF</title>
-    <style> .gameCanvas {cursor: none;}</style>
-</head>
-<body >
-    <!-- That's the place where the game will be displayed.-->
-    <canvas class="gameCanvas" id="myCanvas" width="1080" height="640"></canvas>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Freaky Fighters</title>
+        <style> 
+            html,body{ 
+                margin:0; 
+                padding:0; 
+                height:100%; 
+                width:100%;
+            }
 
-    <!-- This file handles the connection to the server.-->
-    <script src="/socket.io/socket.io.js"></script>
+            .background {
+                text-align: center;
+                background-color: #283C5D;
+                height: 100%;
+                width: 100%
+            }
 
-    <!-- All the code for the client ist bundled and integrated here.-->
-    <script src="/bundle.js"></script>
-    
-</body>
+            .introduction {
+                height: 300;
+            }
+
+            .gameCanvas {
+                width: 1080;
+                height: 760;
+                border: 20px solid white;
+            }
+        </style>
+    </head>
+
+    <body >
+        <div class="background">
+            <div class="introduction">
+
+            </div>
+
+            <!-- That's the place where the game will be displayed.-->
+            <canvas class="gameCanvas" id="myCanvas"></canvas>
+        </div>
+
+        <!-- This file handles the connection to the server.-->
+        <script src="/socket.io/socket.io.js"></script>
+
+        <!-- All the code for the client ist bundled and integrated here.-->
+        <script src="/bundle.js"></script>
+        
+    </body>
 </html>
