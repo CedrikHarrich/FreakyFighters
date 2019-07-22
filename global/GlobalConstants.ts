@@ -53,7 +53,7 @@ export class GlobalConstants{
 
   //Timer and Frames Constants
   static readonly COUNTDOWN: number = 60;
-  static readonly ANIMATION_TIME: number = 300;
+  static readonly ANIMATION_TIME: number = 250;
   static readonly TIMER_COLOR: string = "#F5A9AF";
   static readonly START_ANGLE: number = -0.5 * Math.PI;
   static readonly TIMER_X: number = GlobalConstants.CANVAS_WIDTH / 2; //in the middle of the canvas

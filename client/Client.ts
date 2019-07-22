@@ -138,15 +138,15 @@ export class Client {
         });
       });
 
-      window.addEventListener('mousedown', (event: MouseEvent) => {
+      this.canvas.addEventListener('mousedown', (event: MouseEvent) => {
         this.mouseClickedHandler(event.button, true);
       });
 
-      window.addEventListener('mouseup', (event: MouseEvent) => {
+      this.canvas.addEventListener('mouseup', (event: MouseEvent) => {
         this.mouseClickedHandler(event.button, false);
       });
 
-      window.addEventListener('contextmenu', function(e){
+      this.canvas.addEventListener('contextmenu', function(e){
         e.preventDefault();
       });
     }
