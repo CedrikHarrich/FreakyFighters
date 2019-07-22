@@ -32,9 +32,13 @@ export class Client {
       this.socket.on('end', (winner : number) => {
         if(this.socket.id === winner){
           this.renderingHandler.drawWinnerScreen(this.socket.id);
+        } else if(winner === Const.GAMEOVER_DRAW){
+          this.renderingHandler.drawNoWinnerScreen();
         } else {
           this.renderingHandler.drawLoserScreen(this.socket.id);
         }
+        
+        this.canvas.style.cursor = "default";
       });
 
       this.socket.on('update', (gameState:any) => {
@@ -90,12 +94,13 @@ export class Client {
 
       //Make the GameState
       for(var i in gameState.playerStates){
-        if(gameState.playerStates[i].shootActionState != undefined){
-          let shootActionState = new ShootActionState({x: gameState.playerStates[i].shootActionState.x, y: gameState.playerStates[i].shootActionState.y});
-          Object.assign(gameState.playerStates[i], {'shootActionState': shootActionState});
+        const player = gameState.playerStates[i];
+        if(player.shootActionState != undefined){
+          let shootActionState = new ShootActionState({x: player.shootActionState.x, y: player.shootActionState.y});
+          Object.assign(player, {'shootActionState': shootActionState});
         }
 
-        let playerState = new PlayerState(gameState.playerStates[i]);
+        let playerState = new PlayerState(player);
         this.gameState.addPlayerState(playerState);
       }
 

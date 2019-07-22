@@ -323,6 +323,10 @@ export class Renderer {
       );
     }
 
+    drawNoWinnerScreen(){
+      this.drawScreen(SpriteSheet.DRAW_SCREEN);
+    }
+
     private getPlayerSpriteById(playerID: number){
       return playerID === 1 ? this.player_1_sprites : this.player_2_sprites;
     }

@@ -125,7 +125,7 @@ export class Server{
       setInterval(()=>{
         //Stop calculating if the game has already been won or time is up
 
-        if((this.gameState.getWinner() > 0)){
+        if((this.gameState.getWinner() !== Const.WINNER_INITIAL_STATE)){
           if(this.twoClientsAreConnected()){
             for(var i in this.clientList){
               var socket = this.clientList[i].socket;
@@ -326,7 +326,7 @@ export class Server{
     }
 
     playAgain(){
-      if(this.gameState.getWinner() > 0){
+      if(this.gameState.getWinner() !== Const.WINNER_INITIAL_STATE){
         this.resetGame();
       }
     }
@@ -361,24 +361,36 @@ export class Server{
 
     //if one of the players has no healthpoints left the winner is calculated and setted
     setWinnerAfterNoHealthPoints(){
-      if(this.gameState.playerStates[0].getHealthPoints() <= 0 || (this.gameState.playerStates[1].getHealthPoints() <= 0)){
-        if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
-          this.gameState.setWinner(this.gameState.playerStates[0].getId());
+      const player1 = this.gameState.playerStates[0];
+      const player2 = this.gameState.playerStates[1];
+      
+      if(player1.getHealthPoints() <= 0 || (player2.getHealthPoints() <= 0)){
+        if (player1.getHealthPoints() > player2.getHealthPoints()){
+          this.gameState.setWinner(player1.getId());
 
         } else {
-          this.gameState.setWinner(this.gameState.playerStates[1].getId());
+          this.gameState.setWinner(player2.getId());
         }
       }
     }
 
     //after given time is up the winner is calculated and setted
     setWinnerAfterTimeUp(){
-      if(this.gameState.timeLeft === 0 && !this.gameState.getGameOver()){
-        if (this.gameState.playerStates[0].getHealthPoints() > this.gameState.playerStates[1].getHealthPoints()){
-          this.gameState.setWinner(this.gameState.playerStates[0].getId());
-        } else {
-          this.gameState.setWinner(this.gameState.playerStates[1].getId());
+      if (this.gameState.timeLeft === 0 && !this.gameState.getGameOver()){
+        const player1 = this.gameState.playerStates[0];
+        const player2 = this.gameState.playerStates[1];
+        let winner: number;
+
+        if (player1.getHealthPoints() > player2.getHealthPoints()){
+          winner = player1.getId();
         }
+        if (player1.getHealthPoints() < player2.getHealthPoints()){
+          winner = player2.getId();
+        }
+        if(player1.getHealthPoints() === player2.getHealthPoints()){
+          winner = Const.GAMEOVER_DRAW;
+        }
+        this.gameState.setWinner(winner);
       }
     }
   }

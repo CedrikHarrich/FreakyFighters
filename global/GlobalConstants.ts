@@ -80,6 +80,7 @@ export class GlobalConstants{
   static readonly GAMEOVER_WINNER_SIZE: number = 180;
   static readonly GAMEOVER_LOSER: {x: number, y: number} = {x: 445, y: 335};
   static readonly GAMEOVER_LOSER_SIZE: number = 190;
+  static readonly GAMEOVER_DRAW: number = 100;
 
   //Acceleration Constants
   static readonly ACCELERATION_X: number = 1.5;

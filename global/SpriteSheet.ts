@@ -10,11 +10,12 @@ export class SpriteSheet{
     static readonly PROFILPICTURE: { x: number, y: number} = {x: 0, y: 3};
 
     //Screens
-    static readonly START_SCREEN: {x: number, y: number} = {x: 0, y: 3};
-    static readonly FOREGROUND: {x: number, y: number} = {x: 0, y: 4};
+    static readonly START_SCREEN: {x: number, y: number} = {x: 0, y: 4};
+    static readonly FOREGROUND: {x: number, y: number} = {x: 0, y: 5};
     static readonly BACKGROUND: {x: number, y: number} = {x: 0, y: 0};
     static readonly WINNER_SCREEN: {x: number, y: number} = {x: 0, y: 1};
     static readonly LOSER_SCREEN: {x: number, y: number} = {x: 0, y: 2};
+    static readonly DRAW_SCREEN: {x: number, y: number} = {x: 0, y: 3}
 
     //Clouds
     static readonly CLOUD_LEFT: {x: number, y: number} = {x: 0, y: 0};
