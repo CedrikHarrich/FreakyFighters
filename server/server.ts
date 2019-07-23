@@ -3,6 +3,7 @@
 import * as express from 'express';
 import * as path from 'path';
 import { Player } from './Player';
+import { clientList } from './clientList';
 import { GlobalConstants as Const } from '../global/GlobalConstants';
 import { Keys } from '../global/Keys';
 import { GameState, PlayerState, ShootActionState } from '../global/GameState';
@@ -14,7 +15,7 @@ export class Server{
     private app: any;
     private http: any;
     private io: any;
-    private clientList: Array<{'player': Player, 'socket': any}> = [];
+    private clientList: clientList = [];
 
     //Variables for the actual game
     private idCounter: number = 1;
