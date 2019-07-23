@@ -37,16 +37,11 @@ export class Client {
         } else {
           this.renderingHandler.drawLoserScreen(this.socket.id);
         }
-
-        this.displayCursor();
       });
 
       this.socket.on('update', (gameState:any) => {
         //set the new updated gameState
         this.setGameState(gameState);
-
-        //hide cursor during game
-        this.displayCursor();
 
         //Draw the current Gamestate
         this.drawGameState();
@@ -65,6 +60,7 @@ export class Client {
 
       this.registerKeyEvents();
       this.registerMouseEvents();
+      this.displayCursor();
     }
 
     keyPressedHandler(inputId: string, state: boolean) {
@@ -118,9 +114,11 @@ export class Client {
     }
 
     displayCursor(){
-      // TODO: cursor default when gameover
       if(!this.gameState.getGameOver() && this.gameState.playerStates.length === 2){
         this.canvas.style.cursor = "none";
+        if(this.gameState.getWinnerId() !== Const.WINNER_INITIAL_STATE){
+          this.canvas.style.cursor = "default";
+        }
       } else {
         this.canvas.style.cursor = "default";
       }
