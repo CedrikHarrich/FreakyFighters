@@ -110,11 +110,11 @@ export class Client {
     }
 
     drawGameState(){
+      this.renderingHandler.drawGame(this.gameState);
+
       if((this.gameState.gameOver === true) && this.gameState.getWinner() < 0){
         this.renderingHandler.drawStartScreen(this.socket.id);
-      } else {
-        this.renderingHandler.drawGame(this.gameState);
-      }
+      }    
     }
 
     displayCursor(){
