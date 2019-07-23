@@ -274,15 +274,17 @@ export class Server{
       let clientId = this.getClientId(socketId),
           player = this.clientList[clientId].player;
 
-      switch(button){
-        case Keys.AttackMouse:
-            this.setPlayerAttack(player, state);
-          break;
-        case Keys.DefenseMouse:
-            this.setPlayerDefense(player, state);
+      if(!this.gameState.getGameOver()){
+        switch(button){
+          case Keys.AttackMouse:
+              this.setPlayerAttack(player, state);
             break;
-        default:
-          return;
+          case Keys.DefenseMouse:
+              this.setPlayerDefense(player, state);
+              break;
+          default:
+            return;
+        }
       }
     }
 
