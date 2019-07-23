@@ -1,3 +1,5 @@
+// TODO: seperate gamelogic from connection stuff
+
 import * as express from 'express';
 import * as path from 'path';
 import { Player } from './Player';
@@ -108,7 +110,7 @@ export class Server{
 
         //The game is getting resetted
         this.resetGame();
-        
+
         console.log(`The player with the ID ${socket.id} has disconnected.`);
         console.log(`There are ${this.clientList.length} Players left.`);
       });
@@ -125,14 +127,14 @@ export class Server{
       setInterval(()=>{
         //Stop calculating if the game has already been won or time is up
 
-        if((this.gameState.getWinner() !== Const.WINNER_INITIAL_STATE)){
+        if((this.gameState.getWinnerId() !== Const.WINNER_INITIAL_STATE)){
           if(this.twoClientsAreConnected()){
             for(var i in this.clientList){
               var socket = this.clientList[i].socket;
-              socket.emit('end', this.gameState.getWinner());
+              socket.emit('end', this.gameState.getWinnerId());
             }
           } else {
-            this.gameState.setWinner(Const.WINNER_INITIAL_STATE);
+            this.gameState.setWinnerId(Const.WINNER_INITIAL_STATE);
             this.gameState.setGameOver(true);
           }
 
@@ -182,7 +184,7 @@ export class Server{
               if(this.clientList[0].player.getIsReadyToStartGame() && this.clientList[1].player.getIsReadyToStartGame()){
                 this.gameState.setGameOver(false);
               }
-            }  
+            }
 
           //Event: Send gameState to the clients.
           for(var i in this.clientList){
@@ -193,10 +195,10 @@ export class Server{
           if(this.twoClientsAreConnected()){
 
             //Winner calculated after time run out
-            this.setWinnerAfterTimeUp();
+            this.setWinnerIdAfterTimeUp();
 
             //Winner calculated after one player has no healthPoints
-            this.setWinnerAfterNoHealthPoints();
+            this.setWinnerIdAfterNoHealthPoints();
           }
 
           //The array with the player information will be deleted after it was sent
@@ -221,7 +223,7 @@ export class Server{
       this.gameState.timerStarted = false;
       this.gameState.setGameOver(true);
       this.gameState.resetPlayersInTheGame();
-      this.gameState.setWinner(Const.WINNER_INITIAL_STATE);
+      this.gameState.setWinnerId(Const.WINNER_INITIAL_STATE);
       for(var i in this.clientList){
         this.clientList[i].player.setHealthPoints(Const.MAX_HP);
         this.clientList[i].player.setIsReadyToStartGame(false);
@@ -244,7 +246,7 @@ export class Server{
 
         //A new player is created with the same ID as the socket
         var player = new Player(socket.id);
-        
+
         this.clientList.push({'player': player, 'socket': socket})
 
         console.log(`The player with ID ${socket.id} has connected.`);
@@ -328,7 +330,7 @@ export class Server{
     }
 
     playAgain(){
-      if(this.gameState.getWinner() !== Const.WINNER_INITIAL_STATE){
+      if(this.gameState.getWinnerId() !== Const.WINNER_INITIAL_STATE){
         this.resetGame();
       }
     }
@@ -362,37 +364,37 @@ export class Server{
     }
 
     //if one of the players has no healthpoints left the winner is calculated and setted
-    setWinnerAfterNoHealthPoints(){
+    setWinnerIdAfterNoHealthPoints(){
       const player1 = this.gameState.playerStates[0];
       const player2 = this.gameState.playerStates[1];
-      
+
       if(player1.getHealthPoints() <= 0 || (player2.getHealthPoints() <= 0)){
         if (player1.getHealthPoints() > player2.getHealthPoints()){
-          this.gameState.setWinner(player1.getId());
+          this.gameState.setWinnerId(player1.getId());
 
         } else {
-          this.gameState.setWinner(player2.getId());
+          this.gameState.setWinnerId(player2.getId());
         }
       }
     }
 
     //after given time is up the winner is calculated and setted
-    setWinnerAfterTimeUp(){
+    setWinnerIdAfterTimeUp(){
       if (this.gameState.timeLeft === 0 && !this.gameState.getGameOver()){
         const player1 = this.gameState.playerStates[0];
         const player2 = this.gameState.playerStates[1];
-        let winner: number;
+        let winnerId: number;
 
         if (player1.getHealthPoints() > player2.getHealthPoints()){
-          winner = player1.getId();
+          winnerId = player1.getId();
         }
         if (player1.getHealthPoints() < player2.getHealthPoints()){
-          winner = player2.getId();
+          winnerId = player2.getId();
         }
         if(player1.getHealthPoints() === player2.getHealthPoints()){
-          winner = Const.GAMEOVER_DRAW;
+          winnerId = Const.GAMEOVER_DRAW;
         }
-        this.gameState.setWinner(winner);
+        this.gameState.setWinnerId(winnerId);
       }
     }
   }

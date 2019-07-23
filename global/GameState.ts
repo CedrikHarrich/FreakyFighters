@@ -3,12 +3,13 @@ import { GlobalConstants as Const } from "../global/GlobalConstants";
 
 export class GameState {
   playerStates: Array<PlayerState>;
-  winner: number = Const.WINNER_INITIAL_STATE;
+  winnerId: number = Const.WINNER_INITIAL_STATE;
   timerStarted: boolean = false;
   startingTime: number = Const.COUNTDOWN;
   currentTime: number = Const.TIME_INITIAL_STATE;
   timeLeft: number = Const.COUNTDOWN;
   gameOver: boolean = true;
+  // TODO maybe nicer solution
   playersInGame: Array<boolean> = [undefined, false, false];
 
 
@@ -71,8 +72,8 @@ export class GameState {
     return this.timerStarted;
   }
 
-  getWinner(){
-    return this.winner;
+  getWinnerId(){
+    return this.winnerId;
   }
 
   resetPlayersInTheGame(){
@@ -83,8 +84,8 @@ export class GameState {
     this.gameOver = gameOver;
   }
 
-  setWinner(winner : number){
-    this.winner = winner;
+  setWinnerId(winnerId : number){
+    this.winnerId = winnerId;
   }
 
   noHealthPointsLeft(){

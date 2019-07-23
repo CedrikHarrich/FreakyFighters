@@ -1,4 +1,5 @@
 export enum Keys {
+  // TODO: handle capslock
     Start = "k",
     Up = "w",
     Down = "s",

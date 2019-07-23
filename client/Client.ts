@@ -29,22 +29,22 @@ export class Client {
       //Set new renderingHandler
       this.renderingHandler = new Renderer(this.gameState, this.context);
 
-      this.socket.on('end', (winner : number) => {
-        if(this.socket.id === winner){
+      this.socket.on('end', (winnerId : number) => {
+        if(this.socket.id === winnerId){
           this.renderingHandler.drawWinnerScreen(this.socket.id);
-        } else if(winner === Const.GAMEOVER_DRAW){
+        } else if(winnerId === Const.GAMEOVER_DRAW){
           this.renderingHandler.drawNoWinnerScreen();
         } else {
           this.renderingHandler.drawLoserScreen(this.socket.id);
         }
-        
-        this.canvas.style.cursor = "default";
+
+        this.displayCursor();
       });
 
       this.socket.on('update', (gameState:any) => {
         //set the new updated gameState
         this.setGameState(gameState);
-       
+
         //hide cursor during game
         this.displayCursor();
 
@@ -112,12 +112,13 @@ export class Client {
     drawGameState(){
       this.renderingHandler.drawGame(this.gameState);
 
-      if((this.gameState.gameOver === true) && this.gameState.getWinner() < 0){
+      if((this.gameState.gameOver === true) && this.gameState.getWinnerId() === Const.WINNER_INITIAL_STATE){
         this.renderingHandler.drawStartScreen(this.socket.id);
-      }    
+      }
     }
 
     displayCursor(){
+      // TODO: cursor default when gameover
       if(!this.gameState.getGameOver() && this.gameState.playerStates.length === 2){
         this.canvas.style.cursor = "none";
       } else {
@@ -154,7 +155,6 @@ export class Client {
     registerKeyEvents(){
       //Event: Signal the server that a key has been pressed
       window.addEventListener('keydown', (event: KeyboardEvent) =>{
-        console.log(event.key)
         this.keyPressedHandler(event.key, true)
       }, true);
 

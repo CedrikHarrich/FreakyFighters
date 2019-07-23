@@ -4,14 +4,17 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link href="https://fonts.googleapis.com/css?family=Fredoka+One&display=swap" rel="stylesheet">
         <title>Freaky Fighters</title>
-        <style> 
-            html,body{ 
-                margin:0; 
-                padding:0; 
-                height:100%; 
+        <style>
+            html,body{
+                margin:0;
+                padding:0;
+                height:100%;
                 width:100%;
                 background-color: #283C5D;
+                font-family: "Fredoka One", "Comic Sans MS";
+
             }
 
             .background {
@@ -21,8 +24,6 @@
             }
 
             .headline {
-                font: "fantasy";
-                font-weight: bold;
                 font-size: 100px;
                 color: white;
             }
@@ -41,6 +42,7 @@
                 font-size: 16px;
                 padding: 10px 20px;
                 cursor: pointer;
+                font-family: "Fredoka One", "Comic Sans MS";
             }
 
             #infobox {
@@ -68,13 +70,12 @@
 
         <!-- All the code for the client is bundled and integrated here.-->
         <script src="/bundle.js"></script>
-        
+<!-- TODO move to js file -->
         <!-- handle function for button above game canvas-->
         <script>
         {
             var wasClicked = false;
             var divElement = document.getElementById("infobox");
-            //divElement.onclick = function (){handleClick()};
 
             function handleClick(){
                 wasClicked = !wasClicked;

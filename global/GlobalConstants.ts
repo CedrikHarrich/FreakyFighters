@@ -95,7 +95,7 @@ export class GlobalConstants{
 
   //The character is falling off the edge oddly if the edge is
   //solid on its whole width
-  static readonly PERMEABLE_EDGES: number = 35; // >= 0 but < than BLOCK_WIDTH
+  static readonly PERMEABLE_EDGES: number = 39; // >= 0 but < than BLOCK_WIDTH
 
   //When a character has to be set back on the top of a block,
   //it is first calibrated how deep they collide until this happens

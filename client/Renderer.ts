@@ -10,8 +10,8 @@ export class Renderer {
     private screens: HTMLImageElement = new Image();
     private grid: Array<Array<number>> = Const.GRID_1;
     private gameState: GameState = new GameState();
-    private wasProtectedTime: {time: number, player_id: number} = {time: 0, player_id: Const.ID_INITIAL_STATE};
-    private wasHitTime: {time: number, player_id: number} = {time: 0, player_id: Const.ID_INITIAL_STATE};
+    private wasProtectedTime: {time: number, playerId: number} = {time: 0, playerId: Const.ID_INITIAL_STATE};
+    private wasHitTime: {time: number, playerId: number} = {time: 0, playerId: Const.ID_INITIAL_STATE};
 
     constructor(gameState: GameState, context: CanvasRenderingContext2D){
         //Load all images
@@ -52,14 +52,14 @@ export class Renderer {
         this.context.fillStyle = Const.TIMER_COLOR;
         this.context.fill();
       }
-    
+
     drawStartScreen(playerId: number){
       let image : HTMLImageElement = new Image(),
         clippingPosition: {x: number, y: number};
 
       //draw start screen background
       this.drawScreen(SpriteSheet.START_SCREEN);
-      
+
       clippingPosition = this.gameState.playersInGame[playerId] ? SpriteSheet.PLAYER_READY : SpriteSheet.PLAYER_NOT_READY;
       //draw ready state circle around profile picture
       this.drawSquareImage(
@@ -68,7 +68,7 @@ export class Renderer {
         Const.READY_STATE_POSITION,
         Const.READY_STATE_SIZE
       );
-      
+
       image = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
       //draw profile picture
       this.drawSquareImage(
@@ -150,9 +150,9 @@ export class Renderer {
           image = this.sharedSpriteSheet;
 
           if (playerState.getWasProtected()) {
-            this.wasProtectedTime = { time: Date.now(), player_id: playerState.getId() };
+            this.wasProtectedTime = { time: Date.now(), playerId: playerState.getId() };
           }
-          if (Date.now() < this.wasProtectedTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasProtectedTime.player_id) {
+          if (Date.now() < this.wasProtectedTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasProtectedTime.playerId) {
             image = this.getPlayerSpriteById(playerState.getId());
             clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.HIT_DEFENSE_AIR : SpriteSheet.HIT_DEFENSE_GROUND;
           }
@@ -169,19 +169,19 @@ export class Renderer {
 
     drawShootObject(){
       let playerStates = this.gameState.getPlayerStates(),
-          postion: {x: number, y: number};
+          position: {x: number, y: number};
 
       for(var i = 0; i < playerStates.length; i++) {
         let playerState = this.gameState.getPlayerState(i);
 
         if(playerState.getIsShooting()){
           let image = this.getPlayerSpriteById(playerState.getId());
-          postion = {x: playerState.getShootActionStateX(), y: playerState.getShootActionStateY()};
+          position = {x: playerState.getShootActionStateX(), y: playerState.getShootActionStateY()};
 
           this.drawSquareImage(
             image,
             SpriteSheet.SHOOT,
-            postion,
+            position,
             Const.SHOOT_OBJECT_SIZE
           );
         }
@@ -219,10 +219,10 @@ export class Renderer {
         clippingPosition = playerState.getIsShooting() ? SpriteSheet.PLAYER_SHOOTING : playerState.getClippingPosition();
 
         if(playerState.getWasHit()){
-          this.wasHitTime = {time: Date.now(), player_id: playerState.getId()};
+          this.wasHitTime = {time: Date.now(), playerId: playerState.getId()};
         }
 
-        if(Date.now() < this.wasHitTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasHitTime.player_id){
+        if(Date.now() < this.wasHitTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasHitTime.playerId){
           clippingPosition = SpriteSheet.PLAYER_HIT;
         }
 
