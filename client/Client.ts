@@ -155,12 +155,12 @@ export class Client {
     registerKeyEvents(){
       //Event: Signal the server that a key has been pressed
       window.addEventListener('keydown', (event: KeyboardEvent) =>{
-        this.keyPressedHandler(event.key, true)
+        this.keyPressedHandler(event.key.toLowerCase(), true)
       }, true);
 
       //Event: Stop moving when key is not pressed
       window.addEventListener('keyup', (event: KeyboardEvent) =>{
-        this.keyPressedHandler(event.key, false)
+        this.keyPressedHandler(event.key.toLowerCase(), false)
       }, true);
     }
 }
