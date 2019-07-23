@@ -1,21 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>GruppeFF</title>
-    <style> .gameCanvas {cursor: none;}</style>
-</head>
-<body >
-    <!-- That's the place where the game will be displayed.-->
-    <canvas class="gameCanvas" id="myCanvas" width="1080" height="640"></canvas>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Freaky Fighters</title>
+        <style> 
+            html,body{ 
+                margin:0; 
+                padding:0; 
+                height:100%; 
+                width:100%;
+                background-color: #283C5D;
+            }
 
-    <!-- This file handles the connection to the server.-->
-    <script src="/socket.io/socket.io.js"></script>
+            .background {
+                text-align: center;
+                height: 100%;
+                width: 100%
+            }
 
-    <!-- All the code for the client ist bundled and integrated here.-->
-    <script src="/bundle.js"></script>
-    
-</body>
+            .headline {
+                font: "fantasy";
+                font-weight: bold;
+                font-size: 100px;
+                color: white;
+            }
+
+            .gameCanvas {
+                width: 1080;
+                height: 760;
+                border: 20px solid white;
+            }
+
+            .button {
+                text-align: center;
+                background-color: #283C5D;
+                color: white;
+                border: 5px solid white;
+                font-size: 16px;
+                padding: 10px 20px;
+                cursor: pointer;
+            }
+
+            #infobox {
+                color: white;
+                padding-bottom: 40px;
+            }
+
+            .bottomDiv {
+                height: 40px;
+            }
+        </style>
+    </head>
+
+    <body >
+        <div class="background">
+            <h1 class="headline">FREAKY FIGHTERS</h1>
+            <div id="infobox"><button class='button' onclick="handleClick()">See how to play the game</button></div>
+            <!-- That's the place where the game will be displayed.-->
+            <canvas class="gameCanvas" id="myCanvas"></canvas>
+            <div class="bottomDiv"></div>
+        </div>
+
+        <!-- This file handles the connection to the server.-->
+        <script src="/socket.io/socket.io.js"></script>
+
+        <!-- All the code for the client is bundled and integrated here.-->
+        <script src="/bundle.js"></script>
+        
+        <!-- handle function for button above game canvas-->
+        <script>
+        {
+            var wasClicked = false;
+            var divElement = document.getElementById("infobox");
+            //divElement.onclick = function (){handleClick()};
+
+            function handleClick(){
+                wasClicked = !wasClicked;
+                if(wasClicked){
+                    divElement.innerHTML = "<img onclick='handleClick()' src='assets/GameInstruction.png'/>";
+                } else {
+                    divElement.innerHTML = "<button class='button' onclick='handleClick()'>See how to play the game</button>";
+                }
+            };
+        }
+        </script>
+    </body>
 </html>

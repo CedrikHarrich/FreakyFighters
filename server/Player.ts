@@ -16,6 +16,7 @@ export class Player {
     private healthPoints: number;
     private wasProtected: boolean = false;
     private wasHit: boolean = false;
+    private isReadyToStartGame: boolean = false;
 
     //Actions the player can make
     private isUpKeyPressed : boolean = false;
@@ -53,8 +54,8 @@ export class Player {
         if(this.isShooting){
             if(this.shootAction.getIsShootActionComplete() && this.shootAction !== undefined){
                 this.isShooting = false;
-
             }
+
             this.shootAction.updateShootActionStatePosition();
         }
 
@@ -262,6 +263,11 @@ export class Player {
         return this.healthPoints;
     }
 
+    getIsReadyToStartGame(){
+        return this.isReadyToStartGame;
+    }
+
+
     //Setter Methods
     setHealthPoints(healthPoints: number){
         this.healthPoints = healthPoints;
@@ -333,4 +339,9 @@ export class Player {
     setVelocityX(velocityX : number){
         this.velocityX = velocityX;
     }
+
+    setIsReadyToStartGame(isReady: boolean){
+        this.isReadyToStartGame = isReady;
+    }
+
 }

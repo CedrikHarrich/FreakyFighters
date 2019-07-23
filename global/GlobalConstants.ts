@@ -5,8 +5,15 @@ export class GlobalConstants{
   static readonly SERVER_URL: string = `http://localhost:${GlobalConstants.PORT}`;
   static readonly ASSET_FOLDER: string = "assets/"
   static readonly WAITING_TIME: number = 3000;
+
+  //Game Start Constants
   static readonly WINNER_INITIAL_STATE: number = -1;
   static readonly TIME_INITIAL_STATE: number = -1;
+  static readonly ID_INITIAL_STATE: number = -1;
+  static readonly PROFILE_PICTURE_POSITION: {x: number, y: number} = {x: 390, y: 230};
+  static readonly PROFILE_PICTURE_SIZE: number = 300;
+  static readonly READY_STATE_POSITION: {x: number, y: number} = {x: 340, y: 180};
+  static readonly READY_STATE_SIZE: number = GlobalConstants.PROFILE_PICTURE_SIZE + 100;
 
   //Grid Constants
   static readonly GRID_HEIGHT: number = 19; //Blocks
@@ -45,14 +52,14 @@ export class GlobalConstants{
   static readonly GRAVITATION: number = 1.2;
 
   //Timer and Frames Constants
+  static readonly COUNTDOWN: number = 60;
+  static readonly ANIMATION_TIME: number = 250;
+  static readonly TIMER_COLOR: string = "#F5A9AF";
   static readonly START_ANGLE: number = -0.5 * Math.PI;
   static readonly TIMER_X: number = GlobalConstants.CANVAS_WIDTH / 2; //in the middle of the canvas
   static readonly TIMER_Y: number = 70;
   static readonly TIMER_RADIUS: number = GlobalConstants.BLOCK_WIDTH;
   static readonly CALCULATIONS_PER_SECOND: number = 60;
-  static readonly COUNTDOWN: number = 120;
-  static readonly ANIMATION_TIME: number = 300;
-  static readonly TIMER_COLOR: string = "#F5A9AF";
 
   //Life Bar Constants
   static readonly MAX_HP: number = 200;
@@ -69,12 +76,11 @@ export class GlobalConstants{
   static readonly LIFE_BAR_2_COORDS: {x: number, y: number} = {x: 725, y: 20};
 
   //Game Over Constants
-  static readonly GAMEOVER_WINNER_X: number = 450;
-  static readonly GAMEOVER_WINNER_Y: number = 330;
+  static readonly GAMEOVER_WINNER: {x: number, y: number} = {x: 450, y: 330};
   static readonly GAMEOVER_WINNER_SIZE: number = 180;
-  static readonly GAMEOVER_LOSER_X: number = 445;
-  static readonly GAMEOVER_LOSER_Y: number = 355;
+  static readonly GAMEOVER_LOSER: {x: number, y: number} = {x: 445, y: 335};
   static readonly GAMEOVER_LOSER_SIZE: number = 190;
+  static readonly GAMEOVER_DRAW: number = 100;
 
   //Acceleration Constants
   static readonly ACCELERATION_X: number = 1.5;
@@ -111,11 +117,11 @@ export class GlobalConstants{
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0], //6
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7
     [0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0], //8
-    [0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //10
-    [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0], //11
+    [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //11
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1], //12
-    [0,1,1,1,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0], //13 MIN Block Position: player can run on the ground freely without bumping into any clouds
+    [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0], //13 MIN Block Position: player can run on the ground freely without bumping into any clouds
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //14
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //15
     [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //16
