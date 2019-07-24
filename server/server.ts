@@ -131,7 +131,24 @@ export class Server{
           //GameStatePacker
           for(var i in this.clientList){
             var player = this.clientList[i].player;
-            this.updatePlayerStates(player, i);
+
+            //update player if there is no winner -> game still running
+            //which means if there is a winner stop player actions
+            if(!this.gameState.winnerIsCalculated()){
+              player.updatePlayerState();
+            }
+            
+            //make a new shootActionState
+            let shootActionState = this.makeShootActionState(player);
+            //calculate all collisisons with other player or shootObject
+            this.calculateCollisions({currentPlayerIndex: i});
+            //make playerstate with updated player and new shootActionState
+            let playerState = this.makePlayerState(player, shootActionState);
+            //add it to gamestate
+            this.gameState.addPlayerState(playerState);
+            //after adding the new playerState to gameState set collision with shootObject false
+            player.setWasProtected(false);
+            player.setWasHit(false);
           }
 
           if(this.twoClientsAreConnected()){
@@ -155,19 +172,11 @@ export class Server{
 
       }, 1000/Const.CALCULATIONS_PER_SECOND);
     }
-    
-    updatePlayerStates(player: Player, currentPlayerIndex: string){
-      player.updatePlayerState();
-          
-      let shootActionState = this.makeShootActionState(player);
-
+    calculateCollisions({currentPlayerIndex} : {currentPlayerIndex: string}){
+      //calculate player collisions 
+      //TODO: Should grid collision also be here or better in player.updatePlayserState()????
       CollisionDetection.handlePlayerCollision(currentPlayerIndex, this.clientList);
       CollisionDetection.handleShootObjectCollision(currentPlayerIndex, this.clientList);
-
-      let playerState = this.makePlayerState(player, shootActionState);
-      this.gameState.addPlayerState(playerState);
-      player.setWasProtected(false);
-      player.setWasHit(false);
     }
     
     makeShootActionState(player: Player){
@@ -368,8 +377,8 @@ export class Server{
 
     //if one of the players has no healthpoints left the winner is calculated and setted
     setWinnerIdAfterNoHealthPoints(){
-      const player1 = this.gameState.playerStates[0];
-      const player2 = this.gameState.playerStates[1];
+      const player1 = this.clientList[0].player;
+      const player2 = this.clientList[1].player;
 
       if(player1.getHealthPoints() <= 0 || (player2.getHealthPoints() <= 0)){
         if (player1.getHealthPoints() > player2.getHealthPoints()){
@@ -384,8 +393,8 @@ export class Server{
     //after given time is up the winner is calculated and setted
     setWinnerIdAfterTimeUp(){
       if (this.gameState.timeLeft === 0 && !this.gameState.getGameOver()){
-        const player1 = this.gameState.playerStates[0];
-        const player2 = this.gameState.playerStates[1];
+        const player1 = this.clientList[0].player;
+        const player2 = this.clientList[1].player;
         let winnerId: number;
 
         if (player1.getHealthPoints() > player2.getHealthPoints()){

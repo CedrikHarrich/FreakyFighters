@@ -7,7 +7,7 @@ import { PlayerState } from "../global/PlayerState";
 import { ShootActionState } from "../global/ShootActionState";
 import { CollisionDetection } from './CollisionDetection';
 
-export class GameLogicHandler {
+export class GameHandler {
     private clientList: clientList;
     private gameState: GameState;
 

@@ -191,7 +191,7 @@ export class Player extends DynamicObject {
             this.setX(Const.PLAYER_2_START_X_COORDS);
           }
   
-          this.setY(-Const.PLAYER_WIDTH);
+        this.setY(-Const.PLAYER_WIDTH);
     }
 
     //Getter Methods
