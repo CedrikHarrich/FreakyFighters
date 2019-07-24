@@ -181,6 +181,7 @@ export class Player extends DynamicObject {
     resetPlayer(){
         this.setHealthPoints(Const.MAX_HP);
         this.setIsReadyToStartGame(false);
+        this.resetActions();
         this.resetPlayerPosition();
     }
 
@@ -192,6 +193,15 @@ export class Player extends DynamicObject {
           }
   
         this.setY(-Const.PLAYER_WIDTH);
+    }
+
+    resetActions(){
+        this.isUpKeyPressed = false;
+        this.isDownKeyPressed = false;
+        this.isLeftKeyPressed = false;
+        this.isRightKeyPressed = false;
+        this.isDefending = false;
+        this.isShooting = false;
     }
 
     //Getter Methods
