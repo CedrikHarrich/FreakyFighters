@@ -1,6 +1,7 @@
-import { GlobalConstants as Const } from "../global/GlobalConstants"
-import { SpriteSheet } from "../global/SpriteSheet"
-import { GameState, PlayerState } from "../global/GameState"
+import { GlobalConstants as Const } from "../global/GlobalConstants";
+import { SpriteSheet } from "../global/SpriteSheet";
+import { GameState } from "../global/GameState";
+import { PlayerState } from "../global/PlayerState";
 
 export class Renderer {
     private context: CanvasRenderingContext2D;
@@ -77,6 +78,17 @@ export class Renderer {
         Const.PROFILE_PICTURE_POSITION,
         Const.PROFILE_PICTURE_SIZE
       );
+    }
+
+    drawGameOverScreen(socketId: number){
+      let winnerId: number = this.gameState.getWinnerId();
+        if(socketId === winnerId){
+          this.drawWinnerScreen(socketId);
+        } else if(winnerId === Const.GAMEOVER_DRAW){
+          this.drawNoWinnerScreen();
+        } else {
+          this.drawLoserScreen(socketId);
+        }
     }
 
     drawLifeBarFrame(image: HTMLImageElement, playerState: PlayerState){

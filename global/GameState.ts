@@ -1,5 +1,6 @@
-import { Player } from "../server/Player";
+import { PlayerState } from "../global/PlayerState";
 import { GlobalConstants as Const } from "../global/GlobalConstants";
+import { Player } from "../server/Player";
 
 export class GameState {
   playerStates: Array<PlayerState>;
@@ -47,6 +48,22 @@ export class GameState {
     }
   }
 
+  winnerIsCalculated(){
+    return this.getWinnerId() !== Const.WINNER_INITIAL_STATE;
+  }
+
+  resetPlayersInTheGame(){
+    this.playersInGame = [undefined, false, false];
+  }
+
+  resetGameState(){
+    this.timeLeft = Const.COUNTDOWN;
+    this.timerStarted = false;
+    this.setGameOver(true);
+    this.resetPlayersInTheGame();
+    this.setWinnerId(Const.WINNER_INITIAL_STATE);
+  }
+
   getPlayerStates(){
     return this.playerStates;
   }
@@ -77,10 +94,6 @@ export class GameState {
     return this.winnerId;
   }
 
-  resetPlayersInTheGame(){
-    this.playersInGame = [undefined, false, false];
-  }
-
   setGameOver(gameOver: boolean){
     this.gameOver = gameOver;
   }
@@ -88,74 +101,5 @@ export class GameState {
   setWinnerId(winnerId : number){
     this.winnerId = winnerId;
   }
-
-  noHealthPointsLeft(){
-    for (var i in this.playerStates){
-      if (this.playerStates[i].getHealthPoints() <= 0){
-        return true;
-      }
-    }
-    return false;
-  }
 }
 
-export class PlayerState extends Player {
-  private clippingPosition: {x:number, y:number};
-  private shootActionState: ShootActionState;
-  private isInTheAir: boolean;
-
-  constructor({x, y, cursorX, cursorY, clippingPosition, id, isInTheAir, healthPoints, wasProtected, wasHit, isShooting, isDefending, shootActionState} : {x:number, y:number, cursorX: number, cursorY: number, clippingPosition:{x:number, y:number}, id:number, isInTheAir: boolean, healthPoints: number, wasProtected: boolean, wasHit: boolean, isShooting: boolean, isDefending:boolean, shootActionState:ShootActionState}){
-    super(id);
-    this.setX(x);
-    this.setY(y);
-    this.setCursorPosition(cursorX, cursorY);
-    this.setShootAction(isShooting);
-    this.setIsDefending(isDefending);
-    this.setHealthPoints(healthPoints);
-    this.setWasProtected(wasProtected);
-    this.setWasHit(wasHit);
-    this.isInTheAir = isInTheAir;
-    this.shootActionState = shootActionState;
-    this.clippingPosition = clippingPosition;
-  }
-
-  getIsInTheAir(){
-    return this.isInTheAir;
-  }
-
-  getClippingPosition(){
-    return this.clippingPosition;
-  }
-
-  getShootActionState(){
-    return this.shootActionState;
-  }
-
-  getShootActionStateX(){
-    return this.shootActionState.getX();
-  }
-
-  getShootActionStateY(){
-    return this.shootActionState.getY();
-  }
-}
-
-export class ShootActionState{
-  private x : number;
-  private y : number;
-
-  // constructor()
-
-  constructor({x, y} : {x : number, y : number}){
-    this.x = x;
-    this.y = y;
-  }
-
-  getX(){
-    return this.x;
-  }
-
-  getY(){
-    return this.y;
-  }
-}

@@ -52,7 +52,7 @@ export class GlobalConstants{
   static readonly GRAVITATION: number = 1.2;
 
   //Timer and Frames Constants
-  static readonly COUNTDOWN: number = 60;
+  static readonly COUNTDOWN: number = 10;
   static readonly ANIMATION_TIME: number = 250;
   static readonly TIMER_COLOR: string = "#F5A9AF";
   static readonly START_ANGLE: number = -0.5 * Math.PI;

@@ -1,6 +1,8 @@
-import { GlobalConstants as Const } from "../global/GlobalConstants"
-import { Keys as Keys } from "../global/Keys"
-import { GameState, PlayerState, ShootActionState } from "../global/GameState"
+import { GlobalConstants as Const } from "../global/GlobalConstants";
+import { Keys as Keys } from "../global/Keys";
+import { GameState } from "../global/GameState";
+import { PlayerState } from "../global/PlayerState";
+import { ShootActionState } from "../global/ShootActionState";
 import { Renderer } from "./Renderer";
 
 export class Client {
@@ -28,16 +30,6 @@ export class Client {
     registerEvents(){
       //Set new renderingHandler
       this.renderingHandler = new Renderer(this.gameState, this.context);
-
-      this.socket.on('end', (winnerId : number) => {
-        if(this.socket.id === winnerId){
-          this.renderingHandler.drawWinnerScreen(this.socket.id);
-        } else if(winnerId === Const.GAMEOVER_DRAW){
-          this.renderingHandler.drawNoWinnerScreen();
-        } else {
-          this.renderingHandler.drawLoserScreen(this.socket.id);
-        }
-      });
 
       this.socket.on('update', (gameState:any) => {
         //set the new updated gameState
@@ -103,6 +95,7 @@ export class Client {
       this.gameState.timeLeft = gameState.timeLeft;
       this.gameState.gameOver = gameState.gameOver;
       this.gameState.playersInGame = gameState.playersInGame;
+      this.gameState.winnerId = gameState.winnerId;
     }
 
     drawGameState(){
@@ -111,16 +104,16 @@ export class Client {
       if((this.gameState.gameOver === true) && this.gameState.getWinnerId() === Const.WINNER_INITIAL_STATE){
         this.renderingHandler.drawStartScreen(this.socket.id);
       }
+
+      if(this.gameState.winnerIsCalculated()){
+        this.renderingHandler.drawGameOverScreen(this.socket.id);
+      }
     }
 
     displayCursor(){
-      if(!this.gameState.getGameOver() && this.gameState.playerStates.length === 2){
-        this.canvas.style.cursor = "none";
-        if(this.gameState.getWinnerId() !== Const.WINNER_INITIAL_STATE){
+      this.canvas.style.cursor = "none";
+      if(this.gameState.gameOver || this.gameState.getWinnerId() !== Const.WINNER_INITIAL_STATE){
           this.canvas.style.cursor = "default";
-        }
-      } else {
-        this.canvas.style.cursor = "default";
       }
     }
 
