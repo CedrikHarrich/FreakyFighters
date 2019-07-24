@@ -5,6 +5,7 @@ import { clientList } from './clientList';
 import { GlobalConstants as Const } from '../global/GlobalConstants';
 import { Keys } from '../global/Keys';
 import { GameState } from '../global/GameState';
+import { GameEventHandler } from './GameEventHandler';
 import { GameHandler } from './GameHandler';
 
 export class Server{
@@ -14,6 +15,7 @@ export class Server{
     private http: any;
     private io: any;
     private clientList: clientList = [];
+    private gameEventHandler: GameEventHandler;
     private gameHandler: GameHandler;
 
     //Variables for the actual game
@@ -26,6 +28,7 @@ export class Server{
         this.serveFiles();
         this.gameState = new GameState();
         this.gameHandler = new GameHandler(this.clientList, this.gameState);
+        this.gameEventHandler = new GameEventHandler(this.gameHandler, this.gameState);
         //The server starts listening to events and sends packages as soon as someone connects
         this.registerConnection();
         this.init();
@@ -95,7 +98,7 @@ export class Server{
 
       //EventHandler: When mouse is moved ...
       socket.on('movingMouse', (data: any) => {
-          player.setCursorPosition(data.cursorX, data.cursorY);
+          this.mouseMoveHandler(data, socket.id);
       });
 
       //Eventhandler: When mouse is clicked...
@@ -183,12 +186,20 @@ export class Server{
       }
     }
 
+    //handle moving mouse event
+    mouseMoveHandler(data: any, socketId: number){
+      let clientId = this.getClientId(socketId),
+          player = this.clientList[clientId].player;
+
+      this.gameEventHandler.handleCursorTarget(player, data);
+    }
+
     //handle mouse button pressed/clicked event
     mouseButtonPressedHandler({button: button, state: state}:{button: number, state: boolean}, socketId:number){
       let clientId = this.getClientId(socketId),
           player = this.clientList[clientId].player;
 
-      this.gameHandler.handlePlayerActionMouse(button, player, state);
+      this.gameEventHandler.handlePlayerActionMouse(button, player, state);
     }
 
     //handle key pressed event
@@ -197,9 +208,9 @@ export class Server{
           player = this.clientList[clientId].player;
 
       if(inputId === Keys.Start){
-        this.gameHandler.handleStartKey(player, socketId);
+        this.gameEventHandler.handleStartKey(player, socketId);
       } else {
-        this.gameHandler.handlePlayerActionKeys(inputId, player, state);
+        this.gameEventHandler.handlePlayerActionKeys(inputId, player, state);
       }
     }
 

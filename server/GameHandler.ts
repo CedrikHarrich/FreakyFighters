@@ -1,7 +1,6 @@
 import { Player } from './Player';
 import { clientList } from './clientList';
 import { GlobalConstants as Const } from '../global/GlobalConstants';
-import { Keys } from '../global/Keys';
 import { GameState } from '../global/GameState';
 import { PlayerState } from "../global/PlayerState";
 import { ShootActionState } from "../global/ShootActionState";
@@ -48,24 +47,6 @@ export class GameHandler {
     playAgain(){
         if(this.gameState.winnerIsCalculated()){
           this.resetGame();
-        }
-    }
-
-    //used by keyPressedHandler for pressing shoot key
-    setPlayerAttack(player: Player, state: boolean){
-        if(!player.getIsDefending() && !player.getIsShooting()){
-          player.setShootAction(state);
-        }
-    }
-
-    ////used by keyPressedHandler for pressing defense key
-    setPlayerDefense(player: Player, state: boolean){
-        if(!player.getIsShooting() && state === true){
-          player.setIsDefending(true)
-        }
-  
-        if(player.getIsDefending() && !state){
-          player.setIsDefending(false);
         }
     }
 
@@ -172,54 +153,6 @@ export class GameHandler {
         }
   
         return shootActionState;
-    }
-
-    //used by keyPressedHandler when key.Start is pressed
-    handleStartKey(player: Player, socketId: number){
-        if(this.gameState.getGameOver()){
-            this.setPlayerGameStartReady(player, socketId, true);
-        } else {
-            this.playAgain()
-        }
-    }
-
-    //handle keys and mouse button pressed events
-    handlePlayerActionKeys(inputId: string, player: Player, state: boolean){
-
-        if(!this.gameState.getGameOver() && !this.gameState.winnerIsCalculated()){
-            switch (inputId){
-                case Keys.Up:
-                    player.setIsUpKeyPressed(state);
-                    break;
-                case Keys.Left:
-                    player.setIsLeftKeyPressed(state);
-                    break;
-                case Keys.Down:
-                    player.setIsDownKeyPressed(state);
-                    break;
-                case Keys.Right:
-                    player.setIsRightKeyPressed(state);
-                    break;
-                case (Keys.Attack):
-                    this.setPlayerAttack(player, state);
-                    break;
-                case (Keys.Defense):
-                    this.setPlayerDefense(player, state);
-                    break;
-                default:
-                    return;
-            }
-        }
-    }
-
-    handlePlayerActionMouse(button: number, player: Player, state: boolean){
-        if(button === Keys.AttackMouse){
-            this.setPlayerAttack(player, state);
-        }
-
-        if(button === Keys.DefenseMouse){
-            this.setPlayerDefense(player, state);
-        }
     }
 
     packPlayerStates(){
