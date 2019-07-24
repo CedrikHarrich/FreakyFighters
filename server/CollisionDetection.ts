@@ -23,7 +23,7 @@ export abstract class  CollisionDetection {
     return blockArray;
   }
 
-  static handleCollision(player: Player){
+  static handleGridCollision(player: Player){
     for(let i=0; i < this.blockArray.length; i++ ){
       let block = this.blockArray[i];
 

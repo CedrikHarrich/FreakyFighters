@@ -1,6 +1,5 @@
 import { PlayerState } from "../global/PlayerState";
 import { GlobalConstants as Const } from "../global/GlobalConstants";
-import { Player } from "../server/Player";
 
 export class GameState {
   playerStates: Array<PlayerState>;
@@ -34,6 +33,7 @@ export class GameState {
     this.timerStarted = true;
   }
 
+  
   resetPlayerStates(){
     this.playerStates = [];
   }

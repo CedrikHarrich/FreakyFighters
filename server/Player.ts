@@ -79,7 +79,7 @@ export class Player extends DynamicObject {
             this.solidRoof();
         }
 
-        CollisionDetection.handleCollision(this);
+        CollisionDetection.handleGridCollision(this);
     }
 
     checkJump(){
