@@ -2,16 +2,16 @@ import { GlobalConstants as Const } from "../global/GlobalConstants"
 import { DynamicObject }  from "./DynamicObject";
 
 export class ShootAction extends DynamicObject{
-    private distance: number;
     private shootActionComplete: boolean = false;
 
     constructor(startX: number, startY: number, targetX:number, targetY:number){
+        //set coords to mouth area
         super(startX + Const.SHOOT_OBJECT_SIZE, startY + Const.SHOOT_OBJECT_SIZE);
-        let dx = targetX - this.x; //- 0.5*Const.SHOOT_OBJECT_SIZE;
+        let dx = targetX - this.x;
         let dy = targetY - this.y;
-        this.distance = Math.sqrt( dx * dx + dy * dy);
-        this.velocityX = (dx / this.distance) * Const.SHOOT_OBJECT_SPEED;
-        this.velocityY = (dy / this.distance) * Const.SHOOT_OBJECT_SPEED;
+        let distance = Math.sqrt( dx * dx + dy * dy);
+        this.velocityX = (dx / distance) * Const.SHOOT_OBJECT_SPEED;
+        this.velocityY = (dy / distance) * Const.SHOOT_OBJECT_SPEED;
     }
 
     updateShootActionStatePosition(){

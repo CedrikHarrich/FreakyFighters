@@ -89,6 +89,7 @@ export class GlobalConstants{
   //Level Settings Constants
   static readonly SOLID_WALLS: boolean = true;
   static readonly SOLID_ROOF: boolean = true;
+  static readonly SOLID_GROUND: boolean = true; //Special Feature Muahahahaaaa
   static readonly WITH_GRID: boolean = true;
   static readonly UNLIMITED_PLAYERS: boolean = false;
   static readonly FALL_THROUGH_BLOCKS: boolean = true;

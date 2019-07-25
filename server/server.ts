@@ -42,7 +42,9 @@ export class Server{
 
       //Server starts listening
       this.http.listen(Const.PORT);
-      console.log(`The server has started and is now listening to the port: ${Const.PORT}`)
+      console.log(`The server has started and is now listening to the port: ${Const.PORT}`);
+      let link = `http://localhost:${Const.PORT}`;
+      console.log(`%c${link}`, 'color:blue');
 
       //Enable server to listen to specific events
       this.io = require('socket.io')(this.http);

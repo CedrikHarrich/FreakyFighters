@@ -40,28 +40,50 @@ export class Player extends DynamicObject {
         this.updateVelocity();
 
         //Update the current positon
-        this.x += this.velocityX;
-        this.y += this.velocityY;
+        this.updatePosition();
 
         //Update shoot object position
-        if(this.isShooting){
-            if(this.shootAction.getIsShootActionComplete() && this.shootAction !== undefined){
-                this.isShooting = false;
-            }
-
-            this.shootAction.updateShootActionStatePosition();
-        }
+        this.updateShootObject();
 
         //Set cursor positions within walls
         this.checkCursorPosition();
+        
+        this.checkVerticalBoundaries();
+        this.checkHorizontalBoundaries();
 
+        CollisionDetection.handleBlockCollision(this);
+    }
+
+    updatePosition(){
+        this.x += this.velocityX;
+        this.y += this.velocityY;
+    }
+
+    checkJump(){
+      if (this.isUpKeyPressed && this.isJumping == false){
+          this.velocityY -= Const.JUMP_HEIGHT;
+          this.isJumping = true;
+          console.log(`Player ${this.id} is jumping with velocityY: ${this.velocityY}`);
+      }
+    }
+
+    checkVerticalBoundaries(){
         //Player cannot fall through the platform
-        if (this.y > Const.GROUND_HEIGHT_FROM_TOP){
-            this.isJumping = false;
-            this.y = Const.GROUND_HEIGHT_FROM_TOP;
-            this.velocityY = 0;
+        if (this.y > Const.GROUND_HEIGHT_FROM_TOP && Const.SOLID_GROUND){
+            this.standOnGround();  
+        }
+        //Player can fall and come back from top
+        if(this.y > Const.CANVAS_HEIGHT && !Const.SOLID_GROUND){
+            this.y = -Const.PLAYER_HEIGHT;
         }
 
+        //Level Setting: SolidRoof
+        if (Const.SOLID_ROOF && this.isJumping){
+            this.solidRoof();
+        }
+    }
+
+    checkHorizontalBoundaries(){
         //Level Setting: SolidWalls
         if (Const.SOLID_WALLS){
             //When Canvas stops in x axis, player stops too
@@ -71,21 +93,22 @@ export class Player extends DynamicObject {
             //When player runs to one end of the canvas, he pops out on the other side
             this.permeableWalls();
         }
-
-        //Level Setting: SolidRoof
-        if (Const.SOLID_ROOF){
-            this.solidRoof();
-        }
-
-        CollisionDetection.handleBlockCollision(this);
     }
 
-    checkJump(){
-      if (this.isUpKeyPressed && this.isJumping == false){
-          this.velocityY -= Const.JUMP_HEIGHT;
-          this.isJumping = true;
-          console.log(`Player ${this.id} is jumping with velocityY: ${this.velocityY}`);
-      }
+    standOnGround(){
+        this.isJumping = false;
+        this.y = Const.GROUND_HEIGHT_FROM_TOP;
+        this.velocityY = 0;
+    }
+
+    updateShootObject(){
+        if(this.isShooting){
+            if(this.shootAction.getIsShootActionComplete() && this.shootAction !== undefined){
+                this.isShooting = false;
+            }
+
+            this.shootAction.updateShootActionStatePosition();
+        }
     }
 
     updateVelocity(){

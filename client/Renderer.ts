@@ -24,16 +24,16 @@ export class Renderer {
         this.gameState = gameState;
     }
 
-    drawGameState(socketId: number){
+    drawGameState(playerId: number){
       //draw actual game
       this.drawGame();
 
       if((this.gameState.gameOver === true) && this.gameState.getWinnerId() === Const.WINNER_INITIAL_STATE){
-        this.drawStartScreen(socketId);
+        this.drawStartScreen(playerId);
       }
 
       if(this.gameState.winnerIsCalculated()){
-        this.drawGameOverScreen(socketId);
+        this.drawGameOverScreen(playerId);
       }
     }
 
@@ -66,34 +66,28 @@ export class Renderer {
       this.drawSquareImage(image, SpriteSheet.PROFILPICTURE, Const.PROFILE_PICTURE_POSITION, Const.PROFILE_PICTURE_SIZE);
     }
 
-    drawGameOverScreen(socketId: number){
+    private drawGameOverScreen(playerId: number){
       let winnerId: number = this.gameState.getWinnerId();
-        if(socketId === winnerId){
-          this.drawWinnerScreen(socketId);
+        if(playerId === winnerId){
+          this.drawWinnerScreen(playerId);
         } else if(winnerId === Const.GAMEOVER_DRAW){
           this.drawNoWinnerScreen();
         } else {
-          this.drawLoserScreen(socketId);
+          this.drawLoserScreen(playerId);
         }
     }
 
     private drawTimer(){
+      let end_angle = (2*(this.gameState.timeLeft / Const.COUNTDOWN) - 0.5)*Math.PI;
       this.context.beginPath();
-      this.context.arc(
-        Const.TIMER_X,
-        Const.TIMER_Y,
-        Const.TIMER_RADIUS,
-        Const.START_ANGLE ,
-        (2*(this.gameState.timeLeft / Const.COUNTDOWN) - 0.5)*Math.PI //END_ANGLE
-      );
+      this.context.arc(Const.TIMER_X, Const.TIMER_Y, Const.TIMER_RADIUS, Const.START_ANGLE, end_angle);
       this.context.lineTo(Const.TIMER_X, Const.TIMER_Y);
       this.context.lineTo(Const.TIMER_X, Const.TIMER_Y - Const.BLOCK_HEIGHT);
-
       this.context.fillStyle = Const.TIMER_COLOR;
       this.context.fill();
     }
 
-    drawLifeBarFrame(image: HTMLImageElement, playerState: PlayerState){
+    private drawLifeBarFrame(image: HTMLImageElement, playerState: PlayerState){
       let positionCoords = playerState.getId() === 1 ? Const.LIFE_BAR_FRAME_1_COORDS : Const.LIFE_BAR_FRAME_2_COORDS;
 
       //draws life bar frame
@@ -110,7 +104,7 @@ export class Renderer {
       );
     }
 
-    drawHealthPoints(image: HTMLImageElement, playerState: PlayerState){
+    private drawHealthPoints(image: HTMLImageElement, playerState: PlayerState){
       let lifeBarCoordX: number,
         clippingPositionX: number,
         healthPoints = playerState.getHealthPoints(),
@@ -138,7 +132,7 @@ export class Renderer {
       );
     }
 
-    drawLifeBar(){
+    private drawLifeBar(){
       let playerStates = this.gameState.getPlayerStates();
 
       for(var i = 0; i < playerStates.length; i++) {
@@ -150,7 +144,7 @@ export class Renderer {
       }
     }
 
-    drawDefenseObject(){
+    private drawDefenseObject(){
       let image: HTMLImageElement = new Image();
       let defendObjectPosition: {x: number, y: number};
       let clippingPosition: {x: number, y: number};
@@ -181,7 +175,7 @@ export class Renderer {
       }
     }
 
-    drawShootObject(){
+    private drawShootObject(){
       let playerStates = this.gameState.getPlayerStates(),
           position: {x: number, y: number};
 
@@ -202,7 +196,7 @@ export class Renderer {
       }
     }
 
-    drawTarget(){
+    private drawTarget(){
         let playerStates = this.gameState.getPlayerStates();
 
         for (var i = 0; i < playerStates.length; i++){
@@ -218,7 +212,7 @@ export class Renderer {
         }
     }
 
-    drawPlayer(){
+    private drawPlayer(){
       let image: HTMLImageElement = new Image(),
           clippingPosition: {x: number, y: number},
           playerStates = this.gameState.getPlayerStates();
@@ -246,7 +240,7 @@ export class Renderer {
       }
     }
 
-    drawClouds(){
+    private drawClouds(){
       if (Const.WITH_GRID){
         let preBlock: number;
         let clippingPosition: {x: number, y: number};
@@ -281,25 +275,31 @@ export class Renderer {
       }
     }
 
-    drawBackground(){
-      this.drawScreen(SpriteSheet.BACKGROUND);
+    private drawBackground(){
+      if(Const.SOLID_GROUND){
+        this.drawScreen(SpriteSheet.BACKGROUND);
+      } else {
+        this.drawScreen(SpriteSheet.HEAVEN);
+      }
     }
 
-    drawForeground(){
-      this.context.drawImage(
-        this.screens,
-        SpriteSheet.FOREGROUND.x,
-        SpriteSheet.FOREGROUND.y * Const.CANVAS_HEIGHT,
-        Const.CANVAS_WIDTH,
-        Const.FOREGROUND_HEIGHT,
-        0,
-        Const.CANVAS_HEIGHT - Const.FOREGROUND_HEIGHT,
-        Const.CANVAS_WIDTH,
-        Const.FOREGROUND_HEIGHT
-        );
+    private drawForeground(){
+      if(Const.SOLID_GROUND){
+        this.context.drawImage(
+          this.screens,
+          SpriteSheet.FOREGROUND.x,
+          SpriteSheet.FOREGROUND.y * Const.CANVAS_HEIGHT,
+          Const.CANVAS_WIDTH,
+          Const.FOREGROUND_HEIGHT,
+          0,
+          Const.CANVAS_HEIGHT - Const.FOREGROUND_HEIGHT,
+          Const.CANVAS_WIDTH,
+          Const.FOREGROUND_HEIGHT
+          );
+      }
     }
 
-    drawWinnerScreen(playerId:number){
+    private drawWinnerScreen(playerId:number){
       let image = this.getPlayerSpriteById(playerId);
 
       //draws background screen for winner
@@ -309,7 +309,7 @@ export class Renderer {
       this.drawSquareImage(image, SpriteSheet.WINNER, Const.GAMEOVER_WINNER, Const.GAMEOVER_WINNER_SIZE);
     }
 
-    drawLoserScreen(playerId:number){
+    private drawLoserScreen(playerId:number){
       let image = this.getPlayerSpriteById(playerId);
 
       //draws background screen for loser
@@ -319,12 +319,12 @@ export class Renderer {
       this.drawSquareImage(image, SpriteSheet.LOSER, Const.GAMEOVER_LOSER, Const.GAMEOVER_LOSER_SIZE);
     }
 
-    drawNoWinnerScreen(){
+    private drawNoWinnerScreen(){
       this.drawScreen(SpriteSheet.DRAW_SCREEN);
     }
 
-    private getPlayerSpriteById(playerID: number){
-      return playerID === 1 ? this.player_1_sprites : this.player_2_sprites;
+    private getPlayerSpriteById(playerId: number){
+      return playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
     }
 
     //help function to reduce length of draw functions for screens/background with the same canvas width and heigth
