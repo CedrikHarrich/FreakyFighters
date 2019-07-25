@@ -28,8 +28,7 @@ export class GameHandler {
     
         if(player1.getIsReadyToStartGame() && player2.getIsReadyToStartGame()){
             this.gameState.setGameOver(false);
-            console.log(`Players in game: ${this.gameState.playersReadyToStartGame}`)
-            console.log(`GameOver: ${this.gameState.getGameOver()}`);
+            console.log(`GameOver: ${this.gameState.getGameOver()} -- Game start!`);
             player1.resetPlayer();
             player2.resetPlayer();
         }
@@ -154,13 +153,14 @@ export class GameHandler {
         return shootActionState;
     }
 
+    //update all variables related to players and then pack it as PlayerState into PlayerStates Array
     packPlayerStates(){
         //GameStatePacker
         for(var i in this.clientList){
             var player = this.clientList[i].player;
 
             //update player if there is no winner -> game still running
-            //which means if there is a winner stop player actions
+            //which means if there is a winner --> stop player actions
             if(!this.gameState.winnerIsCalculated()){
               player.updatePlayerState();
             }
@@ -171,9 +171,9 @@ export class GameHandler {
             this.calculateCollisions({currentPlayerIndex: i});
             //make playerstate with updated player and new shootActionState
             let playerState = this.makePlayerState(player, shootActionState);
-            //add it to gamestate
+            //add it to gamestate.playerStates
             this.gameState.addPlayerState(playerState);
-            //after adding the new playerState to gameState set collision with shootObject false
+            //after adding the new playerState to gameState set collision results with shootObject to false
             player.setWasProtected(false);
             player.setWasHit(false);
         }

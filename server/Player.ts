@@ -10,7 +10,7 @@ export class Player extends DynamicObject {
     private id: number = 0;
     private cursorX: number;
     private cursorY: number;
-    private healthPoints: number;
+    private healthPoints: number = Const.MAX_HP;
     private wasProtected: boolean = false;
     private wasHit: boolean = false;
     private isReadyToStartGame: boolean = false;
@@ -29,8 +29,6 @@ export class Player extends DynamicObject {
     constructor(id :number){
         super(0, 0);
         this.id = id;
-        this.healthPoints = Const.MAX_HP;
-        this.isShooting = false;
 
         this.resetPlayerPosition();
     }
@@ -79,7 +77,7 @@ export class Player extends DynamicObject {
             this.solidRoof();
         }
 
-        CollisionDetection.handleGridCollision(this);
+        CollisionDetection.handleBlockCollision(this);
     }
 
     checkJump(){

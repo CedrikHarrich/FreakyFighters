@@ -24,8 +24,20 @@ export class Renderer {
         this.gameState = gameState;
     }
 
-    drawGame(gameState: GameState){
-        this.gameState = gameState;
+    drawGameState(socketId: number){
+      //draw actual game
+      this.drawGame();
+
+      if((this.gameState.gameOver === true) && this.gameState.getWinnerId() === Const.WINNER_INITIAL_STATE){
+        this.drawStartScreen(socketId);
+      }
+
+      if(this.gameState.winnerIsCalculated()){
+        this.drawGameOverScreen(socketId);
+      }
+    }
+
+    private drawGame(){
         this.context.clearRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
         this.drawBackground();
         this.drawTimer();
@@ -38,23 +50,7 @@ export class Renderer {
         this.drawForeground();
     }
 
-    drawTimer(){
-        this.context.beginPath();
-        this.context.arc(
-          Const.TIMER_X,
-          Const.TIMER_Y,
-          Const.TIMER_RADIUS,
-          Const.START_ANGLE ,
-          (2*(this.gameState.timeLeft / Const.COUNTDOWN) - 0.5)*Math.PI //END_ANGLE
-        );
-        this.context.lineTo(Const.TIMER_X, Const.TIMER_Y);
-        this.context.lineTo(Const.TIMER_X, Const.TIMER_Y - Const.BLOCK_HEIGHT);
-
-        this.context.fillStyle = Const.TIMER_COLOR;
-        this.context.fill();
-      }
-
-    drawStartScreen(playerId: number){
+    private drawStartScreen(playerId: number){
       let image : HTMLImageElement = new Image(),
         clippingPosition: {x: number, y: number};
 
@@ -63,21 +59,11 @@ export class Renderer {
 
       clippingPosition = this.gameState.playersReadyToStartGame[playerId] ? SpriteSheet.PLAYER_READY : SpriteSheet.PLAYER_NOT_READY;
       //draw ready state circle around profile picture
-      this.drawSquareImage(
-        this.sharedSpriteSheet,
-        clippingPosition,
-        Const.READY_STATE_POSITION,
-        Const.READY_STATE_SIZE
-      );
+      this.drawSquareImage(this.sharedSpriteSheet, clippingPosition, Const.READY_STATE_POSITION, Const.READY_STATE_SIZE);
 
       image = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
       //draw profile picture
-      this.drawSquareImage(
-        image,
-        SpriteSheet.PROFILPICTURE,
-        Const.PROFILE_PICTURE_POSITION,
-        Const.PROFILE_PICTURE_SIZE
-      );
+      this.drawSquareImage(image, SpriteSheet.PROFILPICTURE, Const.PROFILE_PICTURE_POSITION, Const.PROFILE_PICTURE_SIZE);
     }
 
     drawGameOverScreen(socketId: number){
@@ -89,6 +75,22 @@ export class Renderer {
         } else {
           this.drawLoserScreen(socketId);
         }
+    }
+
+    private drawTimer(){
+      this.context.beginPath();
+      this.context.arc(
+        Const.TIMER_X,
+        Const.TIMER_Y,
+        Const.TIMER_RADIUS,
+        Const.START_ANGLE ,
+        (2*(this.gameState.timeLeft / Const.COUNTDOWN) - 0.5)*Math.PI //END_ANGLE
+      );
+      this.context.lineTo(Const.TIMER_X, Const.TIMER_Y);
+      this.context.lineTo(Const.TIMER_X, Const.TIMER_Y - Const.BLOCK_HEIGHT);
+
+      this.context.fillStyle = Const.TIMER_COLOR;
+      this.context.fill();
     }
 
     drawLifeBarFrame(image: HTMLImageElement, playerState: PlayerState){
@@ -222,7 +224,8 @@ export class Renderer {
           playerStates = this.gameState.getPlayerStates();
 
       for (var i = 0; i < playerStates.length; i++){
-        let playerState = this.gameState.getPlayerState(i);
+        let playerState = this.gameState.getPlayerState(i),
+            playerPosition = {x: playerState.getX(), y: playerState.getY()};
 
         //use different image for each player
         image = this.getPlayerSpriteById(playerState.getId());
@@ -239,12 +242,7 @@ export class Renderer {
         }
 
         //draws player image in the right state
-        this.drawSquareImage(
-          image,
-          clippingPosition,
-          {x: playerState.getX(), y: playerState.getY()},
-          Const.PLAYER_WIDTH
-        );
+        this.drawSquareImage(image, clippingPosition, playerPosition, Const.PLAYER_WIDTH);
       }
     }
 
@@ -254,9 +252,11 @@ export class Renderer {
         let clippingPosition: {x: number, y: number};
 
         //scan only in possible block positions
-        for (let i : number = Const.MAX_BLOCK_POSITION_Y; i < Const.MIN_BLOCK_POSITION_Y; i++){
+        for (let i = Const.MAX_BLOCK_POSITION_Y; i < Const.MIN_BLOCK_POSITION_Y; i++){
           preBlock = 0;
-          for (let j : number = 0; j < Const.GRID_WIDTH; j++){
+          for (let j = 0; j < Const.GRID_WIDTH; j++){
+            let gridPosition = {x: Const.BLOCK_WIDTH * j, y: Const.BLOCK_HEIGHT * i};
+
             //Front/Left: preblock = 0 and now = 1
             if (preBlock === 0 && this.grid[i][j] === 1){
               clippingPosition = SpriteSheet.CLOUD_LEFT;
@@ -271,12 +271,7 @@ export class Renderer {
             }
 
             if(this.grid[i][j] === 1){
-              this.drawSquareImage(
-                this.sharedSpriteSheet,
-                clippingPosition,
-                {x: Const.BLOCK_WIDTH * j, y: Const.BLOCK_HEIGHT * i},
-                Const.BLOCK_HEIGHT
-              );
+              this.drawSquareImage(this.sharedSpriteSheet, clippingPosition, gridPosition, Const.BLOCK_HEIGHT);
             }
             //previous block is now current block
             preBlock = this.grid[i][j];
@@ -311,28 +306,17 @@ export class Renderer {
       this.drawScreen(SpriteSheet.WINNER_SCREEN);
 
       //draws winner profile picture on winner screen
-      this.drawSquareImage(
-        image,
-        SpriteSheet.WINNER,
-        Const.GAMEOVER_WINNER,
-        Const.GAMEOVER_WINNER_SIZE
-      );
+      this.drawSquareImage(image, SpriteSheet.WINNER, Const.GAMEOVER_WINNER, Const.GAMEOVER_WINNER_SIZE);
     }
 
     drawLoserScreen(playerId:number){
-      let loser: HTMLImageElement = new Image();
-      loser = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
+      let image = this.getPlayerSpriteById(playerId);
 
       //draws background screen for loser
       this.drawScreen(SpriteSheet.LOSER_SCREEN);
 
       //draws loser profile picture on loser screen
-      this.drawSquareImage(
-        loser,
-        SpriteSheet.LOSER,
-        Const.GAMEOVER_LOSER,
-        Const.GAMEOVER_LOSER_SIZE
-      );
+      this.drawSquareImage(image, SpriteSheet.LOSER, Const.GAMEOVER_LOSER, Const.GAMEOVER_LOSER_SIZE);
     }
 
     drawNoWinnerScreen(){
@@ -342,6 +326,7 @@ export class Renderer {
     private getPlayerSpriteById(playerID: number){
       return playerID === 1 ? this.player_1_sprites : this.player_2_sprites;
     }
+
     //help function to reduce length of draw functions for screens/background with the same canvas width and heigth
     private drawScreen(clippingPosition: {x: number, y: number}){
       this.context.drawImage(

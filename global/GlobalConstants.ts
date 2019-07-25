@@ -64,7 +64,7 @@ export class GlobalConstants{
   //Life Bar Constants
   static readonly MAX_HP: number = 200;
   static readonly DAMAGE: number = 20;
-  static readonly HALF_DAMAGE: number = 0.25 * GlobalConstants.DAMAGE;
+  static readonly DEFENSE_DAMAGE: number = 0.25 * GlobalConstants.DAMAGE;
   static readonly LIFE_BAR_FRAME_WIDTH: number = 360;
   static readonly LIFE_BAR_FRAME_HEIGHT: number = 120;
   static readonly LIFE_BAR_FRAME_1_COORDS: {x: number, y: number} = {x: 10, y: 0};

@@ -10,7 +10,7 @@ export abstract class  CollisionDetection {
   private static setBlockArray(){
     let blockArray: Array<BlockObject> = [];
 
-    for (let i = 0; i < Const.GRID_1.length; i++){
+    for (let i = Const.MAX_BLOCK_POSITION_Y; i < Const.MIN_BLOCK_POSITION_Y; i++){
         for (let j = 0; j < Const.GRID_1[i].length; j++){
             if(Const.GRID_1[i][j] === 1){
               blockArray.push(
@@ -23,22 +23,22 @@ export abstract class  CollisionDetection {
     return blockArray;
   }
 
-  static handleGridCollision(player: Player){
+  static handleBlockCollision(player: Player){
     for(let i=0; i < this.blockArray.length; i++ ){
       let block = this.blockArray[i];
 
-      //Check if players have collsions with blocks
-      if (this.isColliding(player, block)) {
+        //Check if players have collsions with blocks
+        if (this.isColliding(player, block)) {
 
-          //Handle collisions accordingly
-          if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-Const.SETBACK < block.getY()){
-              if (player.getIsDownKeyPressed() == false && Const.FALL_THROUGH_BLOCKS){
-                  player.setVelocityY(0);
-                  player.setY(block.getY() - Const.PLAYER_HEIGHT);
-                  player.setIsJumping(false);
-              }
-          }
-      }
+            //Handle collisions accordingly
+            if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-Const.SETBACK < block.getY()){
+                if (player.getIsDownKeyPressed() == false && Const.FALL_THROUGH_BLOCKS){
+                    player.setVelocityY(0);
+                    player.setY(block.getY() - Const.PLAYER_HEIGHT);
+                    player.setIsJumping(false);
+                }
+            }
+        }
     }
   }
 
@@ -67,15 +67,9 @@ export abstract class  CollisionDetection {
       }
   }
 
-  private static isColliding(blockOne: BlockObject, blockTwo: BlockObject) : boolean {
-    return blockOne.getX() + Const.PLAYER_WIDTH > blockTwo.getX() + Const.PERMEABLE_EDGES &&
-            blockOne.getX() + Const.PERMEABLE_EDGES < Const.BLOCK_WIDTH + blockTwo.getX() &&
-            blockOne.getY() + Const.PLAYER_HEIGHT > blockTwo.getY() &&
-            blockOne.getY() < Const.BLOCK_HEIGHT + blockTwo.getY()
-  }
-
   static handleShootObjectCollision(currentPlayerIndex: any, clientList: clientList){
-    var shootAction = clientList[currentPlayerIndex].player.getShootAction();
+    var currentPlayer = clientList[currentPlayerIndex].player
+    var shootAction = currentPlayer.getShootAction();
 
     if (shootAction !== undefined){
       for(var i in clientList){
@@ -84,24 +78,36 @@ export abstract class  CollisionDetection {
         if (i !== currentPlayerIndex){
           if (this.isColliding(otherPlayer, shootAction)){
             let damagePoints: number;
-
-            clientList[currentPlayerIndex].player.getShootAction().setShootActionComplete(true);
-
+            
+            //setting type of damage depending on player's defense
             if(otherPlayer.getIsDefending()){
-              damagePoints = Const.HALF_DAMAGE;
+              damagePoints = Const.DEFENSE_DAMAGE;
               otherPlayer.setWasProtected(true);
             } else {
               damagePoints = Const.DAMAGE;
               otherPlayer.setWasHit(true);
             }
 
+            //calculate and set new healthPoints
             otherPlayer.setHealthPoints(otherPlayer.getHealthPoints() - damagePoints);
+
+            //delete shootObject after collision
+            clientList[currentPlayerIndex].player.getShootAction().setShootActionComplete(true);
             clientList[currentPlayerIndex].player.setShootAction(false);
+            console.log(`Player ${otherPlayer.getId()} was hit by Player ${currentPlayer.getId()}`)
+            console.log(`--> Damage: ${(damagePoints / Const.DAMAGE) *100} %`);
             }
           }
         }
       }
-    }
+  }
+
+  private static isColliding(blockOne: BlockObject, blockTwo: BlockObject) : boolean {
+    return blockOne.getX() + Const.PLAYER_WIDTH > blockTwo.getX() + Const.PERMEABLE_EDGES &&
+            blockOne.getX() + Const.PERMEABLE_EDGES < Const.BLOCK_WIDTH + blockTwo.getX() &&
+            blockOne.getY() + Const.PLAYER_HEIGHT > blockTwo.getY() &&
+            blockOne.getY() < Const.BLOCK_HEIGHT + blockTwo.getY()
+  }
 
   private static collisionLeft(player: Player) : boolean{
     return player.getX() < Const.PLAYER_WIDTH - Const.BLOCK_WIDTH

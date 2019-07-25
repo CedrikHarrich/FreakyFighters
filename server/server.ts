@@ -93,7 +93,6 @@ export class Server{
       //EventHandler: When a key is pressed do ...
       socket.on('keyPressed', (data: any) => {
           this.keyPressedHandler(data, socket.id);
-          console.log(`${data.inputId} has been pressed by player ${socket.id}.`);
       });
 
       //EventHandler: When mouse is moved ...
@@ -104,7 +103,6 @@ export class Server{
       //Eventhandler: When mouse is clicked...
       socket.on('mouseClicked', (data: any) => {
           this.mouseButtonPressedHandler(data, socket.id);
-          console.log(`${data.button} has been pressed by player ${socket.id}.`);
       });
 
       //EventHandler: Disconnection of client
@@ -132,7 +130,7 @@ export class Server{
           //calculate all gameState variables
           this.gameHandler.calculateGameState();
 
-          //Event: Send gameState to the clients.
+          //Event: Send updated gameState to the clients.
           for(var i in this.clientList){
               var socket = this.clientList[i].socket;
               socket.emit('update', this.gameState);

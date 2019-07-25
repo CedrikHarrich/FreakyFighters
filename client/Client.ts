@@ -23,24 +23,25 @@ export class Client {
         this.canvas.height = Const.CANVAS_HEIGHT;
         this.canvas.width = Const.CANVAS_WIDTH;
 
+        //Set new renderingHandler
+        this.renderingHandler = new Renderer(this.gameState, this.context);
+
         //Start resgistering events
         this.registerEvents();
     }
 
     registerEvents(){
-      //Set new renderingHandler
-      this.renderingHandler = new Renderer(this.gameState, this.context);
-
       this.socket.on('update', (gameState:any) => {
         //set the new updated gameState
         this.setGameState(gameState);
 
         //Draw the current Gamestate
-        this.drawGameState();
+        this.renderingHandler.drawGameState(this.socket.id);
+        this.displayCursor();
       });
 
        //Change your ID to the newly assigned ID.
-       this.socket.on('ID', (id : number)=>{
+      this.socket.on('ID', (id : number)=>{
         this.socket.id = id;
       })
 
@@ -52,7 +53,6 @@ export class Client {
 
       this.registerKeyEvents();
       this.registerMouseEvents();
-      this.displayCursor();
     }
 
     keyPressedHandler(inputId: string, state: boolean) {
@@ -81,6 +81,7 @@ export class Client {
       this.gameState.resetPlayerStates();
 
       //Make the GameState
+      //Unpack playerStates
       for(var i in gameState.playerStates){
         const player = gameState.playerStates[i];
         if(player.shootActionState != undefined){
@@ -98,22 +99,14 @@ export class Client {
       this.gameState.winnerId = gameState.winnerId;
     }
 
-    drawGameState(){
-      this.renderingHandler.drawGame(this.gameState);
-
+    displayCursor(){
+      this.canvas.style.cursor = "none";
       if((this.gameState.gameOver === true) && this.gameState.getWinnerId() === Const.WINNER_INITIAL_STATE){
-        this.renderingHandler.drawStartScreen(this.socket.id);
+        this.canvas.style.cursor = "default";
       }
 
       if(this.gameState.winnerIsCalculated()){
-        this.renderingHandler.drawGameOverScreen(this.socket.id);
-      }
-    }
-
-    displayCursor(){
-      this.canvas.style.cursor = "none";
-      if(this.gameState.gameOver || this.gameState.getWinnerId() !== Const.WINNER_INITIAL_STATE){
-          this.canvas.style.cursor = "default";
+        this.canvas.style.cursor = "default";
       }
     }
 

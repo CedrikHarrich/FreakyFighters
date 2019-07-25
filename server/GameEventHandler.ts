@@ -18,7 +18,7 @@ export class GameEventHandler {
         player.setIsReadyToStartGame(isReady);
         this.gameState.playersReadyToStartGame[socketId] = isReady;
         console.log(`Players in game: ${this.gameState.playersReadyToStartGame}`)
-        console.log(`GameOver: ${this.gameState.getGameOver()}`);
+        console.log(`GameOver: ${this.gameState.getGameOver()} -- Still waiting, not ready!`);
     }
 
     //used by keyPressedHandler when key.Start is pressed
