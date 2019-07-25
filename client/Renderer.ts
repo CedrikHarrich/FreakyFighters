@@ -30,10 +30,10 @@ export class Renderer {
         this.drawBackground();
         this.drawTimer();
         this.drawPlayer();
+        this.drawShootObject();
         this.drawDefenseObject();
         this.drawClouds();
         this.drawTarget();
-        this.drawShootObject();
         this.drawLifeBar();
         this.drawForeground();
     }
@@ -61,7 +61,7 @@ export class Renderer {
       //draw start screen background
       this.drawScreen(SpriteSheet.START_SCREEN);
 
-      clippingPosition = this.gameState.playersInGame[playerId] ? SpriteSheet.PLAYER_READY : SpriteSheet.PLAYER_NOT_READY;
+      clippingPosition = this.gameState.playersReadyToStartGame[playerId] ? SpriteSheet.PLAYER_READY : SpriteSheet.PLAYER_NOT_READY;
       //draw ready state circle around profile picture
       this.drawSquareImage(
         this.sharedSpriteSheet,

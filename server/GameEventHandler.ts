@@ -13,10 +13,18 @@ export class GameEventHandler {
         this.gameState = gameState;
     }
 
+    //used by handleStartKey to set player to be ready for game to start
+    setPlayerGameStartReady(player: Player, socketId: number, isReady: boolean){
+        player.setIsReadyToStartGame(isReady);
+        this.gameState.playersReadyToStartGame[socketId] = isReady;
+        console.log(`Players in game: ${this.gameState.playersReadyToStartGame}`)
+        console.log(`GameOver: ${this.gameState.getGameOver()}`);
+    }
+
     //used by keyPressedHandler when key.Start is pressed
     handleStartKey(player: Player, socketId: number){
         if(this.gameState.getGameOver()){
-            this.gameHandler.setPlayerGameStartReady(player, socketId, true);
+            this.setPlayerGameStartReady(player, socketId, true);
         } else {
             this.gameHandler.playAgain()
         }

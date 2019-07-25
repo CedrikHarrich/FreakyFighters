@@ -28,6 +28,8 @@ export class GameHandler {
     
         if(player1.getIsReadyToStartGame() && player2.getIsReadyToStartGame()){
             this.gameState.setGameOver(false);
+            console.log(`Players in game: ${this.gameState.playersReadyToStartGame}`)
+            console.log(`GameOver: ${this.gameState.getGameOver()}`);
             player1.resetPlayer();
             player2.resetPlayer();
         }
@@ -50,22 +52,17 @@ export class GameHandler {
         }
     }
 
-    //used by keyPressedHandler to set player to be ready for game to start
-    setPlayerGameStartReady(player: Player, socketId: number, isReady: boolean){
-        player.setIsReadyToStartGame(isReady);
-        this.gameState.playersInGame[socketId] = isReady;
-        console.log(`Players in game: ${this.gameState.playersInGame} SocketID: ${socketId}`)
-        console.log(`GameOver: ${this.gameState.getGameOver()}`);
-    }
-
     //starts timer and calculate remaining time
     handleTimer() {
         if (this.gameState.getGameOver() === false) {
             if (this.gameState.getTimerStarted() === false) {
             this.gameState.startTimer();
             }
-            console.log(this.gameState.getTimeLeft());
+            let oldTime = this.gameState.getTimeLeft();
             this.gameState.calculateTimeLeft();
+            if(oldTime !== this.gameState.getTimeLeft()){
+              console.log(this.gameState.getTimeLeft());
+            }
         }
     } 
     
@@ -76,6 +73,7 @@ export class GameHandler {
         CollisionDetection.handleShootObjectCollision(currentPlayerIndex, this.clientList);
     }
 
+    //calculate all global factors of game
     calculateGameState(){
         if(this.twoClientsAreConnected()){
             this.startGame();
@@ -123,7 +121,7 @@ export class GameHandler {
         }
     }
 
-    //make playerState out of player for sending to client to use 
+    //make playerState out of player for sending it to client to use 
     makePlayerState(player: Player, shootActionState: ShootActionState){
         var playerState = new PlayerState({
           x: player.getX(),
@@ -144,6 +142,7 @@ export class GameHandler {
         return playerState;
     }
 
+    //make shootActionState if player is shooting, else default shootActionState
     makeShootActionState(player: Player){
         var shootActionState: ShootActionState;
         if(player.getIsShooting()){
@@ -177,7 +176,7 @@ export class GameHandler {
             //after adding the new playerState to gameState set collision with shootObject false
             player.setWasProtected(false);
             player.setWasHit(false);
-          }
+        }
     }
 
 }

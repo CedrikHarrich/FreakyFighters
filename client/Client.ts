@@ -94,7 +94,7 @@ export class Client {
 
       this.gameState.timeLeft = gameState.timeLeft;
       this.gameState.gameOver = gameState.gameOver;
-      this.gameState.playersInGame = gameState.playersInGame;
+      this.gameState.playersReadyToStartGame = gameState.playersReadyToStartGame;
       this.gameState.winnerId = gameState.winnerId;
     }
 
