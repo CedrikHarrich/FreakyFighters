@@ -32,11 +32,7 @@ export class Player extends DynamicObject {
         this.healthPoints = Const.MAX_HP;
         this.isShooting = false;
 
-        if(this.id === 1){
-            this.x = Const.PLAYER_1_START_X_COORDS;
-        }else{
-            this.x = Const.PLAYER_2_START_X_COORDS;
-        }
+        this.resetPlayerPosition();
     }
 
     updatePlayerState(){
@@ -83,7 +79,7 @@ export class Player extends DynamicObject {
             this.solidRoof();
         }
 
-        CollisionDetection.handleCollision(this);
+        CollisionDetection.handleGridCollision(this);
     }
 
     checkJump(){
@@ -180,6 +176,32 @@ export class Player extends DynamicObject {
         if(this.isRightKeyPressed){
             return SpriteSheet.PLAYER_RIGHT;
         }
+    }
+
+    resetPlayer(){
+        this.setHealthPoints(Const.MAX_HP);
+        this.setIsReadyToStartGame(false);
+        this.resetActions();
+        this.resetPlayerPosition();
+    }
+
+    resetPlayerPosition(){
+        if(this.getId() === 1){
+            this.setX(Const.PLAYER_1_START_X_COORDS);
+          }else{
+            this.setX(Const.PLAYER_2_START_X_COORDS);
+          }
+  
+        this.setY(-Const.PLAYER_WIDTH);
+    }
+
+    resetActions(){
+        this.isUpKeyPressed = false;
+        this.isDownKeyPressed = false;
+        this.isLeftKeyPressed = false;
+        this.isRightKeyPressed = false;
+        this.isDefending = false;
+        this.isShooting = false;
     }
 
     //Getter Methods
