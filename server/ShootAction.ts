@@ -1,17 +1,12 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants"
+import { DynamicObject }  from "./DynamicObject";
 
-export class ShootAction {
-    private x: number;
-    private y: number;
+export class ShootAction extends DynamicObject{
     private distance: number;
-    private velocityX: number;
-    private velocityY: number;
     private shootActionComplete: boolean = false;
 
     constructor(startX: number, startY: number, targetX:number, targetY:number){
-        this.x = startX + Const.SHOOT_OBJECT_SIZE;
-        this.y = startY + Const.SHOOT_OBJECT_SIZE;
-
+        super(startX + Const.SHOOT_OBJECT_SIZE, startY + Const.SHOOT_OBJECT_SIZE);
         let dx = targetX - this.x; //- 0.5*Const.SHOOT_OBJECT_SIZE;
         let dy = targetY - this.y;
         this.distance = Math.sqrt( dx * dx + dy * dy);
@@ -29,14 +24,6 @@ export class ShootAction {
         if(this.checkIsOutBoundaries()){
             this.shootActionComplete = true;
         }
-    }
-
-    getX(){
-        return this.x;
-    }
-
-    getY(){
-        return this.y;
     }
 
     //player use this method to determine if a new action can be started

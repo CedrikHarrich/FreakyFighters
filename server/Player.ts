@@ -2,15 +2,12 @@ import { GlobalConstants as Const } from "../global/GlobalConstants"
 import { SpriteSheet } from "../global/SpriteSheet"
 import { CollisionDetection } from './CollisionDetection'
 import { ShootAction } from "./ShootAction";
+import { DynamicObject }  from "./DynamicObject";
 
-export class Player {
 
+export class Player extends DynamicObject {
     //Attributes of the player
-    private x : number = 0;
-    private y : number = 0;
-    private velocityX : number = 0;
-    private velocityY : number = 0;
-    private id :number = 0;
+    private id: number = 0;
     private cursorX: number;
     private cursorY: number;
     private healthPoints: number;
@@ -30,9 +27,11 @@ export class Player {
     private isDefending: boolean = false;
 
     constructor(id :number){
+        super(0, 0);
         this.id = id;
         this.healthPoints = Const.MAX_HP;
         this.isShooting = false;
+
         if(this.id === 1){
             this.x = Const.PLAYER_1_START_X_COORDS;
         }else{
@@ -84,7 +83,7 @@ export class Player {
             this.solidRoof();
         }
 
-        CollisionDetection.handleCollision(this, Const.GRID_1);
+        CollisionDetection.handleCollision(this);
     }
 
     checkJump(){
@@ -184,14 +183,6 @@ export class Player {
     }
 
     //Getter Methods
-    getX() : number{
-        return this.x;
-    }
-
-    getY(){
-        return this.y
-    }
-
     getCursorX(){
         return this.cursorX;
     }
