@@ -9,9 +9,8 @@ export class GameState {
   currentTime: number = Const.TIME_INITIAL_STATE;
   timeLeft: number = Const.COUNTDOWN;
   gameOver: boolean = true;
-  // TODO maybe nicer solution -pelo
-  // Is this better? array length has to be 3, it's fixed if you declare it like that
-  playersReadyToStartGame:[number, boolean, boolean] = [0, false, false];
+
+  playersReadyToStartGame: Array<boolean> = [false, false];
 
 
   constructor(){
@@ -53,7 +52,7 @@ export class GameState {
   }
 
   resetPlayersInTheGame(){
-    this.playersReadyToStartGame = [undefined, false, false];
+    this.playersReadyToStartGame = [false, false];
   }
 
   resetGameState(){
@@ -74,7 +73,7 @@ export class GameState {
     }
   }
 
-  getplayersReadyToStartGame(){
+  getPlayersReadyToStartGame(){
     return this.playersReadyToStartGame;
   }
 

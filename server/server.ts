@@ -155,7 +155,6 @@ export class Server{
         //If a client connects, the socket will be registered and
         //the client gets a counting ID. ID = Position in Array
         socket.id = this.idNumberStack.pop();
-        socket.emit(Events.ID, socket.id);
 
         //A new player is created with the same ID as the socket
         let player = new Player(socket.id);
@@ -163,6 +162,7 @@ export class Server{
         this.clientList.push({'player': player, 'socket': socket})
 
         console.log(`The player with ID ${socket.id} has connected.`);
+        socket.emit(Events.ID, socket.id, this.getClientIndex(socket.id));
 
         return this.clientList[clientIndex];
     }
@@ -170,24 +170,24 @@ export class Server{
     removeClient(socketId: number){
       //Ticketsystem: When a player disconnects, he needs to be deleted from clients and players.
       //His ID needs to be pushed the ID-Stack so that the next player can take it
-      let clientId = this.getClientId(socketId);
+      let clientId = this.getClientIndex(socketId);
 
       this.clientList.splice(clientId, 1);
       this.idNumberStack.push(socketId);
     }
 
-    getClientId(socketId: number){
+    getClientIndex(socketId: number){
       // Returns the index of a player or client, given their socketID
-      for (let i = 0; i < this.clientList.length; i++){
-          if(this.clientList[i].socket.id == socketId){
-              return i;
-          }
+      for (let i: number = 0; i < this.clientList.length; i++){
+        if(this.clientList[i].socket.id == socketId){
+            return i;
+        }
       }
     }
 
     //handle moving mouse event
     mouseMoveHandler(data: any, socketId: number){
-      let clientId = this.getClientId(socketId),
+      let clientId = this.getClientIndex(socketId),
           player = this.clientList[clientId].player;
 
       this.gameEventHandler.handleCursorTarget(player, data);
@@ -195,7 +195,7 @@ export class Server{
 
     //handle mouse button pressed/clicked event
     mouseButtonPressedHandler({button: button, state: state}:{button: number, state: boolean}, socketId:number){
-      let clientId = this.getClientId(socketId),
+      let clientId = this.getClientIndex(socketId),
           player = this.clientList[clientId].player;
 
       this.gameEventHandler.handlePlayerActionMouse(button, player, state);
@@ -203,11 +203,11 @@ export class Server{
 
     //handle key pressed event
     keyPressedHandler({inputId: inputId, state: state}:{inputId: string, state: boolean}, socketId:number){
-      let clientId = this.getClientId(socketId),
+      let clientId = this.getClientIndex(socketId),
           player = this.clientList[clientId].player;
 
       if(inputId === Keys.Start){
-        this.gameEventHandler.handleStartKey(player, socketId);
+        this.gameEventHandler.handleStartKey(player, this.getClientIndex(socketId));
       } else {
         this.gameEventHandler.handlePlayerActionKeys(inputId, player, state);
       }

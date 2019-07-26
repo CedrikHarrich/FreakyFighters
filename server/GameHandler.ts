@@ -29,6 +29,7 @@ export class GameHandler {
         if(player1.getIsReadyToStartGame() && player2.getIsReadyToStartGame()){
             this.gameState.setGameOver(false);
             console.log(`GameOver: ${this.gameState.getGameOver()} -- Game start!`);
+            
             player1.resetPlayer();
             player2.resetPlayer();
         }

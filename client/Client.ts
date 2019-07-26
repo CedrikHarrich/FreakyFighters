@@ -11,6 +11,7 @@ export class Client {
     private context: CanvasRenderingContext2D;
     private gameState: GameState = new GameState();
     private renderingHandler: Renderer;
+    private clientListIndex: number;
 
     constructor(){
         console.log("A Client has started.");
@@ -36,13 +37,16 @@ export class Client {
         this.setGameState(gameState);
 
         //Draw the current Gamestate
-        this.renderingHandler.drawGameState(this.socket.id);
+        this.renderingHandler.drawGameState(this.socket.id, this.clientListIndex);
+        console.log(this.clientListIndex);
+
         this.displayCursor();
       });
 
-       //Change your ID to the newly assigned ID.
-      this.socket.on(Events.ID, (id : number)=>{
+      //Change your ID to the newly assigned ID.
+      this.socket.on(Events.ID, (id : number, index: number)=>{
         this.socket.id = id;
+        this.clientListIndex = index;
       })
 
       //Event: Wait until the server has an open spot again

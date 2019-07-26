@@ -24,12 +24,12 @@ export class Renderer {
         this.gameState = gameState;
     }
 
-    drawGameState(playerId: number){
+    drawGameState(playerId: number, playerIndex: number){
       //draw actual game
       this.drawGame();
 
       if((this.gameState.gameOver === true) && this.gameState.getWinnerId() === Const.WINNER_INITIAL_STATE){
-        this.drawStartScreen(playerId);
+        this.drawStartScreen(playerId, playerIndex);
       }
 
       if(this.gameState.winnerIsCalculated()){
@@ -50,14 +50,15 @@ export class Renderer {
         this.drawForeground();
     }
 
-    private drawStartScreen(playerId: number){
+    private drawStartScreen(playerId: number, playerIndex: number){
       let image : HTMLImageElement = new Image(),
         clippingPosition: {x: number, y: number};
 
       //draw start screen background
       this.drawScreen(SpriteSheet.START_SCREEN);
+    
+      clippingPosition = this.gameState.playersReadyToStartGame[playerIndex] ? SpriteSheet.PLAYER_READY : SpriteSheet.PLAYER_NOT_READY;
 
-      clippingPosition = this.gameState.playersReadyToStartGame[playerId] ? SpriteSheet.PLAYER_READY : SpriteSheet.PLAYER_NOT_READY;
       //draw ready state circle around profile picture
       this.drawSquareImage(this.sharedSpriteSheet, clippingPosition, Const.READY_STATE_POSITION, Const.READY_STATE_SIZE);
 
