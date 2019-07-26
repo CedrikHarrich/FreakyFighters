@@ -3,6 +3,22 @@
 Wir sind die Gruppe FF und stellen hier unser Spiel zum "SEP: Softwareentwicklungspraktikum - Spieleentwicklung
 in JavaScript" vor.
 
+## Wie startet man unser Spiel?
+1. Clone das Projekt in lokales Repository:  
+"git clone https://gitlab.lrz.de/ru95sag/gruppeff.git"  
+oder 
+"git clone git@gitlab.lrz.de:ru95sag/gruppeff.git" 
+2. Installiere NPM Packages:  
+"npm install"  
+3. Kompiliere nötige Dateien des Clients:  
+"npm run watch-client"  
+4. Server starten:  
+"npm run server"  
+5. Clients verbinden:  
+Geben Sie in einem Browser "localhost:3000" wenn der verbindende Spieler auch den Server startet.  
+Ansonsten stellen Sie eine Verbindung her indem Sie die lokale IP Adresse des Servers gefolgt von  
+dem Port 3000 eingeben: "\<lokaleIP-Adresse\>:3000"
+
 ## Entwicklungsstatus
 
 Innerhalb der nächsten 6 Wochen wollen wir dieses Projekt fertigstellen.  
