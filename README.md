@@ -9,9 +9,9 @@ Innerhalb der nächsten 6 Wochen wollen wir dieses Projekt fertigstellen.
 Dazu halten wir uns strikt an unseren Milestoneplan:  
 - [x] Milestone 0 (-21.05.2019)
 - [x] Milestone 1 (21.05.2019-11.06.2019)
-- [ ] Milestone 2 (11.06.2019-02.07.2019)
-- [ ] Milestone 3 (02.07.2019-23.07.2019)
-- [ ] Abschlussprüfung (29/30.07.2019)
+- [x] Milestone 2 (11.06.2019-02.07.2019)
+- [x] Milestone 3 (02.07.2019-23.07.2019)
+- [x] Abschlussprüfung (29/30.07.2019)
 
 ### Milestone 0:
 Zu Beginnn unseres Projekts wollen wir folgende Dinge klarstellen:  
@@ -53,20 +53,19 @@ UML-Tool: Draw.io
 ### Milestone 2:
 - [x] Interaktion von Spielern ist möglich
 - [x] Logik von Spiel wurde implementiert
-- [ ] Ladebildschirm
+- [x] Ladebildschirm
 - [x] HUD
 - [x] Leveldesign
 - [x] Characterdesgin
 - [x] MVP
 
 ### Milestone 3:
-- [ ] Gute Interaktion der Spieler
-- [ ] Attackanimation verbessern
+- [x] Gute Interaktion der Spieler
+- [x] Attackanimation verbessern
 - [x] Punktesystem
-- [ ] Balancing
-- [ ] Website kaufen und hochladen
-- [ ] Bugfixing
-- [ ] Abgabe
+- [x] Balancing
+- [x] Bugfixing
+- [x] Abgabe
 
 
 ### Abschlussprüfung:
