@@ -35,7 +35,7 @@ export class Player extends DynamicObject {
 
     updatePlayerState(){
         this.checkJump();
-        this.updateVelocity();
+        this.updateVelocities();
         this.updatePosition();
         this.updateShootObject();
         this.checkCursorPosition();
@@ -105,7 +105,7 @@ export class Player extends DynamicObject {
         }
     }
 
-    updateVelocity(){
+    updateVelocities(){
         //Change the speed depending on the input
         if(this.isRightKeyPressed){
             this.velocityX += Const.ACCELERATION_X;
@@ -148,7 +148,7 @@ export class Player extends DynamicObject {
         //Player cannot pass the walls on either side
         let additionalWidth = this.isDefending ? Const.DEFENSE_X_DIFF : 0 ;
             if(this.x < additionalWidth) {
-                this.x = Const.DEFENSE_X_DIFF
+                this.x = additionalWidth;
             }
             if(this.x > Const.CANVAS_WIDTH - Const.PLAYER_WIDTH - additionalWidth){
                 this.x = Const.CANVAS_WIDTH - Const.PLAYER_WIDTH - additionalWidth;

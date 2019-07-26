@@ -6,6 +6,18 @@ export class GlobalConstants{
   static readonly ASSET_FOLDER: string = "assets/"
   static readonly WAITING_TIME: number = 3000;
 
+  //Level Settings Constants
+  static readonly COUNTDOWN: number = 60;
+  static readonly MAX_HP: number = 200;
+  static readonly DAMAGE: number = 20;
+  static readonly DEFENSE_DAMAGE: number = 0.25 * GlobalConstants.DAMAGE;
+  static readonly SOLID_WALLS: boolean = true;
+  static readonly SOLID_ROOF: boolean = true;
+  static readonly SOLID_GROUND: boolean = true; //Special Feature Muahahahaaaa
+  static readonly WITH_GRID: boolean = true;
+  static readonly UNLIMITED_PLAYERS: boolean = false;
+  static readonly FALL_THROUGH_BLOCKS: boolean = true;
+
   //Game Start Constants
   static readonly WINNER_INITIAL_STATE: number = -1;
   static readonly TIME_INITIAL_STATE: number = -1;
@@ -52,7 +64,6 @@ export class GlobalConstants{
   static readonly GRAVITATION: number = 1.2;
 
   //Timer and Frames Constants
-  static readonly COUNTDOWN: number = 60;
   static readonly ANIMATION_TIME: number = 250;
   static readonly TIMER_COLOR: string = "#F5A9AF";
   static readonly START_ANGLE: number = -0.5 * Math.PI;
@@ -62,9 +73,6 @@ export class GlobalConstants{
   static readonly CALCULATIONS_PER_SECOND: number = 60;
 
   //Life Bar Constants
-  static readonly MAX_HP: number = 200;
-  static readonly DAMAGE: number = 20;
-  static readonly DEFENSE_DAMAGE: number = 0.25 * GlobalConstants.DAMAGE;
   static readonly LIFE_BAR_FRAME_WIDTH: number = 360;
   static readonly LIFE_BAR_FRAME_HEIGHT: number = 120;
   static readonly LIFE_BAR_FRAME_1_COORDS: {x: number, y: number} = {x: 10, y: 0};
@@ -85,14 +93,6 @@ export class GlobalConstants{
   //Acceleration Constants
   static readonly ACCELERATION_X: number = 1.5;
   static readonly ACCELERATION_Y: number = 1.5;
-
-  //Level Settings Constants
-  static readonly SOLID_WALLS: boolean = true;
-  static readonly SOLID_ROOF: boolean = true;
-  static readonly SOLID_GROUND: boolean = true; //Special Feature Muahahahaaaa
-  static readonly WITH_GRID: boolean = true;
-  static readonly UNLIMITED_PLAYERS: boolean = false;
-  static readonly FALL_THROUGH_BLOCKS: boolean = true;
 
   //The character is falling off the edge oddly if the edge is
   //solid on its whole width
