@@ -9,7 +9,7 @@ import { GameEventHandler } from './GameEventHandler';
 import { GameHandler } from './GameHandler';
 
 export class Server{
-    //Variables for the connection
+    //letiables for the connection
     private express: any;
     private app: any;
     private http: any;
@@ -18,7 +18,7 @@ export class Server{
     private gameEventHandler: GameEventHandler;
     private gameHandler: GameHandler;
 
-    //Variables for the actual game
+    //letiables for the actual game
     private idCounter: number = 1;
     private idNumberStack: Array<number> = [];
     private gameState: GameState;
@@ -35,7 +35,7 @@ export class Server{
     }
 
     setupServer(){
-      //Initialize variables used for the connection
+      //Initialize letiables used for the connection
       this.express = require('express');
       this.app = express();
       this.http = require('http').Server(this.app);
@@ -80,7 +80,7 @@ export class Server{
     connectionHandler(socket: any){
       //Check if the game needs another player
       if (this.clientList.length < Const.MAX_PLAYERS || Const.UNLIMITED_PLAYERS){
-          var client = this.addClient(socket);
+          let client = this.addClient(socket);
           this.registerPlayerEvents(client);
       } else {
           //Otherwise notify client that he has to wait.
@@ -128,12 +128,12 @@ export class Server{
           //pack updated players as playerStates into gamestate
           this.gameHandler.packPlayerStates()
 
-          //calculate all gameState variables
+          //calculate all gameState letiables
           this.gameHandler.calculateGameState();
 
           //Event: Send updated gameState to the clients.
-          for(var i in this.clientList){
-              var socket = this.clientList[i].socket;
+          for(let i in this.clientList){
+              let socket = this.clientList[i].socket;
               socket.emit(Events.Update, this.gameState);
           }
 
@@ -158,7 +158,7 @@ export class Server{
         socket.emit(Events.ID, socket.id);
 
         //A new player is created with the same ID as the socket
-        var player = new Player(socket.id);
+        let player = new Player(socket.id);
 
         this.clientList.push({'player': player, 'socket': socket})
 

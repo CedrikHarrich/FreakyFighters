@@ -82,7 +82,7 @@ export class Client {
 
       //Make the GameState
       //Unpack playerStates
-      for(var i in gameState.playerStates){
+      for(let i in gameState.playerStates){
         const player = gameState.playerStates[i];
         if(player.shootActionState != undefined){
           let shootActionState = new ShootActionState({x: player.shootActionState.x, y: player.shootActionState.y});

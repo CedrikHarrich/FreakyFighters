@@ -135,7 +135,7 @@ export class Renderer {
     private drawLifeBar(){
       let playerStates = this.gameState.getPlayerStates();
 
-      for(var i = 0; i < playerStates.length; i++) {
+      for(let i = 0; i < playerStates.length; i++) {
         let playerState = this.gameState.getPlayerState(i);
         let image = this.getPlayerSpriteById(playerState.getId());
 
@@ -150,7 +150,7 @@ export class Renderer {
       let clippingPosition: {x: number, y: number};
       let playerStates = this.gameState.getPlayerStates();
 
-      for (var i = 0; i < playerStates.length; i++) {
+      for (let i = 0; i < playerStates.length; i++) {
         let playerState = this.gameState.getPlayerState(i);
         if (playerState.getIsDefending()) {
           defendObjectPosition = {x: playerState.getX() - Const.DEFENSE_X_DIFF, y: playerState.getY() - Const.DEFENSE_Y_DIFF}
@@ -179,7 +179,7 @@ export class Renderer {
       let playerStates = this.gameState.getPlayerStates(),
           position: {x: number, y: number};
 
-      for(var i = 0; i < playerStates.length; i++) {
+      for(let i = 0; i < playerStates.length; i++) {
         let playerState = this.gameState.getPlayerState(i);
 
         if(playerState.getIsShooting()){
@@ -199,7 +199,7 @@ export class Renderer {
     private drawTarget(){
         let playerStates = this.gameState.getPlayerStates();
 
-        for (var i = 0; i < playerStates.length; i++){
+        for (let i = 0; i < playerStates.length; i++){
           let playerState = this.gameState.getPlayerState(i);
           let image = this.getPlayerSpriteById(playerState.getId());
 
@@ -217,7 +217,7 @@ export class Renderer {
           clippingPosition: {x: number, y: number},
           playerStates = this.gameState.getPlayerStates();
 
-      for (var i = 0; i < playerStates.length; i++){
+      for (let i = 0; i < playerStates.length; i++){
         let playerState = this.gameState.getPlayerState(i),
             playerPosition = {x: playerState.getX(), y: playerState.getY()};
 

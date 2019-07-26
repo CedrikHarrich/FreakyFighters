@@ -43,10 +43,10 @@ export abstract class  CollisionDetection {
   }
 
   static handlePlayerCollision(currentPlayerIndex: any, clientList: clientList){
-    var currentPlayer = clientList[currentPlayerIndex].player;
+    let currentPlayer = clientList[currentPlayerIndex].player;
 
-    for(var i in clientList){
-      var otherPlayer = clientList[i].player;
+    for(let i in clientList){
+      let otherPlayer = clientList[i].player;
 
           if (i !== currentPlayerIndex && this.isColliding(currentPlayer, otherPlayer) ){
 
@@ -68,12 +68,12 @@ export abstract class  CollisionDetection {
   }
 
   static handleShootObjectCollision(currentPlayerIndex: any, clientList: clientList){
-    var currentPlayer = clientList[currentPlayerIndex].player
-    var shootAction = currentPlayer.getShootAction();
+    let currentPlayer = clientList[currentPlayerIndex].player
+    let shootAction = currentPlayer.getShootAction();
 
     if (shootAction !== undefined){
-      for(var i in clientList){
-        var otherPlayer = clientList[i].player;
+      for(let i in clientList){
+        let otherPlayer = clientList[i].player;
 
         if (i !== currentPlayerIndex){
           if (this.isColliding(otherPlayer, shootAction)){

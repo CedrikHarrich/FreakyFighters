@@ -37,7 +37,7 @@ export class GameHandler {
     //reset game to initial state
     resetGame(){
         if(this.clientList.length !== 0){
-          for (var i in this.clientList){
+          for (let i in this.clientList){
             this.clientList[i].player.resetPlayer();
           }
         }
@@ -122,7 +122,7 @@ export class GameHandler {
 
     //make playerState out of player for sending it to client to use 
     makePlayerState(player: Player, shootActionState: ShootActionState){
-        var playerState = new PlayerState({
+        let playerState = new PlayerState({
           x: player.getX(),
           y: player.getY(),
           cursorX: player.getCursorX(),
@@ -143,7 +143,7 @@ export class GameHandler {
 
     //make shootActionState if player is shooting, else default shootActionState
     makeShootActionState(player: Player){
-        var shootActionState: ShootActionState;
+        let shootActionState: ShootActionState;
         if(player.getIsShooting()){
           shootActionState = new ShootActionState({x: player.getShootActionX(), y: player.getShootActionY()});
         } else {
@@ -153,11 +153,11 @@ export class GameHandler {
         return shootActionState;
     }
 
-    //update all variables related to players and then pack it as PlayerState into PlayerStates Array
+    //update all letiables related to players and then pack it as PlayerState into PlayerStates Array
     packPlayerStates(){
         //GameStatePacker
-        for(var i in this.clientList){
-            var player = this.clientList[i].player;
+        for(let i in this.clientList){
+            let player = this.clientList[i].player;
 
             //update player if there is no winner -> game still running
             //which means if there is a winner --> stop player actions

@@ -43,7 +43,7 @@ export class GameState {
   }
 
   addPlayerStates(playerStates: Array<PlayerState>){
-    for(var i in playerStates){
+    for(let i in playerStates){
       this.playerStates.push(playerStates[i]);
     }
   }
