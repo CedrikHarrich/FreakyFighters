@@ -1,5 +1,5 @@
 import { Player } from './Player';
-import { Keys } from '../global/Keys';
+import { Keys } from '../global/Enums';
 import { GameState } from '../global/GameState';
 import { GameHandler } from './GameHandler';
 
