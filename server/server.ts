@@ -3,20 +3,22 @@ import * as path from 'path';
 import { Player } from './Player';
 import { clientList } from './clientList';
 import { GlobalConstants as Const } from '../global/GlobalConstants';
-import { Keys } from '../global/Keys';
+import { Keys, Events } from '../global/Enums';
 import { GameState } from '../global/GameState';
+import { GameEventHandler } from './GameEventHandler';
 import { GameHandler } from './GameHandler';
 
 export class Server{
-    //Variables for the connection
+    //letiables for the connection
     private express: any;
     private app: any;
     private http: any;
     private io: any;
     private clientList: clientList = [];
+    private gameEventHandler: GameEventHandler;
     private gameHandler: GameHandler;
 
-    //Variables for the actual game
+    //letiables for the actual game
     private idCounter: number = 1;
     private idNumberStack: Array<number> = [];
     private gameState: GameState;
@@ -26,20 +28,22 @@ export class Server{
         this.serveFiles();
         this.gameState = new GameState();
         this.gameHandler = new GameHandler(this.clientList, this.gameState);
+        this.gameEventHandler = new GameEventHandler(this.gameHandler, this.gameState);
         //The server starts listening to events and sends packages as soon as someone connects
         this.registerConnection();
         this.init();
     }
 
     setupServer(){
-      //Initialize variables used for the connection
+      //Initialize letiables used for the connection
       this.express = require('express');
       this.app = express();
       this.http = require('http').Server(this.app);
 
       //Server starts listening
       this.http.listen(Const.PORT);
-      console.log(`The server has started and is now listening to the port: ${Const.PORT}`)
+      console.log(`The server has started and is now listening to the port: ${Const.PORT}`);
+      console.log(`Please click: --> ${Const.SERVER_URL} <--`);
 
       //Enable server to listen to specific events
       this.io = require('socket.io')(this.http);
@@ -58,10 +62,10 @@ export class Server{
 
     registerConnection() {
       //EventHandler: Connection of client
-      this.io.sockets.on('connection', (socket: any)=>{
+      this.io.sockets.on(Events.Connection, (socket: any)=>{
 
         //Start with listening to reconnections
-        socket.on('reconnection', () => {
+        socket.on(Events.Reconnection, () => {
             console.log(`A Player from ${socket.id} is trying to reconnect...`);
             this.connectionHandler(socket);
         });
@@ -76,11 +80,11 @@ export class Server{
     connectionHandler(socket: any){
       //Check if the game needs another player
       if (this.clientList.length < Const.MAX_PLAYERS || Const.UNLIMITED_PLAYERS){
-          var client = this.addClient(socket);
+          let client = this.addClient(socket);
           this.registerPlayerEvents(client);
       } else {
           //Otherwise notify client that he has to wait.
-          socket.emit('wait', Const.WAITING_TIME);
+          socket.emit(Events.Wait, Const.WAITING_TIME);
           console.log(`Putting Player on with socket ID: "${socket.id}" into the queue.`);
         }
     }
@@ -88,24 +92,22 @@ export class Server{
     //start listening to all the events when connected
     registerPlayerEvents({player, socket} : {player: Player, socket: any}){
       //EventHandler: When a key is pressed do ...
-      socket.on('keyPressed', (data: any) => {
+      socket.on(Events.KeyPressed, (data: any) => {
           this.keyPressedHandler(data, socket.id);
-          console.log(`${data.inputId} has been pressed by player ${socket.id}.`);
       });
 
       //EventHandler: When mouse is moved ...
-      socket.on('movingMouse', (data: any) => {
-          player.setCursorPosition(data.cursorX, data.cursorY);
+      socket.on(Events.MovingMouse, (data: any) => {
+          this.mouseMoveHandler(data, socket.id);
       });
 
       //Eventhandler: When mouse is clicked...
-      socket.on('mouseClicked', (data: any) => {
+      socket.on(Events.MouseClicked, (data: any) => {
           this.mouseButtonPressedHandler(data, socket.id);
-          console.log(`${data.button} has been pressed by player ${socket.id}.`);
       });
 
       //EventHandler: Disconnection of client
-      socket.on('disconnect', ()=>{
+      socket.on(Events.Disconnect, ()=>{
           //Client is removed
           this.removeClient(socket.id);
 
@@ -126,13 +128,13 @@ export class Server{
           //pack updated players as playerStates into gamestate
           this.gameHandler.packPlayerStates()
 
-          //calculate all gameState variables
+          //calculate all gameState letiables
           this.gameHandler.calculateGameState();
 
-          //Event: Send gameState to the clients.
-          for(var i in this.clientList){
-              var socket = this.clientList[i].socket;
-              socket.emit('update', this.gameState);
+          //Event: Send updated gameState to the clients.
+          for(let i in this.clientList){
+              let socket = this.clientList[i].socket;
+              socket.emit(Events.Update, this.gameState);
           }
 
           //The array with the player information will be deleted after it was sent
@@ -153,14 +155,14 @@ export class Server{
         //If a client connects, the socket will be registered and
         //the client gets a counting ID. ID = Position in Array
         socket.id = this.idNumberStack.pop();
-        socket.emit('ID', socket.id);
 
         //A new player is created with the same ID as the socket
-        var player = new Player(socket.id);
+        let player = new Player(socket.id);
 
         this.clientList.push({'player': player, 'socket': socket})
 
         console.log(`The player with ID ${socket.id} has connected.`);
+        socket.emit(Events.ID, socket.id, this.getClientIndex(socket.id));
 
         return this.clientList[clientIndex];
     }
@@ -168,38 +170,46 @@ export class Server{
     removeClient(socketId: number){
       //Ticketsystem: When a player disconnects, he needs to be deleted from clients and players.
       //His ID needs to be pushed the ID-Stack so that the next player can take it
-      let clientId = this.getClientId(socketId);
+      let clientId = this.getClientIndex(socketId);
 
       this.clientList.splice(clientId, 1);
       this.idNumberStack.push(socketId);
     }
 
-    getClientId(socketId: number){
+    getClientIndex(socketId: number){
       // Returns the index of a player or client, given their socketID
-      for (let i = 0; i < this.clientList.length; i++){
-          if(this.clientList[i].socket.id == socketId){
-              return i;
-          }
+      for (let i: number = 0; i < this.clientList.length; i++){
+        if(this.clientList[i].socket.id == socketId){
+            return i;
+        }
       }
+    }
+
+    //handle moving mouse event
+    mouseMoveHandler(data: any, socketId: number){
+      let clientId = this.getClientIndex(socketId),
+          player = this.clientList[clientId].player;
+
+      this.gameEventHandler.handleCursorTarget(player, data);
     }
 
     //handle mouse button pressed/clicked event
     mouseButtonPressedHandler({button: button, state: state}:{button: number, state: boolean}, socketId:number){
-      let clientId = this.getClientId(socketId),
+      let clientId = this.getClientIndex(socketId),
           player = this.clientList[clientId].player;
 
-      this.gameHandler.handlePlayerActionMouse(button, player, state);
+      this.gameEventHandler.handlePlayerActionMouse(button, player, state);
     }
 
     //handle key pressed event
     keyPressedHandler({inputId: inputId, state: state}:{inputId: string, state: boolean}, socketId:number){
-      let clientId = this.getClientId(socketId),
+      let clientId = this.getClientIndex(socketId),
           player = this.clientList[clientId].player;
 
       if(inputId === Keys.Start){
-        this.gameHandler.handleStartKey(player, socketId);
+        this.gameEventHandler.handleStartKey(player, this.getClientIndex(socketId));
       } else {
-        this.gameHandler.handlePlayerActionKeys(inputId, player, state);
+        this.gameEventHandler.handlePlayerActionKeys(inputId, player, state);
       }
     }
 

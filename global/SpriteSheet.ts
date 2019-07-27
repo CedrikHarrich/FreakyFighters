@@ -11,8 +11,9 @@ export class SpriteSheet{
 
     //Screens
     static readonly START_SCREEN: {x: number, y: number} = {x: 0, y: 4};
-    static readonly FOREGROUND: {x: number, y: number} = {x: 0, y: 5};
+    static readonly FOREGROUND: {x: number, y: number} = {x: 0, y: 6};
     static readonly BACKGROUND: {x: number, y: number} = {x: 0, y: 0};
+    static readonly HEAVEN: {x: number, y: number} = {x: 0, y: 5};
     static readonly WINNER_SCREEN: {x: number, y: number} = {x: 0, y: 1};
     static readonly LOSER_SCREEN: {x: number, y: number} = {x: 0, y: 2};
     static readonly DRAW_SCREEN: {x: number, y: number} = {x: 0, y: 3}

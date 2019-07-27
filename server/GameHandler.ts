@@ -1,7 +1,6 @@
 import { Player } from './Player';
 import { clientList } from './clientList';
 import { GlobalConstants as Const } from '../global/GlobalConstants';
-import { Keys } from '../global/Keys';
 import { GameState } from '../global/GameState';
 import { PlayerState } from "../global/PlayerState";
 import { ShootActionState } from "../global/ShootActionState";
@@ -29,6 +28,8 @@ export class GameHandler {
     
         if(player1.getIsReadyToStartGame() && player2.getIsReadyToStartGame()){
             this.gameState.setGameOver(false);
+            console.log(`GameOver: ${this.gameState.getGameOver()} -- Game start!`);
+            
             player1.resetPlayer();
             player2.resetPlayer();
         }
@@ -37,7 +38,7 @@ export class GameHandler {
     //reset game to initial state
     resetGame(){
         if(this.clientList.length !== 0){
-          for (var i in this.clientList){
+          for (let i in this.clientList){
             this.clientList[i].player.resetPlayer();
           }
         }
@@ -51,40 +52,17 @@ export class GameHandler {
         }
     }
 
-    //used by keyPressedHandler for pressing shoot key
-    setPlayerAttack(player: Player, state: boolean){
-        if(!player.getIsDefending() && !player.getIsShooting()){
-          player.setShootAction(state);
-        }
-    }
-
-    ////used by keyPressedHandler for pressing defense key
-    setPlayerDefense(player: Player, state: boolean){
-        if(!player.getIsShooting() && state === true){
-          player.setIsDefending(true)
-        }
-  
-        if(player.getIsDefending() && !state){
-          player.setIsDefending(false);
-        }
-    }
-
-    //used by keyPressedHandler to set player to be ready for game to start
-    setPlayerGameStartReady(player: Player, socketId: number, isReady: boolean){
-        player.setIsReadyToStartGame(isReady);
-        this.gameState.playersInGame[socketId] = isReady;
-        console.log(`Players in game: ${this.gameState.playersInGame} SocketID: ${socketId}`)
-        console.log(`GameOver: ${this.gameState.getGameOver()}`);
-    }
-
     //starts timer and calculate remaining time
     handleTimer() {
         if (this.gameState.getGameOver() === false) {
             if (this.gameState.getTimerStarted() === false) {
             this.gameState.startTimer();
             }
-            console.log(this.gameState.getTimeLeft());
+            let oldTime = this.gameState.getTimeLeft();
             this.gameState.calculateTimeLeft();
+            if(oldTime !== this.gameState.getTimeLeft()){
+              console.log(this.gameState.getTimeLeft());
+            }
         }
     } 
     
@@ -95,6 +73,7 @@ export class GameHandler {
         CollisionDetection.handleShootObjectCollision(currentPlayerIndex, this.clientList);
     }
 
+    //calculate all global factors of game
     calculateGameState(){
         if(this.twoClientsAreConnected()){
             this.startGame();
@@ -142,9 +121,9 @@ export class GameHandler {
         }
     }
 
-    //make playerState out of player for sending to client to use 
+    //make playerState out of player for sending it to client to use 
     makePlayerState(player: Player, shootActionState: ShootActionState){
-        var playerState = new PlayerState({
+        let playerState = new PlayerState({
           x: player.getX(),
           y: player.getY(),
           cursorX: player.getCursorX(),
@@ -163,8 +142,9 @@ export class GameHandler {
         return playerState;
     }
 
+    //make shootActionState if player is shooting, else default shootActionState
     makeShootActionState(player: Player){
-        var shootActionState: ShootActionState;
+        let shootActionState: ShootActionState;
         if(player.getIsShooting()){
           shootActionState = new ShootActionState({x: player.getShootActionX(), y: player.getShootActionY()});
         } else {
@@ -174,61 +154,14 @@ export class GameHandler {
         return shootActionState;
     }
 
-    //used by keyPressedHandler when key.Start is pressed
-    handleStartKey(player: Player, socketId: number){
-        if(this.gameState.getGameOver()){
-            this.setPlayerGameStartReady(player, socketId, true);
-        } else {
-            this.playAgain()
-        }
-    }
-
-    //handle keys and mouse button pressed events
-    handlePlayerActionKeys(inputId: string, player: Player, state: boolean){
-
-        if(!this.gameState.getGameOver() && !this.gameState.winnerIsCalculated()){
-            switch (inputId){
-                case Keys.Up:
-                    player.setIsUpKeyPressed(state);
-                    break;
-                case Keys.Left:
-                    player.setIsLeftKeyPressed(state);
-                    break;
-                case Keys.Down:
-                    player.setIsDownKeyPressed(state);
-                    break;
-                case Keys.Right:
-                    player.setIsRightKeyPressed(state);
-                    break;
-                case (Keys.Attack):
-                    this.setPlayerAttack(player, state);
-                    break;
-                case (Keys.Defense):
-                    this.setPlayerDefense(player, state);
-                    break;
-                default:
-                    return;
-            }
-        }
-    }
-
-    handlePlayerActionMouse(button: number, player: Player, state: boolean){
-        if(button === Keys.AttackMouse){
-            this.setPlayerAttack(player, state);
-        }
-
-        if(button === Keys.DefenseMouse){
-            this.setPlayerDefense(player, state);
-        }
-    }
-
+    //update all letiables related to players and then pack it as PlayerState into PlayerStates Array
     packPlayerStates(){
         //GameStatePacker
-        for(var i in this.clientList){
-            var player = this.clientList[i].player;
+        for(let i in this.clientList){
+            let player = this.clientList[i].player;
 
             //update player if there is no winner -> game still running
-            //which means if there is a winner stop player actions
+            //which means if there is a winner --> stop player actions
             if(!this.gameState.winnerIsCalculated()){
               player.updatePlayerState();
             }
@@ -239,12 +172,12 @@ export class GameHandler {
             this.calculateCollisions({currentPlayerIndex: i});
             //make playerstate with updated player and new shootActionState
             let playerState = this.makePlayerState(player, shootActionState);
-            //add it to gamestate
+            //add it to gamestate.playerStates
             this.gameState.addPlayerState(playerState);
-            //after adding the new playerState to gameState set collision with shootObject false
+            //after adding the new playerState to gameState set collision results with shootObject to false
             player.setWasProtected(false);
             player.setWasHit(false);
-          }
+        }
     }
 
 }

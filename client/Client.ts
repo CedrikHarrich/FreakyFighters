@@ -1,5 +1,5 @@
 import { GlobalConstants as Const } from "../global/GlobalConstants";
-import { Keys as Keys } from "../global/Keys";
+import { Keys, Events } from "../global/Enums";
 import { GameState } from "../global/GameState";
 import { PlayerState } from "../global/PlayerState";
 import { ShootActionState } from "../global/ShootActionState";
@@ -11,6 +11,7 @@ export class Client {
     private context: CanvasRenderingContext2D;
     private gameState: GameState = new GameState();
     private renderingHandler: Renderer;
+    private clientListIndex: number;
 
     constructor(){
         console.log("A Client has started.");
@@ -23,47 +24,50 @@ export class Client {
         this.canvas.height = Const.CANVAS_HEIGHT;
         this.canvas.width = Const.CANVAS_WIDTH;
 
+        //Set new renderingHandler
+        this.renderingHandler = new Renderer(this.gameState, this.context);
+
         //Start resgistering events
         this.registerEvents();
     }
 
     registerEvents(){
-      //Set new renderingHandler
-      this.renderingHandler = new Renderer(this.gameState, this.context);
-
-      this.socket.on('update', (gameState:any) => {
+      this.socket.on(Events.Update, (gameState:any) => {
         //set the new updated gameState
         this.setGameState(gameState);
 
         //Draw the current Gamestate
-        this.drawGameState();
+        this.renderingHandler.drawGameState(this.socket.id, this.clientListIndex);
+        console.log(this.clientListIndex);
+
+        this.displayCursor();
       });
 
-       //Change your ID to the newly assigned ID.
-       this.socket.on('ID', (id : number)=>{
+      //Change your ID to the newly assigned ID.
+      this.socket.on(Events.ID, (id : number, index: number)=>{
         this.socket.id = id;
+        this.clientListIndex = index;
       })
 
       //Event: Wait until the server has an open spot again
-      this.socket.on('wait', (time: number) =>{
+      this.socket.on(Events.Wait, (time: number) =>{
         console.log("The server is full at the moment. Please wait for a bit.")
         this.delayedReconnection(time);
       });
 
       this.registerKeyEvents();
       this.registerMouseEvents();
-      this.displayCursor();
     }
 
     keyPressedHandler(inputId: string, state: boolean) {
       if (Object.values(Keys).includes(inputId)){
-        this.socket.emit('keyPressed', {inputId: inputId, state: state});
+        this.socket.emit(Events.KeyPressed, {inputId: inputId, state: state});
       }
     }
 
     mouseClickedHandler(button: number, state: boolean){
       if (Object.values(Keys).includes(button)){
-        this.socket.emit('mouseClicked', {button: button, state: state});
+        this.socket.emit(Events.MouseClicked, {button: button, state: state});
       }
     }
 
@@ -73,7 +77,7 @@ export class Client {
 
     async delayedReconnection(time : number) {
       await this.sleep(time);
-      this.socket.emit('reconnection');
+      this.socket.emit(Events.Reconnection);
     }
 
     setGameState(gameState: any){
@@ -81,7 +85,8 @@ export class Client {
       this.gameState.resetPlayerStates();
 
       //Make the GameState
-      for(var i in gameState.playerStates){
+      //Unpack playerStates
+      for(let i in gameState.playerStates){
         const player = gameState.playerStates[i];
         if(player.shootActionState != undefined){
           let shootActionState = new ShootActionState({x: player.shootActionState.x, y: player.shootActionState.y});
@@ -94,63 +99,52 @@ export class Client {
 
       this.gameState.timeLeft = gameState.timeLeft;
       this.gameState.gameOver = gameState.gameOver;
-      this.gameState.playersInGame = gameState.playersInGame;
+      this.gameState.playersReadyToStartGame = gameState.playersReadyToStartGame;
       this.gameState.winnerId = gameState.winnerId;
     }
 
-    drawGameState(){
-      this.renderingHandler.drawGame(this.gameState);
-
-      if((this.gameState.gameOver === true) && this.gameState.getWinnerId() === Const.WINNER_INITIAL_STATE){
-        this.renderingHandler.drawStartScreen(this.socket.id);
-      }
-
-      if(this.gameState.winnerIsCalculated()){
-        this.renderingHandler.drawGameOverScreen(this.socket.id);
-      }
-    }
-
     displayCursor(){
-      this.canvas.style.cursor = "none";
-      if(this.gameState.gameOver || this.gameState.getWinnerId() !== Const.WINNER_INITIAL_STATE){
+      if(!this.gameState.gameOver && !this.gameState.winnerIsCalculated()){
+          this.canvas.style.cursor = "none";
+      } else {
           this.canvas.style.cursor = "default";
       }
     }
 
     registerMouseEvents(){
       //Event: Mouse movement, coordinates of mouse
-      window.addEventListener('mousemove', (event: MouseEvent) =>{
+      window.addEventListener(Events.MouseMove, (event: MouseEvent) =>{
         let canvasRestrict = this.canvas.getBoundingClientRect();
         let scaleX = this.canvas.width / canvasRestrict.width;
         let scaleY = this.canvas.height / canvasRestrict.height;
 
-        this.socket.emit('movingMouse', {
+        this.socket.emit(Events.MovingMouse, {
           cursorX: (event.clientX - canvasRestrict.left)*scaleX,
           cursorY: (event.clientY - canvasRestrict.top)*scaleY
         });
       });
 
-      this.canvas.addEventListener('mousedown', (event: MouseEvent) => {
+      this.canvas.addEventListener(Events.MouseDown, (event: MouseEvent) => {
         this.mouseClickedHandler(event.button, true);
       });
 
-      this.canvas.addEventListener('mouseup', (event: MouseEvent) => {
+      this.canvas.addEventListener(Events.MouseUp, (event: MouseEvent) => {
         this.mouseClickedHandler(event.button, false);
       });
 
-      this.canvas.addEventListener('contextmenu', function(e){
+      this.canvas.addEventListener(Events.ContextMenu, function(e){
         e.preventDefault();
       });
     }
 
     registerKeyEvents(){
       //Event: Signal the server that a key has been pressed
-      window.addEventListener('keydown', (event: KeyboardEvent) =>{
+      window.addEventListener(Events.KeyDown, (event: KeyboardEvent) =>{
         this.keyPressedHandler(event.key.toLowerCase(), true)
       }, true);
 
       //Event: Stop moving when key is not pressed
-      window.addEventListener('keyup', (event: KeyboardEvent) =>{
+      window.addEventListener(Events.KeyUp, (event: KeyboardEvent) =>{
         this.keyPressedHandler(event.key.toLowerCase(), false)
       }, true);
     }
