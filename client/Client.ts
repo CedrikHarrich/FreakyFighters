@@ -113,7 +113,11 @@ export class Client {
       this.canvas.addEventListener(Events.ContextMenu, function(e){
         e.preventDefault();
       });
-    }
+
+      document.getElementById("instructionBtn").addEventListener('click', () => {
+          this.showInstructions();
+      });
+  	}
 
     keyPressedHandler(inputId: string, state: boolean) {
       if (Object.values(Keys).includes(inputId)){
@@ -164,6 +168,14 @@ export class Client {
       } else {
           this.canvas.style.cursor = "default";
       }
+    }
+
+    showInstructions(){
+      let wasClicked = false;
+      let instructionImg = document.getElementById("instructionImg");
+
+            instructionImg.classList.toggle("hidden");
+
     }
 
     sleep(milliseconds : number) {
