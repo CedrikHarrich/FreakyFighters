@@ -9,9 +9,7 @@ export class GameState {
   currentTime: number = Const.TIME_INITIAL_STATE;
   timeLeft: number = Const.COUNTDOWN;
   gameOver: boolean = true;
-
   playersReadyToStartGame: Array<boolean> = [false, false];
-
 
   constructor(){
     this.playerStates = [];
@@ -32,7 +30,6 @@ export class GameState {
     this.timerStarted = true;
   }
 
-  
   resetPlayerStates(){
     this.playerStates = [];
   }
@@ -51,7 +48,7 @@ export class GameState {
     return this.getWinnerId() !== Const.WINNER_INITIAL_STATE;
   }
 
-  resetPlayersInTheGame(){
+  resetPlayersReadyToStartGame(){
     this.playersReadyToStartGame = [false, false];
   }
 
@@ -59,7 +56,7 @@ export class GameState {
     this.timeLeft = Const.COUNTDOWN;
     this.timerStarted = false;
     this.setGameOver(true);
-    this.resetPlayersInTheGame();
+    this.resetPlayersReadyToStartGame();
     this.setWinnerId(Const.WINNER_INITIAL_STATE);
   }
 

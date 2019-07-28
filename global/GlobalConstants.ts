@@ -6,7 +6,54 @@ export class GlobalConstants{
   static readonly ASSET_FOLDER: string = "assets/"
   static readonly WAITING_TIME: number = 3000;
 
+  //Grid for 1080x640 px canvas
+  //1: Blocks; 0: No Blocks
+  static readonly GRID_1 = [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //1
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4
+    [1,1,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //5 MAX Block Position: player with defense wont be cut off
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0], //6
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7
+    [0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0], //8
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //10
+    [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //11
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1], //12
+    [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0], //13 MIN Block Position: player can run on the ground freely without bumping into any clouds
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //14
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //15
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //16
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //17 Ground
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //18
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  //19
+  ];
+
+  static readonly GRID_2 = [
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //1
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //5 MAX Block Position: player with defense wont be cut off
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0], //6
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //8
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
+    [0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1,1,1,0,0,0], //10
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //11
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //12
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //13
+    [0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //14
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //15
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //16
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //17
+    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //18
+    [1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1]  //19
+  ];
+
   //Level Settings Constants
+  static readonly GRID = GlobalConstants.GRID_2; //just change the number
   static readonly COUNTDOWN: number = 60;
   static readonly MAX_HP: number = 200;
   static readonly DAMAGE: number = 20;
@@ -80,15 +127,16 @@ export class GlobalConstants{
   static readonly LIFE_BAR_WIDTH: number = 240;
   static readonly LIFE_BAR_HEIGHT: number = 80;
   static readonly LIFE_BAR_POINT: number = GlobalConstants.LIFE_BAR_WIDTH / GlobalConstants.MAX_HP;
-  static readonly LIFE_BAR_1_COORDS: {x: number, y: number} = {x: 115, y: 20};
-  static readonly LIFE_BAR_2_COORDS: {x: number, y: number} = {x: 725, y: 20};
+  static readonly LIFE_BAR_1_X: number = 115;
+  static readonly LIFE_BAR_2_X: number = 725;
+  static readonly LIFE_BAR_Y: number = 20;
 
   //Game Over Constants
   static readonly GAMEOVER_WINNER: {x: number, y: number} = {x: 450, y: 330};
   static readonly GAMEOVER_WINNER_SIZE: number = 180;
   static readonly GAMEOVER_LOSER: {x: number, y: number} = {x: 445, y: 335};
   static readonly GAMEOVER_LOSER_SIZE: number = 190;
-  static readonly GAMEOVER_DRAW: number = 100;
+  static readonly GAMEOVER_DRAW: number = 100; //random number which is not a playerId and Initial WinnerId
 
   //Acceleration Constants
   static readonly ACCELERATION_X: number = 1.5;
@@ -102,32 +150,9 @@ export class GlobalConstants{
   //it is first calibrated how deep they collide until this happens
   static readonly SETBACK: number = 30; // < BLOCK_HEIGHT
 
-
   //Grid and block rules/constraints
+  //MIN: 19 would be upper side on canvas bottom
   static readonly MIN_BLOCK_POSITION_Y : number = (GlobalConstants.GROUND_HEIGHT_FROM_TOP + GlobalConstants.BLOCK_HEIGHT) / GlobalConstants.BLOCK_HEIGHT;
+  //MAX: 0 would be touching canvas top
   static readonly MAX_BLOCK_POSITION_Y : number = (GlobalConstants.PLAYER_HEIGHT + GlobalConstants.BLOCK_HEIGHT) / GlobalConstants.BLOCK_HEIGHT;
-
-  //Grid for 1080x640 px canvas
-  //1: Blocks; 0: No Blocks
-  static readonly GRID_1 = [
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //1
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //2
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //3
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //4
-    [1,1,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //5 MAX Block Position: player with defense wont be cut off
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0], //6
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //7
-    [0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0], //8
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //9
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //10
-    [0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //11
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1], //12
-    [0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0], //13 MIN Block Position: player can run on the ground freely without bumping into any clouds
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //14
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //15
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //16
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //17 Ground
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], //18
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  //19
-  ];
 }

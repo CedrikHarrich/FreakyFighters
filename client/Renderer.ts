@@ -9,10 +9,10 @@ export class Renderer {
     private player_1_sprites: HTMLImageElement = new Image();
     private player_2_sprites: HTMLImageElement = new Image();
     private screens: HTMLImageElement = new Image();
-    private grid: Array<Array<number>> = Const.GRID_1;
+    private grid: Array<Array<number>> = Const.GRID;
     private gameState: GameState = new GameState();
-    private wasProtectedTime: {time: number, playerId: number} = {time: 0, playerId: Const.ID_INITIAL_STATE};
-    private wasHitTime: {time: number, playerId: number} = {time: 0, playerId: Const.ID_INITIAL_STATE};
+    private endProtection: {time: number, playerId: number} = {time: 0, playerId: Const.ID_INITIAL_STATE};
+    private endHitTime: {time: number, playerId: number} = {time: 0, playerId: Const.ID_INITIAL_STATE};
 
     constructor(gameState: GameState, context: CanvasRenderingContext2D){
         //Load all images
@@ -25,18 +25,21 @@ export class Renderer {
     }
 
     drawGameState(playerId: number, playerIndex: number){
-      //draw actual game
+      //draw actual game screen
       this.drawGame();
 
+      //if game hasn't start yet, draw start screen over game screen
       if((this.gameState.gameOver === true) && this.gameState.getWinnerId() === Const.WINNER_INITIAL_STATE){
         this.drawStartScreen(playerId, playerIndex);
       }
 
+      //if the winner is set, draw game over screen
       if(this.gameState.winnerIsCalculated()){
         this.drawGameOverScreen(playerId);
       }
     }
 
+    //draw game screen
     private drawGame(){
         this.context.clearRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
         this.drawBackground();
@@ -57,13 +60,12 @@ export class Renderer {
       //draw start screen background
       this.drawScreen(SpriteSheet.START_SCREEN);
     
-      clippingPosition = this.gameState.playersReadyToStartGame[playerIndex] ? SpriteSheet.PLAYER_READY : SpriteSheet.PLAYER_NOT_READY;
-
       //draw ready state circle around profile picture
+      clippingPosition = this.gameState.playersReadyToStartGame[playerIndex] ? SpriteSheet.PLAYER_READY : SpriteSheet.PLAYER_NOT_READY;
       this.drawSquareImage(this.sharedSpriteSheet, clippingPosition, Const.READY_STATE_POSITION, Const.READY_STATE_SIZE);
 
-      image = playerId === 1 ? this.player_1_sprites : this.player_2_sprites;
       //draw profile picture
+      image = this.getPlayerSpriteById(playerId);
       this.drawSquareImage(image, SpriteSheet.PROFILPICTURE, Const.PROFILE_PICTURE_POSITION, Const.PROFILE_PICTURE_SIZE);
     }
 
@@ -79,11 +81,11 @@ export class Renderer {
     }
 
     private drawTimer(){
-      let end_angle = (2*(this.gameState.timeLeft / Const.COUNTDOWN) - 0.5)*Math.PI;
+      let end_angle = (2 * (this.gameState.timeLeft / Const.COUNTDOWN) - 0.5) * Math.PI;
       this.context.beginPath();
       this.context.arc(Const.TIMER_X, Const.TIMER_Y, Const.TIMER_RADIUS, Const.START_ANGLE, end_angle);
-      this.context.lineTo(Const.TIMER_X, Const.TIMER_Y);
-      this.context.lineTo(Const.TIMER_X, Const.TIMER_Y - Const.BLOCK_HEIGHT);
+      this.context.lineTo(Const.TIMER_X, Const.TIMER_Y); //middle of circle
+      this.context.lineTo(Const.TIMER_X, Const.TIMER_Y - Const.BLOCK_HEIGHT); // end of circle ("12 o'clock" position)
       this.context.fillStyle = Const.TIMER_COLOR;
       this.context.fill();
     }
@@ -95,7 +97,7 @@ export class Renderer {
       this.context.drawImage(
         image,
         SpriteSheet.LIFE_BAR_FRAME.x,
-        SpriteSheet.LIFE_BAR_FRAME.y,
+        SpriteSheet.LIFE_BAR_FRAME.y * SpriteSheet.SPRITE_SIZE,
         image.width,
         SpriteSheet.SPRITE_SIZE,
         positionCoords.x,
@@ -114,11 +116,12 @@ export class Renderer {
 
       if(playerState.getId() === 1){
         clippingPositionX = SpriteSheet.LIFE_BAR.x;
-        lifeBarCoordX = Const.LIFE_BAR_1_COORDS.x;
+        lifeBarCoordX = Const.LIFE_BAR_1_X;
       }else{
         clippingPositionX = SpriteSheet.LIFE_BAR.x + (lostHealthPoints * oneHealthPointWidth);
-        lifeBarCoordX = Const.LIFE_BAR_2_COORDS.x + (lostHealthPoints * Const.LIFE_BAR_POINT);
+        lifeBarCoordX = Const.LIFE_BAR_2_X + (lostHealthPoints * Const.LIFE_BAR_POINT);
       }
+      
       //draws life bar with current health points
       this.context.drawImage(
         image,
@@ -127,7 +130,7 @@ export class Renderer {
         healthPoints * oneHealthPointWidth,
         SpriteSheet.SPRITE_SIZE,
         lifeBarCoordX,
-        Const.LIFE_BAR_1_COORDS.y,
+        Const.LIFE_BAR_Y,
         healthPoints * Const.LIFE_BAR_POINT,
         Const.LIFE_BAR_HEIGHT
       );
@@ -153,15 +156,16 @@ export class Renderer {
 
       for (let i = 0; i < playerStates.length; i++) {
         let playerState = this.gameState.getPlayerState(i);
+        
         if (playerState.getIsDefending()) {
           defendObjectPosition = {x: playerState.getX() - Const.DEFENSE_X_DIFF, y: playerState.getY() - Const.DEFENSE_Y_DIFF}
           clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.DEFENSE_AIR : SpriteSheet.DEFENSE_GROUND;
           image = this.sharedSpriteSheet;
 
           if (playerState.getWasProtected()) {
-            this.wasProtectedTime = { time: Date.now(), playerId: playerState.getId() };
+            this.endProtection = { time: Date.now() + Const.ANIMATION_TIME, playerId: playerState.getId() };
           }
-          if (Date.now() < this.wasProtectedTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasProtectedTime.playerId) {
+          if (Date.now() < this.endProtection.time && playerState.getId() === this.endProtection.playerId) {
             image = this.getPlayerSpriteById(playerState.getId());
             clippingPosition = playerState.getIsInTheAir() ? SpriteSheet.HIT_DEFENSE_AIR : SpriteSheet.HIT_DEFENSE_GROUND;
           }
@@ -228,14 +232,14 @@ export class Renderer {
         //use shooting player if he's shooting
         clippingPosition = playerState.getIsShooting() ? SpriteSheet.PLAYER_SHOOTING : playerState.getClippingPosition();
 
+        //set end of shocked player animation
         if(playerState.getWasHit()){
-          this.wasHitTime = {time: Date.now(), playerId: playerState.getId()};
+          this.endHitTime = {time: Date.now() + Const.ANIMATION_TIME, playerId: playerState.getId()};
         }
-
-        if(Date.now() < this.wasHitTime.time + Const.ANIMATION_TIME && playerState.getId() === this.wasHitTime.playerId){
+        //use shocked player if he got hit
+        if(Date.now() < this.endHitTime.time && playerState.getId() === this.endHitTime.playerId){
           clippingPosition = SpriteSheet.PLAYER_HIT;
         }
-
         //draws player image in the right state
         this.drawSquareImage(image, clippingPosition, playerPosition, Const.PLAYER_WIDTH);
       }
@@ -250,7 +254,7 @@ export class Renderer {
         for (let i = Const.MAX_BLOCK_POSITION_Y; i < Const.MIN_BLOCK_POSITION_Y; i++){
           preBlock = 0;
           for (let j = 0; j < Const.GRID_WIDTH; j++){
-            let gridPosition = {x: Const.BLOCK_WIDTH * j, y: Const.BLOCK_HEIGHT * i};
+            let blockPosition = {x: Const.BLOCK_WIDTH * j, y: Const.BLOCK_HEIGHT * i};
 
             //Front/Left: preblock = 0 and now = 1
             if (preBlock === 0 && this.grid[i][j] === 1){
@@ -266,7 +270,7 @@ export class Renderer {
             }
 
             if(this.grid[i][j] === 1){
-              this.drawSquareImage(this.sharedSpriteSheet, clippingPosition, gridPosition, Const.BLOCK_HEIGHT);
+              this.drawSquareImage(this.sharedSpriteSheet, clippingPosition, blockPosition, Const.BLOCK_HEIGHT);
             }
             //previous block is now current block
             preBlock = this.grid[i][j];
@@ -320,6 +324,7 @@ export class Renderer {
       this.drawSquareImage(image, SpriteSheet.LOSER, Const.GAMEOVER_LOSER, Const.GAMEOVER_LOSER_SIZE);
     }
 
+    //draws same tied game screen for both players
     private drawNoWinnerScreen(){
       this.drawScreen(SpriteSheet.DRAW_SCREEN);
     }

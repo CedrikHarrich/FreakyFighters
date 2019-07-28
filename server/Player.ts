@@ -55,7 +55,6 @@ export class Player extends DynamicObject {
       if (this.isUpKeyPressed && this.isJumping == false){
           this.velocityY -= Const.JUMP_HEIGHT;
           this.isJumping = true;
-          console.log(`Player ${this.id} is jumping with velocityY: ${this.velocityY}`);
       }
     }
 

@@ -154,7 +154,7 @@ export class GameHandler {
         return shootActionState;
     }
 
-    //update all letiables related to players and then pack it as PlayerState into PlayerStates Array
+    //update all variables related to players and then pack it as PlayerState into PlayerStates Array
     packPlayerStates(){
         //GameStatePacker
         for(let i in this.clientList){
