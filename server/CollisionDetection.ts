@@ -11,8 +11,8 @@ export abstract class  CollisionDetection {
     let blockArray: Array<BlockObject> = [];
 
     for (let i = Const.MAX_BLOCK_POSITION_Y; i < Const.MIN_BLOCK_POSITION_Y; i++){
-        for (let j = 0; j < Const.GRID_1[i].length; j++){
-            if(Const.GRID_1[i][j] === 1){
+        for (let j = 0; j < Const.GRID[i].length; j++){
+            if(Const.GRID[i][j] === 1){
               blockArray.push(
                 new BlockObject(Const.BLOCK_WIDTH * j, Const.BLOCK_WIDTH * i)
               );
@@ -24,21 +24,23 @@ export abstract class  CollisionDetection {
   }
 
   static handleBlockCollision(player: Player){
-    for(let i=0; i < this.blockArray.length; i++ ){
-      let block = this.blockArray[i];
-
-        //Check if players have collsions with blocks
-        if (this.isColliding(player, block)) {
-
-            //Handle collisions accordingly
-            if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-Const.SETBACK < block.getY()){
-                if (player.getIsDownKeyPressed() == false && Const.FALL_THROUGH_BLOCKS){
-                    player.setVelocityY(0);
-                    player.setY(block.getY() - Const.PLAYER_HEIGHT);
-                    player.setIsJumping(false);
-                }
-            }
-        }
+    if(Const.WITH_GRID){
+      for(let i=0; i < this.blockArray.length; i++ ){
+        let block = this.blockArray[i];
+  
+          //Check if players have collsions with blocks
+          if (this.isColliding(player, block)) {
+  
+              //Handle collisions accordingly
+              if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-Const.SETBACK < block.getY()){
+                  if (player.getIsDownKeyPressed() == false && Const.FALL_THROUGH_BLOCKS){
+                      player.setVelocityY(0);
+                      player.setY(block.getY() - Const.PLAYER_HEIGHT);
+                      player.setIsJumping(false);
+                  }
+              }
+          }
+      }
     }
   }
 

@@ -17,17 +17,8 @@ export class GameEventHandler {
     setPlayerGameStartReady(player: Player, clientListIndex: number, isReady: boolean){
         player.setIsReadyToStartGame(isReady);
         this.gameState.playersReadyToStartGame[clientListIndex] = isReady;
-        console.log(`Players in game: ${this.gameState.playersReadyToStartGame}`)
+        console.log(`Players in game: [${this.gameState.playersReadyToStartGame}]`)
         console.log(`GameOver: ${this.gameState.getGameOver()} -- Still waiting, not ready!`);
-    }
-
-    //used by keyPressedHandler when key.Start is pressed
-    handleStartKey(player: Player, clientListIndex: number){
-        if(this.gameState.getGameOver()){
-            this.setPlayerGameStartReady(player, clientListIndex, true);
-        } else {
-            this.gameHandler.playAgain()
-        }
     }
 
     //used by keyPressedHandler for pressing shoot key
@@ -48,16 +39,12 @@ export class GameEventHandler {
         }
     }
 
-    //handle mouse buttons pressed
-    handlePlayerActionMouse(button: number, player: Player, state: boolean){
-        if(!this.gameState.getGameOver() && !this.gameState.winnerIsCalculated()){
-            if(button === Keys.AttackMouse){
-                this.setPlayerAttack(player, state);
-            }
-    
-            if(button === Keys.DefenseMouse){
-                this.setPlayerDefense(player, state);
-            }
+    //used by keyPressedHandler when key.Start is pressed
+    handleStartKey(player: Player, clientListIndex: number){
+        if(this.gameState.getGameOver()){
+            this.setPlayerGameStartReady(player, clientListIndex, true);
+        } else {
+            this.gameHandler.playAgain()
         }
     }
 
@@ -86,6 +73,19 @@ export class GameEventHandler {
                     break;
                 default:
                     return;
+            }
+        }
+    }
+
+    //handle mouse buttons pressed
+    handlePlayerActionMouse(button: number, player: Player, state: boolean){
+        if(!this.gameState.getGameOver() && !this.gameState.winnerIsCalculated()){
+            if(button === Keys.AttackMouse){
+                this.setPlayerAttack(player, state);
+            }
+    
+            if(button === Keys.DefenseMouse){
+                this.setPlayerDefense(player, state);
             }
         }
     }

@@ -31,8 +31,8 @@ export class SpriteSheet{
     static readonly PLAYER_HIT: {x: number, y: number} = {x: 2, y: 5};
 
     //Life Bar
-    static readonly LIFE_BAR_FRAME: {x: number, y: number} = {x: 0, y: 1 * SpriteSheet.SPRITE_SIZE};
-    static readonly LIFE_BAR: {x: number, y: number} = {x: 0 * SpriteSheet.SPRITE_SIZE, y: 0};
+    static readonly LIFE_BAR_FRAME: {x: number, y: number} = {x: 0, y: 1};
+    static readonly LIFE_BAR: {x: number, y: number} = {x: 0, y: 0};
     
     //Action
     static readonly SHOOT: {x: number, y: number} = {x: 1, y: 3};
