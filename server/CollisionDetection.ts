@@ -32,8 +32,8 @@ export abstract class  CollisionDetection {
           if (this.isColliding(player, block)) {
   
               //Handle collisions accordingly
-              if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT-Const.SETBACK < block.getY()){
-                  if (player.getIsDownKeyPressed() == false && Const.FALL_THROUGH_BLOCKS){
+              if (player.getVelocityY() >= 0 && player.getY() + Const.PLAYER_HEIGHT - Const.SETBACK < block.getY()){
+                  if ((player.getIsDownKeyPressed() === false && !Const.FALL_THROUGH_BLOCKS) || Const.SOLID_BLOCKS){
                       player.setVelocityY(0);
                       player.setY(block.getY() - Const.PLAYER_HEIGHT);
                       player.setIsJumping(false);

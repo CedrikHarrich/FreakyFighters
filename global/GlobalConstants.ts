@@ -63,7 +63,8 @@ export class GlobalConstants{
   static readonly SOLID_GROUND: boolean = true; //Special Feature Muahahahaaaa
   static readonly WITH_GRID: boolean = true;
   static readonly UNLIMITED_PLAYERS: boolean = false;
-  static readonly FALL_THROUGH_BLOCKS: boolean = true;
+  static readonly FALL_THROUGH_BLOCKS: boolean = false; //true: grid-drawn but no collision/standing
+  static readonly SOLID_BLOCKS: boolean = false; //true: can't fall through clouds with downKey pressed
 
   //Game Start Constants
   static readonly WINNER_INITIAL_STATE: number = -1;
