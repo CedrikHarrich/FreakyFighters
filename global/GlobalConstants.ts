@@ -53,7 +53,7 @@ export class GlobalConstants{
   ];
 
   //Level Settings Constants
-  static readonly GRID = GlobalConstants.GRID_2; //just change the number
+  static readonly GRID = GlobalConstants.GRID_1; //just change the number
   static readonly COUNTDOWN: number = 60;
   static readonly MAX_HP: number = 200;
   static readonly DAMAGE: number = 20;
