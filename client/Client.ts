@@ -45,13 +45,13 @@ export class Client {
         //set the new updated gameState
         this.setGameState(gameState);
 
-        //Draw the current Gamestate
+        //draw the current gameState
         this.renderingHandler.drawGameState(this.socket.id, this.clientListIndex);
         this.displayCursor();
       });
     }
 
-    //Change your ID to the newly assigned ID and save your index in the clientList.
+    //change your ID to the newly assigned ID and save your index in the clientList.
     registerAssignedId(){
       this.socket.on(Events.ID, (id : number, index: number)=>{
         this.socket.id = id;
@@ -131,6 +131,14 @@ export class Client {
       }
     }
 
+    //HTML button "See how to play the game"
+    showInstructions(){
+      let instructionImg = document.getElementById("instructionImg");
+
+      instructionImg.classList.toggle("hidden");
+
+    }
+
     setGameState(gameState: any){
       //Delete old GameState
       this.gameState.resetPlayerStates();
@@ -162,20 +170,13 @@ export class Client {
       this.gameState.winnerId = gameState.winnerId;
     }
 
+    //hide cursor during game for target image to be seen only
     displayCursor(){
       if(!this.gameState.gameOver && !this.gameState.winnerIsCalculated()){
           this.canvas.style.cursor = "none";
       } else {
           this.canvas.style.cursor = "default";
       }
-    }
-
-    showInstructions(){
-      let wasClicked = false;
-      let instructionImg = document.getElementById("instructionImg");
-
-      instructionImg.classList.toggle("hidden");
-
     }
 
     sleep(milliseconds : number) {
