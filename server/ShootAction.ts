@@ -34,18 +34,18 @@ export class ShootAction extends DynamicObject{
         this.shootActionComplete = isShootActionComplete;
     }
 
-    //checks if shootActionState is outside of canvas
+    //checks if shootObject is outside of canvas
     checkIsOutBoundaries(){
-        let allConditionsComplied = false;
+        let isOutsideOfCanvas = false;
 
         if(this.x > Const.CANVAS_WIDTH || this.x < -Const.SHOOT_OBJECT_SIZE ){
-            allConditionsComplied = true;
+            isOutsideOfCanvas = true;
         }
 
         if(this.y > Const.GROUND_HEIGHT_Y || this.y < -Const.SHOOT_OBJECT_SIZE){
-            allConditionsComplied = true;
+            isOutsideOfCanvas = true;
         }
 
-        return allConditionsComplied;
+        return isOutsideOfCanvas;
     }
 }

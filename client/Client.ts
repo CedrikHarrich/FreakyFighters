@@ -32,31 +32,87 @@ export class Client {
     }
 
     registerEvents(){
+      this.registerUpdatedGameState();
+      this.registerAssignedId();
+      this.registerWaitingInQueue();
+      this.registerKeyEvents();
+      this.registerMouseEvents();
+    }
+
+    //listens to updates and set updated game information
+    registerUpdatedGameState(){
       this.socket.on(Events.Update, (gameState:any) => {
         //set the new updated gameState
         this.setGameState(gameState);
 
         //Draw the current Gamestate
         this.renderingHandler.drawGameState(this.socket.id, this.clientListIndex);
-        console.log(this.clientListIndex);
-
         this.displayCursor();
       });
+    }
 
-      //Change your ID to the newly assigned ID.
+    //Change your ID to the newly assigned ID and save your index in the clientList.
+    registerAssignedId(){
       this.socket.on(Events.ID, (id : number, index: number)=>{
         this.socket.id = id;
         this.clientListIndex = index;
-      })
+      });
+    }
 
-      //Event: Wait until the server has an open spot again
+    //Event: Wait until the server has an open spot again
+    registerWaitingInQueue(){
       this.socket.on(Events.Wait, (time: number) =>{
         console.log("The server is full at the moment. Please wait for a bit.")
         this.delayedReconnection(time);
       });
+    }
 
-      this.registerKeyEvents();
-      this.registerMouseEvents();
+    registerKeyEvents(){
+      //Event: Signal the server that a key has been pressed
+      window.addEventListener(Events.KeyDown, (event: KeyboardEvent) =>{
+        this.keyPressedHandler(event.key.toLowerCase(), true)
+      }, true);
+
+      //Event: Stop moving when key is not pressed
+      window.addEventListener(Events.KeyUp, (event: KeyboardEvent) =>{
+        this.keyPressedHandler(event.key.toLowerCase(), false)
+      }, true);
+    }
+
+    registerMouseEvents(){
+      //register movements of the mouse
+      this.mouseMoveEventListener();
+      //register pressed buttons of the mouse
+      this.mouseButtonListener();
+    }
+
+    mouseMoveEventListener(){
+       //Event: Mouse movement, send coordinates of mouse
+       window.addEventListener(Events.MouseMove, (event: MouseEvent) =>{
+        let canvasRestrict = this.canvas.getBoundingClientRect();
+        let scaleX = this.canvas.width / canvasRestrict.width;
+        let scaleY = this.canvas.height / canvasRestrict.height;
+
+        this.socket.emit(Events.MovingMouse, {
+          cursorX: (event.clientX - canvasRestrict.left)*scaleX,
+          cursorY: (event.clientY - canvasRestrict.top)*scaleY
+        });
+      });
+    }
+
+    mouseButtonListener(){
+      //Event: Mouse button pressed
+      this.canvas.addEventListener(Events.MouseDown, (event: MouseEvent) => {
+        this.mouseClickedHandler(event.button, true);
+      });
+
+      this.canvas.addEventListener(Events.MouseUp, (event: MouseEvent) => {
+        this.mouseClickedHandler(event.button, false);
+      });
+
+      this.canvas.addEventListener(Events.ContextMenu, function(e){
+        e.preventDefault();
+      });
     }
 
     keyPressedHandler(inputId: string, state: boolean) {
@@ -71,23 +127,20 @@ export class Client {
       }
     }
 
-    sleep(milliseconds : number) {
-      return new Promise(resolve => setTimeout(resolve, milliseconds));
-    }
-
-    async delayedReconnection(time : number) {
-      await this.sleep(time);
-      this.socket.emit(Events.Reconnection);
-    }
-
     setGameState(gameState: any){
       //Delete old GameState
       this.gameState.resetPlayerStates();
 
-      //Make the GameState
       //Unpack playerStates
-      for(let i in gameState.playerStates){
-        const player = gameState.playerStates[i];
+      this.unpackPlayerStates(gameState.playerStates);
+
+      //Set updated globally used gameState variables
+      this.setGameStateVariables(gameState);
+    }
+
+    unpackPlayerStates(playerStates: any){
+      for(let i in playerStates){
+        const player = playerStates[i];
         if(player.shootActionState != undefined){
           let shootActionState = new ShootActionState({x: player.shootActionState.x, y: player.shootActionState.y});
           Object.assign(player, {'shootActionState': shootActionState});
@@ -96,7 +149,9 @@ export class Client {
         let playerState = new PlayerState(player);
         this.gameState.addPlayerState(playerState);
       }
+    }
 
+    setGameStateVariables(gameState: any){
       this.gameState.timeLeft = gameState.timeLeft;
       this.gameState.gameOver = gameState.gameOver;
       this.gameState.playersReadyToStartGame = gameState.playersReadyToStartGame;
@@ -111,41 +166,12 @@ export class Client {
       }
     }
 
-    registerMouseEvents(){
-      //Event: Mouse movement, coordinates of mouse
-      window.addEventListener(Events.MouseMove, (event: MouseEvent) =>{
-        let canvasRestrict = this.canvas.getBoundingClientRect();
-        let scaleX = this.canvas.width / canvasRestrict.width;
-        let scaleY = this.canvas.height / canvasRestrict.height;
-
-        this.socket.emit(Events.MovingMouse, {
-          cursorX: (event.clientX - canvasRestrict.left)*scaleX,
-          cursorY: (event.clientY - canvasRestrict.top)*scaleY
-        });
-      });
-
-      this.canvas.addEventListener(Events.MouseDown, (event: MouseEvent) => {
-        this.mouseClickedHandler(event.button, true);
-      });
-
-      this.canvas.addEventListener(Events.MouseUp, (event: MouseEvent) => {
-        this.mouseClickedHandler(event.button, false);
-      });
-
-      this.canvas.addEventListener(Events.ContextMenu, function(e){
-        e.preventDefault();
-      });
+    sleep(milliseconds : number) {
+      return new Promise(resolve => setTimeout(resolve, milliseconds));
     }
 
-    registerKeyEvents(){
-      //Event: Signal the server that a key has been pressed
-      window.addEventListener(Events.KeyDown, (event: KeyboardEvent) =>{
-        this.keyPressedHandler(event.key.toLowerCase(), true)
-      }, true);
-
-      //Event: Stop moving when key is not pressed
-      window.addEventListener(Events.KeyUp, (event: KeyboardEvent) =>{
-        this.keyPressedHandler(event.key.toLowerCase(), false)
-      }, true);
+    async delayedReconnection(time : number) {
+      await this.sleep(time);
+      this.socket.emit(Events.Reconnection);
     }
 }

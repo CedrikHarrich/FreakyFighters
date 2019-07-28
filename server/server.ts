@@ -9,7 +9,7 @@ import { GameEventHandler } from './GameEventHandler';
 import { GameHandler } from './GameHandler';
 
 export class Server{
-    //letiables for the connection
+    //variables for the connection
     private express: any;
     private app: any;
     private http: any;
@@ -18,7 +18,7 @@ export class Server{
     private gameEventHandler: GameEventHandler;
     private gameHandler: GameHandler;
 
-    //letiables for the actual game
+    //variables for the ticket system
     private idCounter: number = 1;
     private idNumberStack: Array<number> = [];
     private gameState: GameState;
@@ -35,7 +35,7 @@ export class Server{
     }
 
     setupServer(){
-      //Initialize letiables used for the connection
+      //Initialize variables used for the connection
       this.express = require('express');
       this.app = express();
       this.http = require('http').Server(this.app);
@@ -56,7 +56,7 @@ export class Server{
       });
 
       this.app.use(
-        express.static(path.join(__dirname, '../dist/'))
+        this.express.static(path.join(__dirname, '../dist/'))
       );
     }
 
@@ -128,7 +128,7 @@ export class Server{
           //pack updated players as playerStates into gamestate
           this.gameHandler.packPlayerStates()
 
-          //calculate all gameState letiables
+          //calculate all gameState variables
           this.gameHandler.calculateGameState();
 
           //Event: Send updated gameState to the clients.
