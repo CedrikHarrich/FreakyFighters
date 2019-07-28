@@ -19,6 +19,7 @@ export enum Events {
     Disconnect = "disconnect",
     KeyPressed = "keyPressed",
     MouseClicked = "mouseClicked",
+    MouseClickedNative = "click", 
     MouseMove = "mousemove",
     MovingMouse = "movingMouse",
     MouseDown = "mousedown",

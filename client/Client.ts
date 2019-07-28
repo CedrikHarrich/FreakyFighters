@@ -114,7 +114,7 @@ export class Client {
         e.preventDefault();
       });
 
-      document.getElementById("instructionBtn").addEventListener('click', () => {
+      document.getElementById("instructionBtn").addEventListener(Events.MouseClickedNative, () => {
           this.showInstructions();
       });
   	}
@@ -174,7 +174,7 @@ export class Client {
       let wasClicked = false;
       let instructionImg = document.getElementById("instructionImg");
 
-            instructionImg.classList.toggle("hidden");
+      instructionImg.classList.toggle("hidden");
 
     }
 
