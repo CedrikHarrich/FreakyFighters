@@ -1,6 +1,6 @@
 # Welcome\!
 
-This used to be the project for our "Software Engineering Lab Course". In a team of 4 people we had to implement a simple muliplayer online game. The project was assigned with the best possible mark (1.0, german grading system)
+This game was the result of the "Software Engineering Lab Course in JavaScript" at the university of munich. In a team of 4 people we had to implement a simple muliplayer online game. The project was assigned with the best possible mark (1.0, german grading system)
 
 ## How to start the game?
 1. Clone the local repository:  
