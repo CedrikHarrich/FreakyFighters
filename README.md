@@ -4,9 +4,7 @@ This game was the result of the "Software Engineering Lab Course in JavaScript" 
 
 ## How to start the game?
 1. Clone the local repository:  
-"git clone https://gitlab.lrz.de/ru95sag/gruppeff.git"  
-or 
-"git clone git@gitlab.lrz.de:ru95sag/gruppeff.git" 
+"git clone https://github.com/CedrikHarrich/FreakyFighters.git"
 2. Install npm packages:  
 "npm install"  
 3. Compile the typescript files for the client:  
